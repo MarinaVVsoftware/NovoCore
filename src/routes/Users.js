@@ -2,11 +2,11 @@
 
 /* CONTROLLERS */
 // ejemplo de instancia de controlador
-const Example = require("../controllers/Example");
+const Users = require("../controllers/Users");
 
 module.exports = (app, router) => {
   // ejemplo de ruta
-  router.get("/api/example/example", Example.example());
+  router.get("/api/users/get", Users.example());
 
   app.use(router);
 };

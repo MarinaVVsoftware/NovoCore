@@ -1,5 +1,4 @@
 const express = require("express");
-// si no está el archivo .env el programa tronará.
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
@@ -7,7 +6,6 @@ const swagger = require("./swagger/swagger");
 const routes = require("./routes");
 const monitor = require("express-status-monitor");
 const Log = require("../helpers/Logs");
-var keys = require("./Keys");
 var monitorConfig = require("./monitorConfig");
 
 // este módulo sirve para separar la configuración del servidor

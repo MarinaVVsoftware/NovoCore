@@ -19,6 +19,6 @@ const app = config(express());
 
 //start server on port: 8080
 const server = app.listen(8080, function() {
-  Log.Success("API inicializó exitósamente.");
-  Log.Success("server listening at http://localhost:" + server.address().port);
+  // Log.Success("API inicializó exitósamente.");
+  // Log.Success("server listening at http://localhost:" + server.address().port);
 });

@@ -1,16 +1,22 @@
-const express = require('express');
-const app = express();
+/** //- PROCESO DE INSTANCIA DE LA API
+ *  1. Crea la configuración del servidor en src/server/config.js
+ *  2. Carga las "keys" desde el archivo .env, es importante que este documento exista.
+ *  3. Carga morgan, json, cors.
+ *  4. Carga los Routes y Controllers.
+ *        - Routes: Mapa de rutas de la API.
+ *        - Controllers: Código de cada ruta de la API, estructurado.
+ *  5. Inicia la aplicación.
+ */
 
-// Settings
-app.set('port', process.env.PORT || 3000);
+const express = require("express"); //import express
+const Log = require("./src/helpers/Logs");
+const config = require("./src/server/Config"); //importa la configuración
 
-// Middlewares
-app.use(express.json());
+// se pasa como parámetro la instancia de express al módulo de config
+const app = config(express());
 
-// Routes
-app.use(require('./routes/user'));
-
-// Starting the server
-app.listen(app.get('port'), () => {
-  console.log(`Server on port ${app.get('port')}`);
+//start server on port: 8080
+const server = app.listen(8080, function() {
+  Log.Success("API inicializó exitósamente.");
+  Log.Success("server listening at http://localhost:" + server.address().port);
 });
