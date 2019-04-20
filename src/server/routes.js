@@ -5,9 +5,9 @@
 const Users = require("../routes/Users");
 const Log = require("../helpers/Logs");
 
-module.exports = (app, router) => {
+module.exports = (app, router, mysqlConnection) => {
   /* Rutas de login */
-  Users(app, router);
+  Users(app, router, mysqlConnection);
 
   Log.Success("Rutas de la API cargadas.");
 };

@@ -4,9 +4,20 @@ const dotenv = require("dotenv").config();
 // que la app pueda usar amigablemente.
 module.exports = {
   database: {
-    DB_HOST: process.env.DB_HOST,
-    DB_USER: process.env.DB_USER,
-    DB_PASS: process.env.DB_USER,
-    DB_NAME: process.env.DB_USER
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    localAddress: process.env.DB_LOCAL_ADDRESS,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
+  },
+
+  database_local: {
+    host: process.env.DB_LOCAL_HOST,
+    port: process.env.DB_PORT,
+    localAddress: process.env.DB_LOCAL_ADDRESS,
+    user: process.env.DB_LOCAL_USER,
+    password: process.env.DB_LOCAL_PASS,
+    database: process.env.DB_LOCAL_NAME
   }
 };
