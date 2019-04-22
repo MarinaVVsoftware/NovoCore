@@ -12,7 +12,7 @@
 
 const express = require("express"); //import express
 const Log = require("./src/helpers/Logs");
-const config = require("./src/server/Config"); //importa la configuración
+const config = require("./src/server/config"); //importa la configuración
 
 // se pasa como parámetro la instancia de express al módulo de config
 const app = config(express());
