@@ -46,6 +46,7 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+
 // Add An User
 router.post("/", (req, res) => {
   const { User_Name, Email, rol, Status } = req.body;
@@ -57,6 +58,7 @@ router.post("/", (req, res) => {
     SET @Status = ?;
     CALL SP_CREATE_USER(@User_Name, @Email, @rol,@Status);
   `;
+
   mysqlConnection.query(
     query,
     [User_Name, Email, rol, Status],
@@ -82,7 +84,8 @@ router.put("/:Id_User", (req, res) => {
     SET @Status = ?;    
     CALL Update_Usuario(@Id_User, @User_Name, @Email,@rol,Status);
   `;
-  mysqlConnection.query(
+
+mysqlConnection.query(
     query,
     [Id_User, User_Name, Email, rol, Status],
     (err, rows, fields) => {
