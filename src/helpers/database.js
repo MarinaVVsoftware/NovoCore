@@ -1,20 +1,22 @@
 const mysql = require("mysql");
-var { database } = require("../server/keys");
-// var { database_local } = require("../server/keys");
-console.log(database);
+// var { database } = require("../server/keys");
+var { database_local } = require("../server/keys");
+console.log(database_local);
 // fix para el paso de variables de entorno a la config de mysql.
-var host = "66.117.0.76";
-var port = "3306";
-var localAddress = "66.117.0.76";
-var user = "marina32";
-var password = "MarinA13..";
-var database = "marina32_novo_db";
+// var host = database.host;
+// var port = database.port;
+// var localAddress = database.localAddress;
+// var user = database.user;
+// var password = database.password;
+// var database = database.database;
 
 // configuración para localhost
-// var host = database_local.host;
-// var user = database_local.user;
-// var password = database_local.password;
-// var database = database_local.database;
+var host = database_local.host;
+var port = database_local.port;
+var localAddress = database_local.localAddress;
+var user = database_local.user;
+var password = database_local.password;
+var database = database_local.database;
 
 //Connection Settings To DB Server
 const mysqlConnection = mysql.createConnection({
@@ -29,16 +31,6 @@ const mysqlConnection = mysql.createConnection({
   insecureAuth: true
 });
 
-//Produccion local
-// const mysqlConnection = mysql.createConnection({
-//   host,
-//   user,
-//   password,
-//   database,
-
-//   multipleStatements: true,
-//   insecureAuth: true
-// });
 //Status about connection
 function createConnection() {
   mysqlConnection.connect(function(err) {
