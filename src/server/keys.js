@@ -1,4 +1,5 @@
 const dotenv = require("dotenv").config();
+console.log(process.env);
 
 // se importan los datos sensibles del archivo .env a un objeto
 // que la app pueda usar amigablemente.
@@ -14,8 +15,8 @@ module.exports = {
 
   database_local: {
     host: process.env.DB_LOCAL_HOST,
-    port: process.env.DB_PORT,
-    localAddress: process.env.DB_LOCAL_ADDRESS,
+    port: process.env.DB_LOCAL_PORT,
+    localAddress: process.env.DB_LOCAL_ADDRES,
     user: process.env.DB_LOCAL_USER,
     password: process.env.DB_LOCAL_PASS,
     database: process.env.DB_LOCAL_NAME
