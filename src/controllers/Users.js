@@ -137,11 +137,42 @@ Users.Update = function(mysqlConnection) {
             res.json({ status: "USER UPDATED" });
           } else {
             console.log(err);
+            res.status(400).send(err);
           }
         }
       );
-    } catch (error) {}
+    } catch (error) {
+      res.status(400).send({ error });
+    }
   };
 };
+Users.Permission = function(mysqlConnection) {
+  return function(req, res) {
+    if (!req.body.Email)
+      res.status(400).send({
+        error:
+          "No se ha definido el Objeto Email para poder realizar la busqueda"
+      });
+    try {
+      var rol = 0;
+      mysqlConnection.query(
+        `CALL SP_READ_PERMISSIONS(?);`,
+        [req.body.Email],
 
+        (err, rows, fields) => {
+          if (!err) {
+            console.log(rows[0]);
+            res.status(200).send(JSON.stringify(rows[0]));
+            // res.json(rows[0]);
+          } else {
+            console.log(err);
+            res.status(400).send(err);
+          }
+        }
+      );
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  };
+};
 module.exports = Users;
