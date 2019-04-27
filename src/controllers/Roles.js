@@ -56,11 +56,11 @@ Roles.Create = function(mysqlConnection) {
     //   });
     if (!req.body.Id_Grade)
       res.status(400).send({ error: "No se ha definido el objeto Rol." });
-
+    const Jsn = JSON.stringify(req.body.Jsn);
     try {
       mysqlConnection.query(
         "CALL SP_CREATE_ROLES(?,?,?);",
-        [req.body.Rol_Name, req.body.Jsn, req.body.Id_Grade],
+        [req.body.Rol_Name, Jsn, req.body.Id_Grade],
         (err, result) => {
           if (!err) {
             res.json({ status: "ROL SAVED" });
