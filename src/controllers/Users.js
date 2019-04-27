@@ -154,7 +154,6 @@ Users.Permission = function(mysqlConnection) {
           "No se ha definido el Objeto Email para poder realizar la busqueda"
       });
     try {
-      var rol = 0;
       mysqlConnection.query(
         `CALL SP_READ_PERMISSIONS(?);`,
         [req.body.Email],
