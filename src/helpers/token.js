@@ -1,19 +1,27 @@
 const jwt = require('jsonwebtoken');
+const Token = {};
+const fs = require('fs');
+const path = require('path');
+const privateKey = fs.readFileSync(path.join(__dirname, '../keys/private.key'), 'utf8');
+const publicKey = fs.readFileSync(path.join(__dirname, '../keys/public.key'), 'utf8');
 
-function validateToken(header) {
-	var hola = false;
-	const token = header;
-	if (!token) return false;
-
-	const token2 = token.replace('Bearer', '');
-	return jwt.verify(token2, 'Secret Password', function(err, user) {
-		if (err) {
-			return hola;
-		} else {
-			return !hola;
-		}
-		//return false;
+Token.generateToken = (tokenData) => {
+	return jwt.sign(tokenData, privateKey, {
+		/*issuer: 'Marina v&v',
+		subject: 'sistemas@sistemas.com',
+		audience: 'novonautica.com',*/
+		algorithm: 'RS256'
 	});
-}
+};
 
-module.exports = validateToken;
+Token.validateToken = (header) => {
+	var isSuccess = false;
+	const token = header;
+	if (!token) return isSuccess;
+	const tokenFormatted = token.replace('Bearer', '');
+	return jwt.verify(tokenFormatted, publicKey, function(err, user) {
+		return err ? isSuccess : !isSuccess;
+	});
+};
+
+module.exports = Token;

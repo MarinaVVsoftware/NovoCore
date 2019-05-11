@@ -1,6 +1,6 @@
 const Log = require('../helpers/Logs');
 const jwt = require('jsonwebtoken');
-const validateToken = require('../helpers/token');
+const Token = require('../helpers/token');
 
 // Controller - Users
 const Users = {};
@@ -128,18 +128,18 @@ Users.Update = function(mysqlConnection) {
 
 Users.Login = () => {
 	return (req, res) => {
-		var tokenData = {
+		const loginCredentials = {
 			username: 'chuchito'
 		};
-		var token = jwt.sign(tokenData, 'Secret Password');
-		res.status(200).send({ token });
+		const tokenData = Token.generateToken(loginCredentials);
+		res.status(200).send({ tokenData });
 	};
 };
 
 Users.secure = () => {
 	return (req, res) => {
-		if (!validateToken(req.headers['authorization'])) {
-			res.status(400).send({ error: 'No se ha podido ingresar ' });
+		if (!Token.validateToken(req.headers['authorization'])) {
+			res.status(400).send({ error: 'No se ha podido ingresar' });
 		}
 		res.status(200).send({ nombre: 'chuchito' });
 	};
