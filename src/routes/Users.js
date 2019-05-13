@@ -2,9 +2,10 @@
 
 /* CONTROLLERS */
 // ejemplo de instancia de controlador
-const Users = require("../controllers/Users");
+const Users = require('../controllers/Users');
 
 module.exports = (app, router, mysqlConnection) => {
+  
   // Ruta para mandar a llamar a la funcion de lectura de datos
   router.get("/api/Users/Read", Users.Read(mysqlConnection));
   router.post("/api/Users/ReadId", Users.ReadId(mysqlConnection));

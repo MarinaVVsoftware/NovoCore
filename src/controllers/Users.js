@@ -1,4 +1,6 @@
 const Log = require('../helpers/Logs');
+const jwt = require('jsonwebtoken');
+const Token = require('../helpers/Token');
 
 // Controller - Users
 const Users = {};
