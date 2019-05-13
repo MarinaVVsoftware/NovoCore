@@ -12,6 +12,7 @@ module.exports = (app, router, mysqlConnection) => {
 	//Toma como argumento app para la verificación del JWT
 	Auth(app);
 	Users(app, router, mysqlConnection);
+  Roles(app, router, mysqlConnection);
 	Marina(app, router, mysqlConnection);
 
 	Log.Success('Rutas de la API cargadas.');

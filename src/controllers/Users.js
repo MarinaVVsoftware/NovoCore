@@ -111,19 +111,56 @@ Users.Update = function(mysqlConnection) {
 			const query = `    
       CALL SP_UPDATE_USERS(?, ?, ?,?,?);
     `;
-			mysqlConnection.query(
-				query,
-				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
-				(err, rows, fields) => {
-					if (!err) {
-						res.json({ status: 'USER UPDATED' });
-					} else {
-						console.log(err);
-					}
-				}
-			);
-		} catch (error) {}
-	};
-};
 
+      mysqlConnection.query(
+        query,
+        [
+          req.body.Id_User,
+          req.body.User_Name,
+          req.body.Email,
+          req.body.rol,
+          req.body.Status
+        ],
+        (err, rows, fields) => {
+          if (!err) {
+            res.json({ status: "USER UPDATED" });
+          } else {
+            console.log(err);
+            res.status(400).send(err);
+          }
+        }
+      );
+    } catch (error) {
+      res.status(400).send({ error });
+    }
+  };
+};
+Users.Permission = function(mysqlConnection) {
+  return function(req, res) {
+    if (!req.body.Email)
+      res.status(400).send({
+        error:
+          "No se ha definido el Objeto Email para poder realizar la busqueda"
+      });
+    try {
+      mysqlConnection.query(
+        `CALL SP_READ_PERMISSIONS(?);`,
+        [req.body.Email],
+
+        (err, rows, fields) => {
+          if (!err) {
+            console.log(rows[0]);
+            res.status(200).send(JSON.stringify(rows[0]));
+            // res.json(rows[0]);
+          } else {
+            console.log(err);
+            res.status(400).send(err);
+          }
+        }
+      );
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  };
+};
 module.exports = Users;
