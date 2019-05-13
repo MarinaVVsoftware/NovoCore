@@ -1,13 +1,14 @@
 const Log = require('../helpers/Logs');
 const jwt = require('jsonwebtoken');
 const Token = require('../helpers/Token');
+const newError = require('../helpers/newError');
 
 // Controller - Users
 const Users = {};
 
 //funcion para llamar y leer la informaion dentro de los usuarios en general
 Users.Read = function(mysqlConnection) {
-	return function(req, res) {
+	return function(req, res, next) {
 		try {
 			mysqlConnection.query('CALL SP_READ_USERS', (err, rows, fields) => {
 				rows.pop();
@@ -15,7 +16,7 @@ Users.Read = function(mysqlConnection) {
 					res.status(200).send(JSON.stringify(rows));
 				} else {
 					console.log(err);
-					res.status(400).send(JSON.stringify(err));
+					next(newError());
 				}
 			});
 		} catch (error) {
@@ -112,55 +113,43 @@ Users.Update = function(mysqlConnection) {
       CALL SP_UPDATE_USERS(?, ?, ?,?,?);
     `;
 
-      mysqlConnection.query(
-        query,
-        [
-          req.body.Id_User,
-          req.body.User_Name,
-          req.body.Email,
-          req.body.rol,
-          req.body.Status
-        ],
-        (err, rows, fields) => {
-          if (!err) {
-            res.json({ status: "USER UPDATED" });
-          } else {
-            console.log(err);
-            res.status(400).send(err);
-          }
-        }
-      );
-    } catch (error) {
-      res.status(400).send({ error });
-    }
-  };
+			mysqlConnection.query(
+				query,
+				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
+				(err, rows, fields) => {
+					if (!err) {
+						res.json({ status: 'USER UPDATED' });
+					} else {
+						console.log(err);
+						res.status(400).send(err);
+					}
+				}
+			);
+		} catch (error) {
+			res.status(400).send({ error });
+		}
+	};
 };
 Users.Permission = function(mysqlConnection) {
-  return function(req, res) {
-    if (!req.body.Email)
-      res.status(400).send({
-        error:
-          "No se ha definido el Objeto Email para poder realizar la busqueda"
-      });
-    try {
-      mysqlConnection.query(
-        `CALL SP_READ_PERMISSIONS(?);`,
-        [req.body.Email],
-
-        (err, rows, fields) => {
-          if (!err) {
-            console.log(rows[0]);
-            res.status(200).send(JSON.stringify(rows[0]));
-            // res.json(rows[0]);
-          } else {
-            console.log(err);
-            res.status(400).send(err);
-          }
-        }
-      );
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  };
+	return function(req, res) {
+		if (!req.body.Email)
+			res.status(400).send({
+				error: 'No se ha definido el Objeto Email para poder realizar la busqueda'
+			});
+		try {
+			mysqlConnection.query(`CALL SP_READ_PERMISSIONS(?);`, [ req.body.Email ], (err, rows, fields) => {
+				if (!err) {
+					console.log(rows[0]);
+					res.status(200).send(JSON.stringify(rows[0]));
+					// res.json(rows[0]);
+				} else {
+					console.log(err);
+					res.status(400).send(err);
+				}
+			});
+		} catch (error) {
+			res.status(400).send(error);
+		}
+	};
 };
 module.exports = Users;
