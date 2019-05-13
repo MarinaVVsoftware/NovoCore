@@ -5,9 +5,12 @@
 const Users = require('../routes/Users');
 const Marina = require('../routes/Marina');
 const Log = require('../helpers/Logs');
+const Auth = require('../routes/Auth');
 
 module.exports = (app, router, mysqlConnection) => {
 	/* Rutas de login */
+	//Toma como argumento app para la verificación del JWT
+	Auth(app);
 	Users(app, router, mysqlConnection);
 	Marina(app, router, mysqlConnection);
 

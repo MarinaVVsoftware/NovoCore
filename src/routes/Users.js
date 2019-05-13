@@ -11,8 +11,5 @@ module.exports = (app, router, mysqlConnection) => {
 	router.delete('/api/Users/Delete', Users.Delete(mysqlConnection));
 	router.post('/api/Users/Create', Users.Create(mysqlConnection));
 	router.put('/api/Users/Update', Users.Update(mysqlConnection));
-	router.post('/api/Users/Login', Users.Login());
-	router.post('/api/Users/Secure', Users.secure());
-
 	app.use(router);
 };
