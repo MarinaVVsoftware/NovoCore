@@ -11,145 +11,98 @@ Users.Read = function(mysqlConnection) {
 	return function(req, res, next) {
 		try {
 			mysqlConnection.query('CALL SP_READ_USERS', (err, rows, fields) => {
+				if (err) throw 'Mysql Error';
 				rows.pop();
-				if (!err) {
-					res.status(200).send(JSON.stringify(rows));
-				} else {
-					console.log(err);
-					next(newError());
-				}
+				res.status(200).send(JSON.stringify(rows));
 			});
 		} catch (error) {
 			console.log(error);
-			res.status(400).send(error);
+			next(newError(error, 500));
 		}
 	};
 };
 
 //Funcion para llamar La informacion de 1 usuario a travez de su Id
 Users.ReadId = function(mysqlConnection) {
-	return function(req, res) {
-		if (!req.body.email)
-			res.status(400).send({
-				error: 'No se ha definido el Objeto Email para poder realizar la busqueda'
-			});
+	return function(req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_USERS_BY_EMAIL(?);`, [ req.body.email ], (err, rows, fields) => {
-				if (!err) {
-					console.log(rows[0]);
-					res.status(200).send(JSON.stringify(rows[0]));
-					// res.json(rows[0]);
-				} else {
-					console.log(err);
-					res.status(400).send(err);
-				}
+				if (err) throw 'Mysql Error';
+				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
-			res.status(400).send(error);
+			next(newError(error, 500));
 		}
 	};
 };
+
 // Funcion para eliminar usuarios por su ID
 Users.Delete = function(mysqlConnection) {
-	return function(req, res) {
-		if (!req.body.email) res.status(400).send({ error: 'El objeto Email no se ha deifinido' });
+	return function(req, res, next) {
 		try {
 			const query = ' CALL SP_DELETE_USERS(?);';
-			//DELETE FROM Users WHERE Id_User = ?
 			mysqlConnection.query(query, [ req.body.email ], (err, rows, fields) => {
-				if (!err) {
-					res.json({ status: 'USER DELETED' });
-				} else {
-					console.log(err);
-				}
+				if (err) throw 'Mysql Error';
+				res.status(200).send({ status: 'USER DELETED' });
 			});
-		} catch (error) {}
+		} catch (error) {
+			next(newError(error, 500));
+		}
 	};
 };
+
 //Funcion para Insertar Usuarios dentro de la Tabla
 Users.Create = function(mysqlConnection) {
-	return function(req, res) {
-		if (!req.body.userName)
-			res.status(400).send({
-				error: 'No se ha definido el objeto userName dentro del body.'
-			});
-		if (!req.body.email)
-			res.status(400).send({
-				error: 'No se ha definido el objeto email dentro del body.'
-			});
-		if (!req.body.rol) res.status(400).send({ error: 'No se ha definido el objeto Rol.' });
-		if (!req.body.status) res.status(400).send({ error: 'No se ha definido el objeto Status.' });
-
+	return function(req, res, next) {
 		try {
 			mysqlConnection.query(
 				'CALL SP_CREATE_USER(?,?,?,?);',
 				[ req.body.userName, req.body.email, req.body.rol, req.body.status ],
-				(err, result) => {
-					if (!err) {
-						res.json({ status: 'USER SAVED' });
-					} else {
-						res.status(400).send({ error: err });
-					}
+				(err, rows, fields) => {
+					if (err) throw 'Mysql Error';
+					res.status(200).send({ status: 'USER CREATED' });
 				}
 			);
 		} catch (error) {
-			res.status(400).send({ error: error });
+			next(newError(error, 500));
 		}
 	};
 };
+
 //Funcion para Modificar Usuarios
 Users.Update = function(mysqlConnection) {
-	return function(req, res) {
-		if (!req.body.Id_User)
-			res.status(400).send({
-				error: 'No se ha definido el Objeto Identificador del Usuario'
-			});
-		if (!req.body.User_Name) res.status(400).send({ error: 'No se ha definido el Objeto Nombre del Usuraio' });
-		if (!req.body.Email) res.status(400).send({ error: 'No se ha definido el Objeto  Email' });
-		if (!req.body.rol) res.status(400).send({ error: 'No se ha definido el Objeto Rol' });
-		if (!req.body.Status) res.status(400).send({ error: 'No se ha definido el Objeto Status ' });
+	return function(req, res, next) {
 		try {
 			const query = `    
       CALL SP_UPDATE_USERS(?, ?, ?,?,?);
     `;
-
 			mysqlConnection.query(
 				query,
 				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
 				(err, rows, fields) => {
-					if (!err) {
-						res.json({ status: 'USER UPDATED' });
-					} else {
-						console.log(err);
-						res.status(400).send(err);
-					}
+					if (err) throw 'Mysql Error';
+					res.status(200).send({ status: 'USER UPDATED' });
 				}
 			);
 		} catch (error) {
-			res.status(400).send({ error });
+			console.log(error);
+			next(newError(error, 500));
 		}
 	};
 };
+
 Users.Permission = function(mysqlConnection) {
-	return function(req, res) {
-		if (!req.body.Email)
-			res.status(400).send({
-				error: 'No se ha definido el Objeto Email para poder realizar la busqueda'
-			});
+	return function(req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_PERMISSIONS(?);`, [ req.body.Email ], (err, rows, fields) => {
-				if (!err) {
-					console.log(rows[0]);
-					res.status(200).send(JSON.stringify(rows[0]));
-					// res.json(rows[0]);
-				} else {
-					console.log(err);
-					res.status(400).send(err);
-				}
+				if (err) throw 'Mysql Error';
+				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
-			res.status(400).send(error);
+			console.log(error);
+			next(newError(error, 500));
 		}
 	};
 };
+
 module.exports = Users;

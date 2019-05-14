@@ -21,7 +21,7 @@ Token.validateToken = (header) => {
 Token.auth = () => {
 	return (req, res, next) => {
 		if (!Token.validateToken(req.headers['authorization'])) {
-			res.status(400).send({ error: 'No se ha podido ingresar' });
+			res.status(400).send({ error: 'No se ha definido el token correctamente.' });
 		} else {
 			//Utiliza la función de middleware propio de express
 			next();

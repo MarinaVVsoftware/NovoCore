@@ -4,8 +4,10 @@
  * @param {number} statusCode Código de error
  */
 function newError(errorMessage, statusCode) {
-	const err = new Error(errorMessage ? errorMessage : 'Ops! Something went wrong');
-	err.statusCode = statusCode ? statusCode : 500;
+	const err = new Error(
+		errorMessage && typeof errorMessage === 'string' ? errorMessage : 'Ops! Something went wrong'
+	);
+	err.statusCode = statusCode ? statusCode : 400;
 	console.log(err);
 	return err;
 }
