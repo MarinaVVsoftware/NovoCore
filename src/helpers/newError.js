@@ -1,7 +1,7 @@
 /**
  * Importar la función y ejecutarlo dentro de next()
  * @param {string} errorMessage Mensaje de error
- * @param {int} statusCode Código de error
+ * @param {number} statusCode Código de error
  */
 function newError(errorMessage, statusCode) {
 	const err = new Error(errorMessage ? errorMessage : 'Ops! Something went wrong');
