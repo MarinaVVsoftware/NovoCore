@@ -1,17 +1,15 @@
-const Log = require('../helpers/Logs');
-const jwt = require('jsonwebtoken');
-const Token = require('../helpers/Token');
-const newError = require('../helpers/newError');
+const Log = require("../helpers/Logs");
+const newError = require("../helpers/newError");
 
 // Controller - Users
 const Users = {};
 
 //funcion para llamar y leer la informaion dentro de los usuarios en general
-Users.Read = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.Read = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
-			mysqlConnection.query('CALL SP_READ_USERS', (err, rows, fields) => {
-				if (err) throw 'Mysql Error';
+			mysqlConnection.query("CALL SP_READ_USERS", (err, rows, fields) => {
+				if (err) throw "Mysql Error";
 				rows.pop();
 				res.status(200).send(JSON.stringify(rows));
 			});
@@ -23,11 +21,11 @@ Users.Read = function(mysqlConnection) {
 };
 
 //Funcion para llamar La informacion de 1 usuario a travez de su Id
-Users.ReadId = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.ReadId = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_USERS_BY_EMAIL(?);`, [ req.body.email ], (err, rows, fields) => {
-				if (err) throw 'Mysql Error';
+				if (err) throw "Mysql Error";
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
@@ -37,13 +35,13 @@ Users.ReadId = function(mysqlConnection) {
 };
 
 // Funcion para eliminar usuarios por su ID
-Users.Delete = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.Delete = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
-			const query = ' CALL SP_DELETE_USERS(?);';
+			const query = " CALL SP_DELETE_USERS(?);";
 			mysqlConnection.query(query, [ req.body.email ], (err, rows, fields) => {
-				if (err) throw 'Mysql Error';
-				res.status(200).send({ status: 'USER DELETED' });
+				if (err) throw "Mysql Error";
+				res.status(200).send({ status: "USER DELETED" });
 			});
 		} catch (error) {
 			next(newError(error, 500));
@@ -52,15 +50,15 @@ Users.Delete = function(mysqlConnection) {
 };
 
 //Funcion para Insertar Usuarios dentro de la Tabla
-Users.Create = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.Create = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
 			mysqlConnection.query(
-				'CALL SP_CREATE_USER(?,?,?,?);',
+				"CALL SP_CREATE_USER(?,?,?,?);",
 				[ req.body.userName, req.body.email, req.body.rol, req.body.status ],
 				(err, rows, fields) => {
-					if (err) throw 'Mysql Error';
-					res.status(200).send({ status: 'USER CREATED' });
+					if (err) throw "Mysql Error";
+					res.status(200).send({ status: "USER CREATED" });
 				}
 			);
 		} catch (error) {
@@ -70,8 +68,8 @@ Users.Create = function(mysqlConnection) {
 };
 
 //Funcion para Modificar Usuarios
-Users.Update = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.Update = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
 			const query = `    
       CALL SP_UPDATE_USERS(?, ?, ?,?,?);
@@ -80,8 +78,8 @@ Users.Update = function(mysqlConnection) {
 				query,
 				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
 				(err, rows, fields) => {
-					if (err) throw 'Mysql Error';
-					res.status(200).send({ status: 'USER UPDATED' });
+					if (err) throw "Mysql Error";
+					res.status(200).send({ status: "USER UPDATED" });
 				}
 			);
 		} catch (error) {
@@ -91,11 +89,11 @@ Users.Update = function(mysqlConnection) {
 	};
 };
 
-Users.Permission = function(mysqlConnection) {
-	return function(req, res, next) {
+Users.Permission = function (mysqlConnection) {
+	return function (req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_PERMISSIONS(?);`, [ req.body.Email ], (err, rows, fields) => {
-				if (err) throw 'Mysql Error';
+				if (err) throw "Mysql Error";
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
