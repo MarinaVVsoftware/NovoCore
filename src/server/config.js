@@ -1,5 +1,4 @@
 const express = require("express");
-// si no está el archivo .env el programa tronará.
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
@@ -7,8 +6,8 @@ const swagger = require("./swagger/swagger");
 const routes = require("./routes");
 const monitor = require("express-status-monitor");
 const Log = require("../helpers/Logs");
-var keys = require("./Keys");
 var monitorConfig = require("./monitorConfig");
+const database = require("../helpers/database");
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -29,8 +28,10 @@ module.exports = app => {
   // inicia el servicio de monitoreo
   app.use(monitor(monitorConfig));
 
+  const mysqlConnection = database();
+
   /* ROUTES */
-  routes(app, router);
+  routes(app, router, mysqlConnection);
 
   Log.Success("Configuración del servidor establecida.");
   return app;
