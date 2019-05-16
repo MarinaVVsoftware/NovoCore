@@ -9,7 +9,7 @@ Marina.Read = (mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 			mysqlConnection.query("CALL SP_READ_MARINA_QUOTATION", (err, rows, fields) => {
-				if (err) next(newError(400, err));
+				if (err) next(newError(err, 400));
 				rows.pop();
 				res.status(200).send(JSON.stringify(rows));
 			});
@@ -20,11 +20,12 @@ Marina.Read = (mysqlConnection) => {
 	};
 };
 
+// Erase the record (DELETE)
 Marina.Erase = (mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 			mysqlConnection.query("CALL SP_DELETE_MARINA_QUOTATION (?);", [ req.body.id ], (err, rows, fields) => {
-				if (err) next(newError(400, err));
+				if (err) next(newError(err, 400));
 				res.status(200).send({ status: "QUOTATION DELETED" });
 			});
 		} catch (error) {
@@ -34,6 +35,7 @@ Marina.Erase = (mysqlConnection) => {
 	};
 };
 
+// Update the state
 Marina.Delete = (mysqlConnection) => {
 	return (req, res, next) => {
 		if (!req.body.id || req.body.delete === null) res.status(400).send({ error: "Undefined Object" });
@@ -42,8 +44,8 @@ Marina.Delete = (mysqlConnection) => {
 				"CALL SP_LOGICAL_DELETED_MARINA_QUOTATION (?,?);",
 				[ req.body.id, req.body.delete ],
 				(err, rows, fields) => {
-					if (err) next(newError(400, err));
-					res.json({ status: "Success" });
+					if (err) next(newError(err, 400));
+					res.status(200).send({ status: "Success" });
 				}
 			);
 		} catch (error) {
@@ -53,24 +55,9 @@ Marina.Delete = (mysqlConnection) => {
 	};
 };
 
+// Create a new record
 Marina.Create = (mysqlConnection) => {
 	return (req, res, next) => {
-		if (
-			!req.body.boatId ||
-			!req.body.quotationStatusId ||
-			!req.body.mooringRateId ||
-			!req.body.arrivalDate ||
-			!req.body.departureDate ||
-			req.body.arrivalStatus === null ||
-			!req.body.daysStay ||
-			!req.body.discountStay ||
-			!req.body.tax ||
-			!req.body.total ||
-			!req.body.subtotal
-		) {
-			res.status(400).send({ error: "Undefined Object" });
-		}
-
 		try {
 			mysqlConnection.query(
 				"CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?)",
@@ -88,8 +75,8 @@ Marina.Create = (mysqlConnection) => {
 					req.body.subtotal
 				],
 				(err, rows, fields) => {
-					if (err) next(newError(400, err));
-					res.json({ status: "Success" });
+					if (err) next(newError(err, 400));
+					res.status(200).send({ status: "Success" });
 				}
 			);
 		} catch (error) {
@@ -99,25 +86,9 @@ Marina.Create = (mysqlConnection) => {
 	};
 };
 
+// Update a record
 Marina.Update = (mysqlConnection) => {
-	return (req, res) => {
-		if (
-			!req.body.quotationId ||
-			!req.body.boatId ||
-			!req.body.quotationStatusId ||
-			!req.body.mooringRateId ||
-			!req.body.arrivalDate ||
-			!req.body.departureDate ||
-			req.body.arrivalStatus === null ||
-			!req.body.daysStay ||
-			!req.body.discountStay ||
-			!req.body.tax ||
-			!req.body.total ||
-			!req.body.subtotal
-		) {
-			res.status(400).send({ error: "Undefined Object" });
-		}
-
+	return (req, res, next) => {
 		try {
 			mysqlConnection.query(
 				"CALL SP_UPDATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -136,8 +107,8 @@ Marina.Update = (mysqlConnection) => {
 					req.body.subtotal
 				],
 				(err, rows, fields) => {
-					if (err) next(newError(400, err));
-					res.json({ status: "QUOTATION UPDATED" });
+					if (err) next(newError(err, 400));
+					res.status(200).send({ status: "QUOTATION UPDATED" });
 				}
 			);
 		} catch (error) {

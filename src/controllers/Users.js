@@ -9,7 +9,7 @@ Users.Read = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
 			mysqlConnection.query("CALL SP_READ_USERS", (err, rows, fields) => {
-				if (err) throw "Mysql Error";
+				if (err) newError(err, 400);
 				rows.pop();
 				res.status(200).send(JSON.stringify(rows));
 			});
@@ -25,10 +25,11 @@ Users.ReadId = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_USERS_BY_EMAIL(?);`, [ req.body.email ], (err, rows, fields) => {
-				if (err) throw "Mysql Error";
+				if (err) newError(err, 400);
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
+			console.log(error);
 			next(newError(error, 500));
 		}
 	};
@@ -40,10 +41,11 @@ Users.Delete = function (mysqlConnection) {
 		try {
 			const query = " CALL SP_DELETE_USERS(?);";
 			mysqlConnection.query(query, [ req.body.email ], (err, rows, fields) => {
-				if (err) throw "Mysql Error";
+				if (err) newError(err, 400);
 				res.status(200).send({ status: "USER DELETED" });
 			});
 		} catch (error) {
+			console.log(error);
 			next(newError(error, 500));
 		}
 	};
@@ -57,11 +59,12 @@ Users.Create = function (mysqlConnection) {
 				"CALL SP_CREATE_USER(?,?,?,?);",
 				[ req.body.userName, req.body.email, req.body.rol, req.body.status ],
 				(err, rows, fields) => {
-					if (err) throw "Mysql Error";
+					if (err) newError(err, 400);
 					res.status(200).send({ status: "USER CREATED" });
 				}
 			);
 		} catch (error) {
+			console.log(error);
 			next(newError(error, 500));
 		}
 	};
@@ -78,7 +81,7 @@ Users.Update = function (mysqlConnection) {
 				query,
 				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
 				(err, rows, fields) => {
-					if (err) throw "Mysql Error";
+					if (err) newError(err, 400);
 					res.status(200).send({ status: "USER UPDATED" });
 				}
 			);
@@ -93,7 +96,7 @@ Users.Permission = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
 			mysqlConnection.query(`CALL SP_READ_PERMISSIONS(?);`, [ req.body.Email ], (err, rows, fields) => {
-				if (err) throw "Mysql Error";
+				if (err) newError(err, 400);
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
