@@ -8,7 +8,6 @@ function newError (errorMessage, statusCode) {
 		errorMessage && typeof errorMessage === "string" ? errorMessage : "Ops! Something went wrong"
 	);
 	err.statusCode = statusCode ? statusCode : 400;
-	//console.log(err);
 	return err;
 }
 
