@@ -61,7 +61,7 @@ Roles.Update = function (mysqlConnection) {
 		try {
 			const jsn = JSON.stringify(req.body.jsn);
 			mysqlConnection.query(
-				" CALL SP_UPDATE_ROLES(?,?,?)",
+				"CALL SP_UPDATE_ROLES(?,?,?)",
 				[ req.body.rolName, jsn, req.body.idGrade ],
 				(err, rows, fields) => {
 					if (err) next(newError(err, 400));

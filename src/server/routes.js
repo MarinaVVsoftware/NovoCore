@@ -4,6 +4,7 @@
 // necesarias.
 const Users = require("../routes/Users");
 const Marina = require("../routes/Marina");
+const MarinaDebts = require("../routes/MarinaDebts");
 const Log = require("../helpers/Logs");
 const Auth = require("../routes/Auth");
 const Roles = require("../routes/Roles");
@@ -16,6 +17,7 @@ module.exports = (app, router, mysqlConnection) => {
 	Users(app, router, mysqlConnection);
 	Roles(app, router, mysqlConnection);
 	Marina(app, router, mysqlConnection);
+	MarinaDebts(app, router, mysqlConnection);
 	ErrorHandler(app);
 
 	Log.Success("Rutas de la API cargadas.");

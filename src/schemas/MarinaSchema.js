@@ -1,6 +1,7 @@
-const marinaSchema = {};
+const MarinaSchema = {};
+const MarinaDebtSchema = {};
 
-marinaSchema.erase = {
+MarinaSchema.erase = {
 	type: "object",
 	required: [ "id" ],
 	properties: {
@@ -10,7 +11,7 @@ marinaSchema.erase = {
 	}
 };
 
-marinaSchema.delete = {
+MarinaSchema.delete = {
 	type: "object",
 	required: [ "id", "delete" ],
 	properties: {
@@ -23,7 +24,7 @@ marinaSchema.delete = {
 	}
 };
 
-marinaSchema.create = {
+MarinaSchema.create = {
 	type: "object",
 	required: [
 		"boatId",
@@ -75,15 +76,58 @@ marinaSchema.create = {
 	}
 };
 
-marinaSchema.update = {
+MarinaSchema.update = {
 	type: "object",
 	required: [ "quotationId" ],
 	properties: {
 		quotationId: {
 			type: "number"
 		},
-		...marinaSchema.create.properties
+		...MarinaSchema.create.properties
 	}
 };
 
-module.exports = marinaSchema;
+MarinaDebtSchema.create = {
+	type: "object",
+	required: [ "clientId", "folio", "amount", "creationDate" ],
+	properties: {
+		clientId: {
+			type: "number"
+		},
+		folio: {
+			type: "number"
+		},
+		amount: {
+			type: "number"
+		},
+		creationDate: {
+			type: "string"
+		}
+	}
+};
+
+MarinaDebtSchema.erase = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "number"
+		}
+	}
+};
+
+MarinaDebtSchema.update = {
+	type: "object",
+	required: [ "marinaDebtId" ],
+	properties: {
+		marinaDebtId: {
+			type: "number"
+		},
+		...MarinaDebtSchema.create.properties
+	}
+};
+
+module.exports = {
+	MarinaSchema,
+	MarinaDebtSchema
+};
