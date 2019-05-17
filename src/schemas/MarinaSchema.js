@@ -1,6 +1,7 @@
 const MarinaSchema = {};
 const MarinaDebtSchema = {};
 const MarinaPaymentsSchema = {};
+const MarinaServicesSchema = {};
 
 MarinaSchema.erase = {
 	type: "object",
@@ -189,8 +190,43 @@ MarinaPaymentsSchema.update = {
 	}
 };
 
+MarinaServicesSchema.erase = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "number"
+		}
+	}
+};
+
+MarinaServicesSchema.create = {
+	type: "object",
+	required: [ "name", "price" ],
+	properties: {
+		name: {
+			type: "string"
+		},
+		price: {
+			type: "number"
+		}
+	}
+};
+
+MarinaServicesSchema.update = {
+	type: "object",
+	required: [ "marinaServiceId" ],
+	properties: {
+		MarinaServiceId: {
+			type: "number"
+		},
+		...MarinaServicesSchema.create.properties
+	}
+};
+
 module.exports = {
 	MarinaSchema,
 	MarinaDebtSchema,
-	MarinaPaymentsSchema
+	MarinaPaymentsSchema,
+	MarinaServicesSchema
 };
