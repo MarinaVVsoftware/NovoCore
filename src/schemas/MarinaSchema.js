@@ -1,5 +1,6 @@
 const MarinaSchema = {};
 const MarinaDebtSchema = {};
+const MarinaPaymentsSchema = {};
 
 MarinaSchema.erase = {
 	type: "object",
@@ -127,7 +128,69 @@ MarinaDebtSchema.update = {
 	}
 };
 
+MarinaPaymentsSchema.create = {
+	type: "object",
+	required: [
+		"paymentTypeId",
+		"clientId",
+		"folio",
+		"currency",
+		"currencyDate",
+		"paymentReceived",
+		"convertedAmount",
+		"creationDate"
+	],
+	properties: {
+		paymentTypeId: {
+			type: "number"
+		},
+		clientId: {
+			type: "number"
+		},
+		folio: {
+			type: "number"
+		},
+		currency: {
+			type: "number"
+		},
+		currencyDate: {
+			type: "string"
+		},
+		paymentReceived: {
+			type: "number"
+		},
+		convertedAmount: {
+			type: "number"
+		},
+		creationDate: {
+			type: "string"
+		}
+	}
+};
+
+MarinaPaymentsSchema.erase = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "number"
+		}
+	}
+};
+
+MarinaPaymentsSchema.update = {
+	type: "object",
+	required: [ "marinaPaymentId" ],
+	properties: {
+		marinaPaymentId: {
+			type: "number"
+		},
+		...MarinaPaymentsSchema.create.properties
+	}
+};
+
 module.exports = {
 	MarinaSchema,
-	MarinaDebtSchema
+	MarinaDebtSchema,
+	MarinaPaymentsSchema
 };
