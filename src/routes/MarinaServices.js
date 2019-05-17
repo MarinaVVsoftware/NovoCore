@@ -13,7 +13,7 @@ module.exports = (app, router, mysqlConnection) => {
 		validate({ body: MarinaServicesSchema.erase }),
 		MarinaServices.Erase(mysqlConnection)
 	);
-	/*router.post(
+	router.post(
 		"/api/Marina-Service/Create",
 		validate({ body: MarinaServicesSchema.create }),
 		MarinaServices.Create(mysqlConnection)
@@ -22,7 +22,7 @@ module.exports = (app, router, mysqlConnection) => {
 		"/api/Marina-Service/Update",
 		validate({ body: MarinaServicesSchema.update }),
 		MarinaServices.Update(mysqlConnection)
-	);*/
+	);
 
 	app.use(router);
 };

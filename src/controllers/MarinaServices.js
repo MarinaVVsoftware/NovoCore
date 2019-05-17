@@ -37,7 +37,7 @@ MarinaServices.Create = (mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 			mysqlConnection.query(
-				"CALL SP_CREATE_MARINA_SERVICE (?,?)",
+				"CALL SP_CREATE_MARINA_SERVICE (?,?);",
 				[ req.body.name, req.body.price ],
 				(err, rows, fields) => {
 					if (err) next(newError(err, 400));
@@ -54,7 +54,14 @@ MarinaServices.Create = (mysqlConnection) => {
 MarinaServices.Update = (mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query("CALL SP_UPDATE_MARINA_SERVICE (?,?,?)");
+			mysqlConnection.query(
+				"CALL SP_UPDATE_MARINA_SERVICE (?,?,?)",
+				[ req.body.marinaServiceId, req.body.name, req.body.price ],
+				(err, rows, fields) => {
+					if (err) next(newError(err, 400));
+					res.status(200).send({ status: "MARINA SERVICE UPDATED" });
+				}
+			);
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
