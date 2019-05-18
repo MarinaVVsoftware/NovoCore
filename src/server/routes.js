@@ -7,6 +7,7 @@ const Marina = require("../routes/Marina");
 const MarinaDebts = require("../routes/MarinaDebts");
 const MarinaPayments = require("../routes/MarinaPayments");
 const MarinaServices = require("../routes/MarinaServices");
+const ElectronicSignature = require("../routes/ElectronicSignature");
 const Log = require("../helpers/Logs");
 const Auth = require("../routes/Auth");
 const Roles = require("../routes/Roles");
@@ -22,6 +23,7 @@ module.exports = (app, router, mysqlConnection) => {
 	MarinaDebts(app, router, mysqlConnection);
 	MarinaPayments(app, router, mysqlConnection);
 	MarinaServices(app, router, mysqlConnection);
+	ElectronicSignature(app, router, mysqlConnection);
 	ErrorHandler(app);
 
 	Log.Success("Rutas de la API cargadas.");
