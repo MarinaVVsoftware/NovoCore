@@ -1,6 +1,6 @@
 // Routes
 const Marina = require("../controllers/Marina");
-const MarinaSchema = require("../schemas/MarinaSchema");
+const { MarinaSchema } = require("../schemas/MarinaSchema");
 
 var { Validator } = require("express-json-validator-middleware");
 var validator = new Validator({ allErrors: true });
