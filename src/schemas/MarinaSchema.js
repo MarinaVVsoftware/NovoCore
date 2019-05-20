@@ -2,6 +2,8 @@ const MarinaSchema = {};
 const MarinaDebtSchema = {};
 const MarinaPaymentsSchema = {};
 const MarinaServicesSchema = {};
+const MarinaPaymentTypeSchema = {};
+const MarinaQuotationServicesSchema = {};
 
 MarinaSchema.erase = {
 	type: "object",
@@ -224,9 +226,107 @@ MarinaServicesSchema.update = {
 	}
 };
 
+MarinaPaymentTypeSchema.erase = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "number"
+		}
+	}
+};
+
+MarinaPaymentTypeSchema.create = {
+	type: "object",
+	required: [ "name" ],
+	properties: {
+		name: {
+			type: "string"
+		}
+	}
+};
+
+MarinaPaymentTypeSchema.update = {
+	type: "object",
+	required: [ "paymentTypeId" ],
+	properties: {
+		paymentTypeId: {
+			type: "number"
+		},
+		...MarinaPaymentTypeSchema.create.properties
+	}
+};
+
+MarinaQuotationServicesSchema.create = {
+	type: "object",
+	required: [ "boatId", "marinaServiceId", "done", "tax", "total", "subtotal", "quantity", "creationDate" ],
+	properties: {
+		boatId: {
+			type: "number"
+		},
+		marinaServiceId: {
+			type: "number"
+		},
+		done: {
+			type: "boolean"
+		},
+		tax: {
+			type: "number"
+		},
+		total: {
+			type: "number"
+		},
+		subtotal: {
+			type: "number"
+		},
+		quantity: {
+			type: "number"
+		},
+		creationDate: {
+			type: "string"
+		}
+	}
+};
+
+MarinaQuotationServicesSchema.update = {
+	type: "object",
+	required: [ "marinaQuotationServiceId" ],
+	properties: {
+		marinaQuotationServiceId: {
+			type: "number"
+		},
+		...MarinaQuotationServicesSchema.create.properties
+	}
+};
+
+MarinaQuotationServicesSchema.delete = {
+	type: "object",
+	required: [ "marinaQuotationServiceId", "delete" ],
+	properties: {
+		marinaQuotationServiceId: {
+			type: "number"
+		},
+		delete: {
+			type: "number"
+		}
+	}
+};
+
+MarinaQuotationServicesSchema.erase = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "number"
+		}
+	}
+};
+
 module.exports = {
 	MarinaSchema,
 	MarinaDebtSchema,
 	MarinaPaymentsSchema,
-	MarinaServicesSchema
+	MarinaServicesSchema,
+	MarinaPaymentTypeSchema,
+	MarinaQuotationServicesSchema
 };
