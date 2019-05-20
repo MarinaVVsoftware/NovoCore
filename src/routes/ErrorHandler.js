@@ -6,7 +6,9 @@ module.exports = app => {
   app.use((err, req, res, next) => {
     try {
       let bodyErrors = [];
+      let paramsErrors = [];
       let queryErrors = [];
+
       /* En caso que sea un error en el body del endpoint */
       if (err.validationErrors) {
         /* Mapea los errores de body */
@@ -18,7 +20,17 @@ module.exports = app => {
               message: element.message
             };
           });
-        /* Mapea los errores de query params */
+        /* Mapea los errores de params */
+        if (err.validationErrors.params)
+          paramsErrors = err.validationErrors.params.map(element => {
+            return {
+              datapath: element.dataPath,
+              type: element.params.type,
+              message: element.message
+            };
+          });
+
+        /* Mapea los errores de querys */
         if (err.validationErrors.query)
           queryErrors = err.validationErrors.query.map(element => {
             return {
@@ -30,19 +42,22 @@ module.exports = app => {
       }
 
       /* En caso que se ejecute un NewError() */
-      console.log(err);
       if (err.statusCode && err.message) {
         res.status(err.statusCode).send(err.message);
       } else if (err.validationErrors) {
-        res
-          .status(400)
-          .send({ bodyErrors: bodyErrors, queryErrors: queryErrors });
+        res.status(400).send({
+          bodyErrors: bodyErrors,
+          paramsErrors: paramsErrors,
+          queryErrors: queryErrors
+        });
       } else {
         /* En caso que no se especifique el error */
-        res.status(400).send("Something Went Wrong!");
+        res
+          .status(400)
+          .send({ error: "Something Went Wrong! error attached: " + err });
       }
     } catch (error) {
-      res.status(500).send("El validador ha fallado: " + error);
+      res.status(500).send({ error: "El validador ha fallado: " + error });
     }
   });
 };
