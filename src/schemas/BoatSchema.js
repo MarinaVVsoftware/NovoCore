@@ -1,13 +1,12 @@
 /* Modelos de validación de los endpoints de Boats */
 const BoatSchema = {};
 
-/* Valida los params de la url */
 BoatSchema.GetBoatsByClient = {
   type: "object",
   required: ["clientId"],
   properties: {
     clientId: {
-      type: "string"
+      type: "number"
     }
   }
 };

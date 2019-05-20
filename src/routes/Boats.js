@@ -10,7 +10,7 @@ var validate = validator.validate;
 module.exports = (app, router, mysqlConnection) => {
   router.get(
     "/api/clients/:clientId/boats/",
-    validate({ params: Schema.GetBoatsByClient }),
+    validate({ query: Schema.GetBoatsByClient }),
     Boats.GetBoatsByClient(mysqlConnection)
   );
   router.put(
