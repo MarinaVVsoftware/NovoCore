@@ -9,16 +9,13 @@ var validate = validator.validate;
 
 module.exports = (app, router, mysqlConnection) => {
   router.get(
-    "/api/clients/:clientId/boats/",
-    validate({ params: Schema.GetBoatsByClient }),
+    "/api/clients/:id/boats/",
+    validate({ params: Schema.ParamsGetBoatsByClient }),
     Boats.GetBoatsByClient(mysqlConnection)
   );
-  router.put(
-    "/api/clients/:clientId/boats/:name",
-    Boats.PutBoat(mysqlConnection)
-  );
+  router.put("/api/clients/:id/boats/:name", Boats.PutBoat(mysqlConnection));
   router.delete(
-    "/api/clients/:clientId/boats/:name",
+    "/api/clients/:id/boats/:name",
     Boats.DeleteBoat(mysqlConnection)
   );
 

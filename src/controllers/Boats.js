@@ -11,23 +11,23 @@ Boats.GetBoatsByClient = mysqlConnection => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.clientId)))
+      if (isNaN(parseInt(req.params.id)))
         next(newError('el param "clientId" no es un número válido.', 500));
 
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
       let Promises = [
         Query(mysqlConnection, "CALL SP_READ_BOATS_BY_CLIENT (?);", [
-          req.params.clientId
+          req.params.id
         ]),
         Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_CLIENT (?);", [
-          req.params.clientId
+          req.params.id
         ]),
         Query(mysqlConnection, "CALL SP_READ_BOAT_ELECTRICITY_BY_CLIENT (?);", [
-          req.params.clientId
+          req.params.id
         ]),
         Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_CLIENT (?);", [
-          req.params.clientId
+          req.params.id
         ])
       ];
 

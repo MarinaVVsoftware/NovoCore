@@ -2,37 +2,42 @@
 const BoatSchema = {};
 
 /* Valida los params de la url */
-BoatSchema.GetBoatsByClient = {
+BoatSchema.ParamsGetBoatsByClient = {
   type: "object",
-  required: ["clientId"],
+  required: ["id"],
   properties: {
-    clientId: {
+    id: {
       type: "string"
     }
   }
 };
 
-BoatSchema.PutBoat = {
+/* Valida los params de la url */
+BoatSchema.sd = {
   type: "object",
-  required: ["clientId", "name", "model", "loa", "draft", "beam"],
+  required: ["id", "name"],
   properties: {
-    clientId: {
-      type: "number"
-    },
-    name: {
+    id: {
       type: "string"
+    }
+  }
+};
+
+BoatSchema.BodyPutBoat = {
+  type: "object",
+  required: ["boat", "engines", "electricity", "documents"],
+  properties: {
+    boat: {
+      type: "object"
     },
-    model: {
-      type: "string"
+    engines: {
+      type: "object"
     },
-    loa: {
-      type: "number"
+    electricity: {
+      type: "object"
     },
-    draft: {
-      type: "number"
-    },
-    beam: {
-      type: "number"
+    documents: {
+      type: "object"
     }
   }
 };
