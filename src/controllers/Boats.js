@@ -93,7 +93,125 @@ Boats.GetBoatsByClient = mysqlConnection => {
 Boats.PutBoat = mysqlConnection => {
   return (req, res, next) => {
     try {
-      res.status(200).send(JSON.stringify("PutBoat"));
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(parseInt(req.params.id)))
+        next(newError('el param "clientId" no es un número válido.', 500));
+
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido */
+      if (!/^[a-z0-9]+$/i.test(req.params.name))
+        next(newError('el param "name" no es un string válido.', 500));
+
+      let boat = req.body.boat;
+      let captain = req.body.captain;
+      let responsable = req.body.responsable;
+      let engines = req.body.engines;
+      let electricity = req.body.electricity;
+      let documents = req.body.documents;
+
+      /* Promise bien chonchote para insertar un barco 
+      Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
+      En los casos de engines, electricity y documents, se hacen los inserts en paralelo
+      si son más de uno.
+      */
+      Query(mysqlConnection, "CALL SP_PUT_BOAT_BY_NAME (?,?,?,?,?,?);", [
+        boat.client_id,
+        boat.name,
+        boat.model,
+        boat.loa,
+        boat.draft,
+        boat.beam
+      ])
+        .then(result => {
+          boatId = result[0][0][0].boat_id;
+          /* El barco ha sido creado o modificado y se retornó su id, con el
+          se puede realizar el resto de inserts o updates. todos los siguientes
+          inserts se pueden hacer en paralelo a partir del id del bote. */
+          let Promises = [];
+
+          /* Si se estableció un capitán, se inserta. */
+          if (captain)
+            Promises.push(
+              Query(mysqlConnection, "CALL SP_CREATE_CAPTAIN (?,?,?,?,?,?);", [
+                boatId,
+                captain.name,
+                captain.phone,
+                captain.email,
+                captain.payment_permission,
+                captain.aceptation_permission
+              ])
+            );
+
+          /* Si se estableció un responsable, se inserta. */
+          if (responsable)
+            Promises.push(
+              Query(
+                mysqlConnection,
+                "CALL SP_CREATE_RESPONSABLE (?,?,?,?,?,?);",
+                [
+                  boatId,
+                  responsable.name,
+                  responsable.phone,
+                  responsable.email,
+                  responsable.payment_permission,
+                  responsable.aceptation_permission
+                ]
+              )
+            );
+
+          /* Si existen engines, por cada engine, crea una query */
+          if (engines)
+            engines.forEach(engine => {
+              Promises.push(
+                Query(mysqlConnection, "CALL SP_CREATE_ENGINE (?,?,?);", [
+                  boatId,
+                  engine.model,
+                  engine.brand
+                ])
+              );
+            });
+
+          /* Si existen engines, por cada engine, crea una query */
+          if (electricity)
+            electricity.forEach(electr => {
+              Promises.push(
+                Query(
+                  mysqlConnection,
+                  "CALL SP_CREATE_BOAT_ELECTRICITY (?,?,?);",
+                  [boatId, electr.cable_type_id, electr.socket_type_id]
+                )
+              );
+            });
+
+          /* Si existen engines, por cada engine, crea una query */
+          if (documents)
+            documents.forEach(doc => {
+              Promises.push(
+                Query(
+                  mysqlConnection,
+                  "CALL SP_CREATE_BOAT_DOCUMENT (?,?,?);",
+                  [boatId, doc.boat_document_type_id, doc.url]
+                )
+              );
+            });
+
+          /* Ejecuta todas las promesas y las resuelve todas */
+          Promise.all(Promises)
+            .then(() => {
+              res.status(200).send(
+                JSON.stringify({
+                  status: "Barco creado correctamente. id: " + boatId
+                })
+              );
+            })
+            .catch(error => {
+              console.log(error);
+              next(newError(error, 500));
+            });
+        })
+        .catch(error => {
+          console.log(error);
+          next(newError(error, 500));
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));

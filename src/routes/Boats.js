@@ -13,7 +13,11 @@ module.exports = (app, router, mysqlConnection) => {
     validate({ params: Schema.ParamsGetBoatsByClient }),
     Boats.GetBoatsByClient(mysqlConnection)
   );
-  router.put("/api/clients/:id/boats/:name", Boats.PutBoat(mysqlConnection));
+  router.put(
+    "/api/clients/:id/boats/:name",
+    validate({ params: Schema.ParamsPutBoat, body: Schema.BodyPutBoat }),
+    Boats.PutBoat(mysqlConnection)
+  );
   router.delete(
     "/api/clients/:id/boats/:name",
     Boats.DeleteBoat(mysqlConnection)
