@@ -56,7 +56,7 @@ ClientsSchema.create = {
       type: "string"
     },
     creation_date: {
-      type: "date"
+      type: "string"
     },
     electronic_wallet_id: {
       type: "number"

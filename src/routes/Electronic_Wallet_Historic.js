@@ -16,11 +16,7 @@ module.exports = (app, router, mysqlConnection) => {
     validate({ body: Electronic_Wallet_HistoricSchema.erase }),
     Electronic_Wallet_Historic.Erase(mysqlConnection)
   );
-  router.patch(
-    "/api/Electronic_Wallet_Historic/Delete",
-    validate({ body: Electronic_Wallet_HistoricSchema.delete }),
-    Electronic_Wallet_Historic.Delete(mysqlConnection)
-  );
+
   router.post(
     "/api/Electronic_Wallet_Historic/Create",
     validate({ body: Electronic_Wallet_HistoricSchema.create }),
