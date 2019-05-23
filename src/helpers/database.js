@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 // var { database } = require("../server/keys");
 var { database_local } = require("../server/keys");
-console.log(database_local);
 // fix para el paso de variables de entorno a la config de mysql.
 // var host = database.host;
 // var port = database.port;
