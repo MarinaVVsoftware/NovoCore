@@ -10,19 +10,6 @@ Electronic_Wallet_HistoricSchema.erase = {
   }
 };
 
-// Electronic_Wallet_HistoricSchema.delete = {
-// 	type: "object",
-// 	required: [ "id", "delete" ],
-// 	properties: {
-// 		id: {
-// 			type: "number"
-// 		},
-// 		delete: {
-// 			type: "number"
-// 		}
-// 	}
-// };
-
 Electronic_Wallet_HistoricSchema.create = {
   type: "object",
   required: [
@@ -38,7 +25,7 @@ Electronic_Wallet_HistoricSchema.create = {
       type: "number"
     },
     creation_date: {
-      type: "date"
+      type: "string"
     },
     alter_responsable: {
       type: "string"
@@ -47,10 +34,10 @@ Electronic_Wallet_HistoricSchema.create = {
       type: "string"
     },
     previous_amount: {
-      type: "double"
+      type: "number"
     },
     new_amount: {
-      type: "double"
+      type: "number"
     }
   }
 };

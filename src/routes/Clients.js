@@ -8,11 +8,7 @@ var validate = validator.validate;
 
 module.exports = (app, router, mysqlConnection) => {
   router.get("/api/Clients/Read", Clients.Read(mysqlConnection));
-  router.delete(
-    "/api/Clients/Erase",
-    validate({ body: ClientsSchema.erase }),
-    Clients.Erase(mysqlConnection)
-  );
+
   router.patch(
     "/api/Clients/Delete",
     validate({ body: ClientsSchema.delete }),

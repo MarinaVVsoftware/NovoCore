@@ -28,7 +28,7 @@ Electronic_WalletSchema.create = {
   required: ["marina_amount", "logical_deleted"],
   properties: {
     marina_amount: {
-      type: "decimal"
+      type: "number"
     },
     logical_deleted: {
       type: "number"
