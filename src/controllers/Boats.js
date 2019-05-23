@@ -111,8 +111,7 @@ Boats.PutBoat = mysqlConnection => {
       /* Promise bien chonchote para insertar un barco 
       Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
       En los casos de engines, electricity y documents, se hacen los inserts en paralelo
-      si son más de uno.
-      */
+      si son más de uno. */
       Query(mysqlConnection, "CALL SP_PUT_BOAT_BY_NAME (?,?,?,?,?,?);", [
         boat.client_id,
         boat.name,
@@ -122,10 +121,12 @@ Boats.PutBoat = mysqlConnection => {
         boat.beam
       ])
         .then(result => {
-          boatId = result[0][0][0].boat_id;
+          boatId = result[0][0][0]["LAST_INSERT_ID()"];
+
           /* El barco ha sido creado o modificado y se retornó su id, con el
           se puede realizar el resto de inserts o updates. todos los siguientes
-          inserts se pueden hacer en paralelo a partir del id del bote. */
+          inserts se pueden hacer en paralelo a partir del id del bote. Se crea un
+          arreglo de promesas que se ejecutarán en paralelo. */
           let Promises = [];
 
           /* Si se estableció un capitán, se inserta. */
@@ -205,12 +206,12 @@ Boats.PutBoat = mysqlConnection => {
             })
             .catch(error => {
               console.log(error);
-              next(newError(error, 500));
+              next(error);
             });
         })
         .catch(error => {
           console.log(error);
-          next(newError(error, 500));
+          next(error);
         });
     } catch (error) {
       console.log(error);
@@ -222,7 +223,26 @@ Boats.PutBoat = mysqlConnection => {
 Boats.DeleteBoat = mysqlConnection => {
   return (req, res, next) => {
     try {
-      res.status(200).send(JSON.stringify("DeleteBoat"));
+      console.log(req.params);
+      /* Elimina el barco */
+      Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
+        req.params.id,
+        req.params.name
+      ])
+        .then(result => {
+          /* retorna un status con el id */
+          res.status(200).send(
+            JSON.stringify({
+              status:
+                "Barco eliminado correctamente. Id: " + result[0][0][0].boat_id
+            })
+          );
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
