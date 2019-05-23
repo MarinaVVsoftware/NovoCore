@@ -8,7 +8,6 @@ const Boats = {};
 /* Trae la lista de botes que pertenecen a un cliente
 mediante el id del cliente. */
 Boats.GetBoatsByClient = mysqlConnection => {
-  console.log("dentro del método");
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
