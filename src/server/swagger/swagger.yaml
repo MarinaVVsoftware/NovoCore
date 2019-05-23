@@ -16,13 +16,11 @@ host: localhost:8080
 # basePath prefixes all resource paths
 basePath: /api/
 tags:
-  - name: Login
+  - name: login
     description: Métodos para iniciar sesión con Firebase Auth.
-  - name: User
-    description: Basic CRUD for the user.
 schemes:
   # tip: remove http to make production-grade
-  #- https
+  - https
   - http
   # format of bodies a client can send (Content-Type)
 consumes:
@@ -34,14 +32,14 @@ paths:
   /login:
     post:
       tags:
-        - Login
+        - login
       summary: >-
         Recibe los datos para el login con firebase y devuelve el resultado del
-        login.
+        login
       description: >-
         Recibe un correo y contraseña como método de autenticación a través de
         firebase.
-      operationId: Login
+      operationId: login
       consumes:
         - application/json
       produces:
@@ -62,55 +60,7 @@ paths:
             contraseña.
         '405':
           description: Invalid input
-  /Users/Read:
-    get:
-      tags:
-        - User
-      summary: >-
-        Read all the users.
-      description: >-
-        Read all the users
-      operationId: userRead
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Ningún parámetro es necesario.
-      responses:
-        '200':
-          description: '{ auth: true } ó { auth: false }'
-        '404':
-          description: >-
-            No se existe ningún usuario o la petición es incorrecta.
-  /Users/Create:
-    get:
-      tags:
-        - User
-      summary: >-
-        Create a new user.
-      description: >-
-        Create a new user.
-      operationId: userRead
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Parámetros necesarios.
-          required: true
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        '200':
-          description: '{ auth: true } ó { auth: false }'
-        '404':
-          description: >-
-            No se existe ningún usuario o la petición es incorrecta.
+   
 definitions:
   User:
     type: object

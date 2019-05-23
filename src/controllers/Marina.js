@@ -38,6 +38,7 @@ Marina.Erase = (mysqlConnection) => {
 // Update the state
 Marina.Delete = (mysqlConnection) => {
 	return (req, res, next) => {
+		if (!req.body.id || req.body.delete === null) res.status(400).send({ error: "Undefined Object" });
 		try {
 			mysqlConnection.query(
 				"CALL SP_LOGICAL_DELETED_MARINA_QUOTATION (?,?);",

@@ -1,6 +1,7 @@
-const mysql = require("mysql2");
+const mysql = require("mysql");
 // var { database } = require("../server/keys");
 var { database_local } = require("../server/keys");
+console.log(database_local);
 // fix para el paso de variables de entorno a la config de mysql.
 // var host = database.host;
 // var port = database.port;
@@ -18,19 +19,29 @@ var password = database_local.password;
 var database = database_local.database;
 
 //Connection Settings To DB Server
+const mysqlConnection = mysql.createConnection({
+  host,
+  port,
+  localAddress,
+  user,
+  password,
+  database,
+
+  multipleStatements: true,
+  insecureAuth: true
+});
+
+//Status about connection
 function createConnection() {
-  const connection = mysql.createConnection({
-    host,
-    port,
-    localAddress,
-    user,
-    password,
-    database,
-    multipleStatements: true,
-    insecureAuth: true
+  mysqlConnection.connect(function(err) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log("db is connected");
+    }
   });
-  if (connection) console.log("base de datos inicializada");
-  return connection;
+
+  return mysqlConnection;
 }
 
 module.exports = createConnection;

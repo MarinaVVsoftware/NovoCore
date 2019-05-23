@@ -36,7 +36,18 @@ userSchema.update = {
     userId: {
       type: "number"
     },
-    ...userSchema.create.properties
+    userName: {
+      type: "string"
+    },
+    email: {
+      type: "string"
+    },
+    rol: {
+      type: "number"
+    },
+    status: {
+      type: "number"
+    }
   }
 };
 
