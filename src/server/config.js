@@ -7,7 +7,7 @@ const routes = require("./routes");
 const monitor = require("express-status-monitor");
 const Log = require("../helpers/Logs");
 var monitorConfig = require("./monitorConfig");
-const database = require("../helpers/database");
+const mysql = require("../helpers/database");
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -28,7 +28,7 @@ module.exports = app => {
   // inicia el servicio de monitoreo
   app.use(monitor(monitorConfig));
 
-  const mysqlConnection = database();
+  const mysqlConnection = mysql();
 
   /* ROUTES */
   routes(app, router, mysqlConnection);

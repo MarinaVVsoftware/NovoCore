@@ -33,4 +33,5 @@ rolSchema.update = {
 		...rolSchema.create.properties
 	}
 };
+
 module.exports = rolSchema;

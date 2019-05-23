@@ -8,8 +8,8 @@ const Users = {};
 Users.Read = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
-			mysqlConnection.query("CALL SP_READ_USERS", (err, rows, fields) => {
-				if (err) newError(err, 400);
+			mysqlConnection.query("CALL SP_READ_USERS;", (err, rows, fields) => {
+				if (err) next(newError(err, 400));
 				rows.pop();
 				res.status(200).send(JSON.stringify(rows));
 			});
@@ -24,8 +24,8 @@ Users.Read = function (mysqlConnection) {
 Users.ReadId = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
-			mysqlConnection.query(`CALL SP_READ_USERS_BY_EMAIL(?);`, [ req.body.email ], (err, rows, fields) => {
-				if (err) newError(err, 400);
+			mysqlConnection.query("CALL SP_READ_USERS_BY_EMAIL(?);", [ req.body.email ], (err, rows, fields) => {
+				if (err) next(newError(err, 400));
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
@@ -39,9 +39,8 @@ Users.ReadId = function (mysqlConnection) {
 Users.Delete = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
-			const query = " CALL SP_DELETE_USERS(?);";
-			mysqlConnection.query(query, [ req.body.email ], (err, rows, fields) => {
-				if (err) newError(err, 400);
+			mysqlConnection.query("CALL SP_DELETE_USERS(?);", [ req.body.email ], (err, rows, fields) => {
+				if (err) next(newError(err, 400));
 				res.status(200).send({ status: "USER DELETED" });
 			});
 		} catch (error) {
@@ -59,7 +58,7 @@ Users.Create = function (mysqlConnection) {
 				"CALL SP_CREATE_USER(?,?,?,?);",
 				[ req.body.userName, req.body.email, req.body.rol, req.body.status ],
 				(err, rows, fields) => {
-					if (err) newError(err, 400);
+					if (err) next(newError(err, 400));
 					res.status(200).send({ status: "USER CREATED" });
 				}
 			);
@@ -74,14 +73,11 @@ Users.Create = function (mysqlConnection) {
 Users.Update = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
-			const query = `    
-      CALL SP_UPDATE_USERS(?, ?, ?,?,?);
-    `;
 			mysqlConnection.query(
-				query,
+				"CALL SP_UPDATE_USERS(?, ?, ?,?,?);",
 				[ req.body.Id_User, req.body.User_Name, req.body.Email, req.body.rol, req.body.Status ],
 				(err, rows, fields) => {
-					if (err) newError(err, 400);
+					if (err) next(newError(err, 400));
 					res.status(200).send({ status: "USER UPDATED" });
 				}
 			);
@@ -95,8 +91,8 @@ Users.Update = function (mysqlConnection) {
 Users.Permission = function (mysqlConnection) {
 	return function (req, res, next) {
 		try {
-			mysqlConnection.query(`CALL SP_READ_PERMISSIONS(?);`, [ req.body.Email ], (err, rows, fields) => {
-				if (err) newError(err, 400);
+			mysqlConnection.query("CALL SP_READ_PERMISSIONS(?);", [ req.body.Email ], (err, rows, fields) => {
+				if (err) next(newError(err, 400));
 				res.status(200).send(JSON.stringify(rows[0]));
 			});
 		} catch (error) {
