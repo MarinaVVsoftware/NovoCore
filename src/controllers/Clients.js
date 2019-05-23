@@ -50,7 +50,7 @@ Clients.Create = function(mysqlConnection) {
         [
           req.body.status_id,
           req.body.rol_id,
-          req.body.es_id,
+          req.body.electronic_signature_id,
           req.body.name,
           req.body.email,
           req.body.phone,
@@ -82,7 +82,7 @@ Clients.Update = function(mysqlConnection) {
           req.body.clients_id,
           req.body.status_id,
           req.body.rol_id,
-          req.body.es_id,
+          req.body.electronic_signature_id,
           req.body.name,
           req.body.email,
           req.body.phone,

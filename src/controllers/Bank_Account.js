@@ -9,7 +9,7 @@ Marina.Read = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_READ_MARINA_QUOTATION",
+        "CALL SP_READ_BANK_ACCOUNT",
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           rows.pop();
@@ -94,14 +94,15 @@ Marina.Update = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_UPDATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?)",
+        "CALL SP_UPDATE_BANK_ACCOUNT (?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           req.body.bank_account_id,
           req.body.client_id,
           req.body.alias,
           req.body.bank,
           req.body.account_number,
-          req.body.clabe
+          req.body.clabe,
+          req.body.status_id
         ],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));

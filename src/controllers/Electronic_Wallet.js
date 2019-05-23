@@ -1,17 +1,17 @@
 const Log = require("../helpers/Logs");
 const newError = require("../helpers/newError");
 
-// Controller - Electronic_Wallet
-const Electronic_Wallet = {};
+// Marina - Controller
+const Marina = {};
 
-//funcion para llamar y leer la informaion dentro de los usuarios en general
-Electronic_Wallet.Read = function(mysqlConnection) {
-  return function(req, res, next) {
+// Read all the Marina Quotation
+Marina.Read = mysqlConnection => {
+  return (req, res, next) => {
     try {
       mysqlConnection.query(
         "CALL SP_READ_ELECTRONIC_WALLET",
         (err, rows, fields) => {
-          if (err) throw "Mysql Error";
+          if (err) next(newError(err, 400));
           rows.pop();
           res.status(200).send(JSON.stringify(rows));
         }
@@ -23,56 +23,16 @@ Electronic_Wallet.Read = function(mysqlConnection) {
   };
 };
 
-// Funcion para eliminar usuarios por su ID
-Electronic_Wallet.Delete = function(mysqlConnection) {
-  return function(req, res, next) {
+// Erase the record (DELETE)
+Marina.Erase = mysqlConnection => {
+  return (req, res, next) => {
     try {
-      const query = "CALL SP_DELETE_ELECTRONIC_WALLET(?);";
       mysqlConnection.query(
-        query,
+        "CALL SP_DELETE_ELECTRONIC_WALLET (?);",
         [req.body.electronic_wallet_id],
         (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER DELETED" });
-        }
-      );
-    } catch (error) {
-      next(newError(error, 500));
-    }
-  };
-};
-
-//Funcion para Insertar Usuarios dentro de la Tabla
-Electronic_Wallet.Create = function(mysqlConnection) {
-  return function(req, res, next) {
-    try {
-      mysqlConnection.query(
-        "CALL SP_CREATE_ELECTRONIC_WALLET(?);",
-        [req.body.marina_amount],
-        (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER CREATED" });
-        }
-      );
-    } catch (error) {
-      next(newError(error, 500));
-    }
-  };
-};
-
-//Funcion para Modificar Usuarios
-Electronic_Wallet.Update = function(mysqlConnection) {
-  return function(req, res, next) {
-    try {
-      const query = `    
-      CALL SP_UPDATE_ELECTRONIC_WALLET (?,?);
-    `;
-      mysqlConnection.query(
-        query,
-        [req.body.electronic_wallet_id, req.body.marina_amount],
-        (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER UPDATED" });
+          if (err) next(newError(err, 400));
+          res.status(200).send({ status: "QUOTATION DELETED" });
         }
       );
     } catch (error) {
@@ -82,4 +42,68 @@ Electronic_Wallet.Update = function(mysqlConnection) {
   };
 };
 
-module.exports = Electronic_Wallet;
+// Update the state
+Marina.Delete = mysqlConnection => {
+  return (req, res, next) => {
+    if (!req.body.id || req.body.delete === null)
+      res.status(400).send({ error: "Undefined Object" });
+    try {
+      mysqlConnection.query(
+        "CALL SP_LOGICAL_DELETED_ELECTRONIC_WALLET (?,?);",
+        [req.body.electronic_wallet_id, req.body.logical_deleted],
+        (err, rows, fields) => {
+          if (err) next(newError(err, 400));
+          res.status(200).send({ status: "Success" });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+// Create a new record
+Marina.Create = mysqlConnection => {
+  return (req, res, next) => {
+    try {
+      var ld = 0;
+      mysqlConnection.query(
+        "CALL SP_CREATE_ELECTRONIC_WALLET (?,?)",
+        [req.body.marina_amount, ld],
+        (err, rows, fields) => {
+          if (err) next(newError(err, 400));
+          res.status(200).send({ status: "Success" });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+// Update a record
+Marina.Update = mysqlConnection => {
+  return (req, res, next) => {
+    try {
+      mysqlConnection.query(
+        "CALL SP_UPDATE_ELECTRONIC_WALLET (?,?,?)",
+        [
+          req.body.electronic_wallet_id,
+          req.body.marina_amount,
+          req.body.logical_deleted
+        ],
+        (err, rows, fields) => {
+          if (err) next(newError(err, 400));
+          res.status(200).send({ status: "QUOTATION UPDATED" });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+module.exports = Marina;
