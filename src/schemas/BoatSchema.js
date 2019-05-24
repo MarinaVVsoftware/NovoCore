@@ -42,16 +42,16 @@ BoatSchema.BodyPutBoat = {
           type: "string"
         },
         model: {
-          type: "string"
+          type: ["string", "null"]
         },
         loa: {
           type: "number"
         },
         draft: {
-          type: "number"
+          type: ["number", "null"]
         },
         beam: {
-          type: "number"
+          type: ["number", "null"]
         }
       }
     },
@@ -69,10 +69,10 @@ BoatSchema.BodyPutBoat = {
           type: "string"
         },
         phone: {
-          type: "string"
+          type: ["string", "null"]
         },
         email: {
-          type: "string"
+          type: ["string", "null"]
         },
         payment_permission: {
           type: "boolean"
@@ -96,10 +96,10 @@ BoatSchema.BodyPutBoat = {
           type: "string"
         },
         phone: {
-          type: "string"
+          type: ["string", "null"]
         },
         email: {
-          type: "string"
+          type: ["string", "null"]
         },
         payment_permission: {
           type: "boolean"
@@ -161,7 +161,7 @@ BoatSchema.BodyPutBoat = {
                 type: "number"
               },
               url: {
-                type: "string"
+                type: ["string", "null"]
               }
             }
           }
