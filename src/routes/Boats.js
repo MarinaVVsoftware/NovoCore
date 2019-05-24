@@ -23,5 +23,15 @@ module.exports = (app, router, mysqlConnection) => {
     Boats.DeleteBoat(mysqlConnection)
   );
 
+  /* Rutas para traer las tablas débiles */
+  router.get("/api/cable-types/", Boats.GetCableTypes(mysqlConnection));
+  router.get("/api/socket-types/", Boats.GetSocketTypes(mysqlConnection));
+  router.get("/api/slip-types/", Boats.GetSlipTypes(mysqlConnection));
+  router.get("/api/slips/", Boats.GetSlips(mysqlConnection));
+  router.get(
+    "/api/boat-document-types/",
+    Boats.GetBoatDocumentTypes(mysqlConnection)
+  );
+
   app.use(router);
 };
