@@ -1,9 +1,10 @@
-const newError = require("../../helpers/newError");
-const Query = require("../../helpers/query");
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
+const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
 // SlipTypes - Controller
 const SlipTypes = {};
 
+/* Trae la lista de SlipTypes */
 SlipTypes.GetSlipTypes = mysqlConnection => {
   return (req, res, next) => {
     try {

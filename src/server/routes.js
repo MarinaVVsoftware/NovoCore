@@ -3,49 +3,108 @@
 // entender el ruteo de la API. También ayuda a el paso de parámetros de instancias
 // necesarias.
 const path = require("path");
-const Users = require("../routes/Users");
-const Marina = require("../routes/Marina");
-const MarinaDebts = require("../routes/MarinaDebts");
-const MarinaPayments = require("../routes/MarinaPayments");
-const MarinaServices = require("../routes/MarinaServices");
-const ElectronicSignature = require("../routes/ElectronicSignature");
-const MarinaPaymentTypes = require("../routes/MarinaPaymentTypes");
-const MarinaQuotationServices = require("../routes/MarinaQuotationServices");
-const Log = require("../helpers/Logs");
-const Auth = require("../routes/Auth");
-const Roles = require("../routes/Roles");
-const Clients = require("../routes/Clients");
-const Bank_Account = require("../routes/Bank_Account");
-const Electronic_Wallet_Historic = require("../routes/Electronic_Wallet_Historic");
-const Electronic_wallet = require("../routes/Electronic_Wallet");
-const Social_Reason = require("../routes/Social_Reason");
-const Boats = require(path.resolve(__dirname, "../routes/Boats"));
-const ErrorHandler = require("../routes/ErrorHandler");
+const Log = require(path.resolve(__dirname, "../helpers/Logs"));
+const Auth = require(path.resolve(__dirname, "../routes/Auth"));
+const ErrorHandler = require(path.resolve(__dirname, "../routes/ErrorHandler"));
+/* Imports de Users y RRHH */
+const Users = require(path.resolve(__dirname, "../routes/Users"));
+const Roles = require(path.resolve(__dirname, "../routes/Roles"));
+/* Imports de Clients */
+const Clients = require(path.resolve(__dirname, "../routes/Clients"));
+const Bank_Account = require(path.resolve(__dirname, "../routes/Bank_Account"));
+const Social_Reason = require(path.resolve(
+  __dirname,
+  "../routes/Social_Reason"
+));
+const Electronic_Wallet_Historic = require(path.resolve(
+  __dirname,
+  "../routes/Electronic_Wallet_Historic"
+));
+const Electronic_wallet = require(path.resolve(
+  __dirname,
+  "../routes/Electronic_Wallet"
+));
+const ElectronicSignature = require(path.resolve(
+  __dirname,
+  "../routes/ElectronicSignature"
+));
+/* Imports de Marina */
+const Marina = require(path.resolve(__dirname, "../routes/Marina"));
+const MarinaServices = require(path.resolve(
+  __dirname,
+  "../routes/MarinaServices"
+));
+const MarinaQuotationServices = require(path.resolve(
+  __dirname,
+  "../routes/MarinaQuotationServices"
+));
+const MarinaDebts = require(path.resolve(__dirname, "../routes/MarinaDebts"));
+const MarinaPayments = require(path.resolve(
+  __dirname,
+  "../routes/MarinaPayments"
+));
+const MarinaPaymentTypes = require(path.resolve(
+  __dirname,
+  "../routes/MarinaPaymentTypes"
+));
+/* Imports de Boats */
+const BoatDocuments = require(path.resolve(
+  __dirname,
+  "../routes/boats/BoatDocuments"
+));
+const BoatDocumentTypes = require(path.resolve(
+  __dirname,
+  "../routes/boats/BoatDocumentTypes"
+));
+const Boats = require(path.resolve(__dirname, "../routes/boats/Boats"));
+const CableTypes = require(path.resolve(
+  __dirname,
+  "../routes/boats/CableTypes"
+));
+const Slips = require(path.resolve(__dirname, "../routes/boats/Slips"));
+const SlipTypes = require(path.resolve(__dirname, "../routes/boats/SlipTypes"));
+const SocketTypes = require(path.resolve(
+  __dirname,
+  "../routes/boats/SocketTypes"
+));
 
-module.exports = (app, router, mysqlConnection) => {
-  /* Rutas de login */
+module.exports = (app, router, validate, mysqlConnection) => {
+  const instances = [app, router, validate, mysqlConnection];
+
+  /* Middleware: Autenticación */
   //Toma como argumento app para la verificación del JWT
   //Auth(app);
+
+  /* Rutas del Modelo de Users y RRHH */
   Users(app, router, mysqlConnection);
   Roles(app, router, mysqlConnection);
-  Marina(app, router, mysqlConnection);
+
+  /* Rutas del Modelo de Clients */
   Clients(app, router, mysqlConnection);
   Bank_Account(app, router, mysqlConnection);
+  Social_Reason(app, router, mysqlConnection);
   Electronic_Wallet_Historic(app, router, mysqlConnection);
   Electronic_wallet(app, router, mysqlConnection);
-  Social_Reason(app, router, mysqlConnection);
-  ErrorHandler(app);
+  ElectronicSignature(app, router, mysqlConnection);
 
+  /* Rutas del Modelo de Marina */
+  Marina(app, router, mysqlConnection);
+  MarinaServices(app, router, mysqlConnection);
+  MarinaQuotationServices(app, router, mysqlConnection);
   MarinaDebts(app, router, mysqlConnection);
   MarinaPayments(app, router, mysqlConnection);
-  MarinaServices(app, router, mysqlConnection);
-  ElectronicSignature(app, router, mysqlConnection);
   MarinaPaymentTypes(app, router, mysqlConnection);
-  MarinaQuotationServices(app, router, mysqlConnection);
-  ErrorHandler(app);
 
-  /* Rutas del Grupo Boats */
-  Boats(app, router, mysqlConnection);
+  /* Rutas del Modelo de Boats */
+  BoatDocuments(...instances);
+  BoatDocumentTypes(...instances);
+  Boats(...instances);
+  CableTypes(...instances);
+  Slips(...instances);
+  SlipTypes(...instances);
+  SocketTypes(...instances);
+
+  /* Middleware: Manejo de Errores */
   ErrorHandler(app);
 
   Log.Success("Rutas de la API cargadas.");

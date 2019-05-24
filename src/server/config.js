@@ -1,13 +1,14 @@
+const Log = require(path.resolve(__dirname, "../helpers/Logs"));
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
-const swagger = require("./swagger/swagger");
-const routes = require("./routes");
+const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
+const routes = require(path.resolve(__dirname, "./routes"));
 const monitor = require("express-status-monitor");
-const Log = require("../helpers/Logs");
-var monitorConfig = require("./monitorConfig");
-const mysql = require("../helpers/database");
+const mysql = require(path.resolve(__dirname, "../helpers/database"));
+var { Validator } = require("express-json-validator-middleware");
+var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -21,6 +22,8 @@ module.exports = app => {
   app.use(express.json());
   app.use(bodyParser.json());
   app.use(cors);
+  var validator = new Validator({ allErrors: true });
+  var validate = validator.validate;
   // crea el objeto de routing
   const router = express.Router();
   // instancia de swagger
@@ -31,7 +34,9 @@ module.exports = app => {
   const mysqlConnection = mysql();
 
   /* ROUTES */
-  routes(app, router, mysqlConnection);
+  // recibe todas las instancias que debe propagar a través
+  // de los diferentes endpoints de la API.
+  routes(app, router, validate, mysqlConnection);
 
   Log.Success("Configuración del servidor establecida.");
   return app;

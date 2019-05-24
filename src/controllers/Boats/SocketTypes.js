@@ -1,5 +1,5 @@
-const newError = require("../../helpers/newError");
-const Query = require("../../helpers/query");
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
+const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
 // SocketTypes - Controller
 const SocketTypes = {};

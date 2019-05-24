@@ -1,6 +1,6 @@
-const Log = require("../../helpers/Logs");
-const newError = require("../../helpers/newError");
-const Query = require("../../helpers/query");
+const Log = require(path.resolve(__dirname, "../../helpers/Logs"));
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
+const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
 // Marina - Controller
 const Boats = {};

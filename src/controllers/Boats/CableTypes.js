@@ -1,10 +1,10 @@
-const newError = require("../../helpers/newError");
-const Query = require("../../helpers/query");
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
+const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
 // CableTypes - Controller
 const CableTypes = {};
 
-/* Retorna la lista de CableTypes */
+/* Trae la lista de CableTypes */
 CableTypes.GetCableTypes = mysqlConnection => {
   return (req, res, next) => {
     try {
