@@ -1,12 +1,8 @@
-const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // SlipTypes - Controller
 const SlipTypes = {};
 
 /* Trae la lista de SlipTypes */
-SlipTypes.GetSlipTypes = mysqlConnection => {
+SlipTypes.GetSlipTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_READ_SLIP_TYPES();")

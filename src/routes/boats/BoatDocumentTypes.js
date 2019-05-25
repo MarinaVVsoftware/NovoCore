@@ -1,11 +1,16 @@
 const path = require("path");
-const CableTypes = require(path.resolve(
+const BoatDocumentTypes = require(path.resolve(
   __dirname,
-  "../../controllers/boats/CableTypes"
+  "../../controllers/boats/BoatDocumentTypes"
 ));
 
-module.exports = (app, router, validate, mysqlConnection) => {
-  router.get("/api/cable-types/", CableTypes.GetCableTypes(mysqlConnection));
+module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+  const instances = [newError, Query, mysqlConnection];
+
+  router.get(
+    "/api/boat-document-types/",
+    BoatDocumentTypes.GetBoatDocumentTypes(...instances)
+  );
 
   app.use(router);
 };

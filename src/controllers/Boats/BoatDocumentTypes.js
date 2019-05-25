@@ -1,11 +1,8 @@
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // BoatDocumentTypes - Controller
 const BoatDocumentTypes = {};
 
 /* Trae la lista de BoatDocumentTypes */
-BoatDocumentTypes.GetBoatDocumentTypes = mysqlConnection => {
+BoatDocumentTypes.GetBoatDocumentTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENT_TYPES();")

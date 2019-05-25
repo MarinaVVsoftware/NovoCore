@@ -4,8 +4,10 @@ const SlipTypes = require(path.resolve(
   "../../controllers/boats/SlipTypes"
 ));
 
-module.exports = (app, router, validate, mysqlConnection) => {
-  router.get("/api/slip-types/", SlipTypes.GetSlipTypes(mysqlConnection));
+module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+  const instances = [newError, Query, mysqlConnection];
+
+  router.get("/api/slip-types/", SlipTypes.GetSlipTypes(...instances));
 
   app.use(router);
 };

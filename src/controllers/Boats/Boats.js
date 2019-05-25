@@ -1,13 +1,9 @@
-const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // Marina - Controller
 const Boats = {};
 
 /* Trae la lista de botes que pertenecen a un cliente
 mediante el id del cliente. */
-Boats.GetBoatsByClient = mysqlConnection => {
+Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
@@ -91,7 +87,7 @@ Boats.GetBoatsByClient = mysqlConnection => {
   };
 };
 
-Boats.PutBoat = mysqlConnection => {
+Boats.PutBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
@@ -222,7 +218,7 @@ Boats.PutBoat = mysqlConnection => {
   };
 };
 
-Boats.DeleteBoat = mysqlConnection => {
+Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       console.log(req.params);

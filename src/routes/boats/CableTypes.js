@@ -1,8 +1,13 @@
 const path = require("path");
-const Slips = require(path.resolve(__dirname, "../../controllers/boats/Slips"));
+const CableTypes = require(path.resolve(
+  __dirname,
+  "../../controllers/boats/CableTypes"
+));
 
-module.exports = (app, router, mysqlConnection) => {
-  router.get("/api/slips/", Slips.GetSlips(mysqlConnection));
+module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+  const instances = [newError, Query, mysqlConnection];
+
+  router.get("/api/cable-types/", CableTypes.GetCableTypes(...instances));
 
   app.use(router);
 };

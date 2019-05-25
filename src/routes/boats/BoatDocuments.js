@@ -6,11 +6,13 @@ const BoatDocuments = require(path.resolve(
 ));
 const Schema = require("../../schemas/boats/BoatDocuments");
 
-module.exports = (app, router, validate, mysqlConnection) => {
+module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+  const instances = [newError, Query, mysqlConnection];
+
   router.get(
     "/api/boats/:name/boat-documents/",
     validate({ params: Schema.ParamsGetBoatDocuments }),
-    BoatDocuments.GetBoatDocuments(mysqlConnection)
+    BoatDocuments.GetBoatDocuments(...instances)
   );
   router.put(
     "/api/boats/:name/boat-documents/",
@@ -18,7 +20,7 @@ module.exports = (app, router, validate, mysqlConnection) => {
       params: Schema.ParamsPutBoatDocuments,
       body: Schema.BodyPutBoatDocuments
     }),
-    BoatDocuments.PutBoatDocuments(mysqlConnection)
+    BoatDocuments.PutBoatDocuments(...instances)
   );
   router.put(
     "/api/boats/:name/boat-documents/:typeid",
@@ -26,7 +28,7 @@ module.exports = (app, router, validate, mysqlConnection) => {
       params: Schema.ParamsPutBoatDocumentsByType,
       body: Schema.BodyPutBoatDocumentsByType
     }),
-    BoatDocuments.PutBoatDocumentByType(mysqlConnection)
+    BoatDocuments.PutBoatDocumentByType(...instances)
   );
 
   app.use(router);

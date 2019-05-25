@@ -68,8 +68,8 @@ const SocketTypes = require(path.resolve(
   "../routes/boats/SocketTypes"
 ));
 
-module.exports = (app, router, validate, mysqlConnection) => {
-  const instances = [app, router, validate, mysqlConnection];
+module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+  const instances = [app, router, newError, Query, validate, mysqlConnection];
 
   /* Middleware: Autenticación */
   //Toma como argumento app para la verificación del JWT

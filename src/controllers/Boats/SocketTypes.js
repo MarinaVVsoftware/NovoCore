@@ -1,12 +1,8 @@
-const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // SocketTypes - Controller
 const SocketTypes = {};
 
 /* Trae la lista de SocketTypes */
-SocketTypes.GetSocketTypes = mysqlConnection => {
+SocketTypes.GetSocketTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_READ_SOCKET_TYPES();")

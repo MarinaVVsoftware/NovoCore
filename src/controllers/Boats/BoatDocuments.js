@@ -1,13 +1,8 @@
-const path = require("path");
-
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // BoatDocuments - Controller
 const BoatDocuments = {};
 
 /* Trae la lista de BoatDocuments */
-BoatDocuments.GetBoatDocuments = mysqlConnection => {
+BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
@@ -34,7 +29,7 @@ BoatDocuments.GetBoatDocuments = mysqlConnection => {
 };
 
 /* Inserta todos los documentos de un bote en conjunto. */
-BoatDocuments.PutBoatDocuments = mysqlConnection => {
+BoatDocuments.PutBoatDocuments = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
@@ -72,7 +67,7 @@ BoatDocuments.PutBoatDocuments = mysqlConnection => {
 };
 
 /* Inserta un documento de un barco por su tipo */
-BoatDocuments.PutBoatDocumentByType = mysqlConnection => {
+BoatDocuments.PutBoatDocumentByType = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.

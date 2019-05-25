@@ -1,12 +1,8 @@
-const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../../helpers/query"));
-
 // Slips - Controller
 const Slips = {};
 
 /* Trae la lista de Slips */
-Slips.GetSlips = mysqlConnection => {
+Slips.GetSlips = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_READ_SLIPS();")
