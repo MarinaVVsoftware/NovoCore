@@ -1,3 +1,5 @@
+const path = require("path");
+
 const newError = require(path.resolve(__dirname, "../../helpers/newError"));
 const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
@@ -35,7 +37,33 @@ BoatDocuments.GetBoatDocuments = mysqlConnection => {
 BoatDocuments.PutBoatDocuments = mysqlConnection => {
   return (req, res, next) => {
     try {
-      res.status(200).send("PutBoatDocuments");
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+      decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 500));
+
+      let documents = req.body.documents;
+      let Promises = [];
+
+      documents.forEach(doc => {
+        Promises.push(
+          Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
+            decodeURIComponent(req.params.name),
+            doc.boat_document_type_id,
+            doc.url
+          ])
+        );
+      });
+
+      Promise.all(Promises)
+        .then(() => {
+          res.status(200).send({ status: "documentos actualizados." });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -47,7 +75,30 @@ BoatDocuments.PutBoatDocuments = mysqlConnection => {
 BoatDocuments.PutBoatDocumentByType = mysqlConnection => {
   return (req, res, next) => {
     try {
-      res.status(200).send("PutBoatDocumentByType");
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+      decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 500));
+
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(parseInt(req.params.typeid)))
+        next(newError('el param "typeid" no es un número válido.', 500));
+
+      let document = req.body.document;
+
+      Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
+        decodeURIComponent(req.params.name),
+        document.boat_document_type_id,
+        document.url
+      ])
+        .then(() => {
+          res.status(200).send({ status: "documento actualizado." });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));

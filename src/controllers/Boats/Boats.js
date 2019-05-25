@@ -1,4 +1,4 @@
-const Log = require(path.resolve(__dirname, "../../helpers/Logs"));
+const path = require("path");
 const newError = require(path.resolve(__dirname, "../../helpers/newError"));
 const Query = require(path.resolve(__dirname, "../../helpers/query"));
 
