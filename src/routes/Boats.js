@@ -8,20 +8,17 @@ var validator = new Validator({ allErrors: true });
 var validate = validator.validate;
 
 module.exports = (app, router, mysqlConnection) => {
-  router.get(
-    "/api/clients/:id/boats/",
-    validate({ params: Schema.ParamsGetBoatsByClient }),
-    Boats.GetBoatsByClient(mysqlConnection)
-  );
-  router.put(
-    "/api/clients/:id/boats/:name",
-    validate({ params: Schema.ParamsPutBoat, body: Schema.BodyPutBoat }),
-    Boats.PutBoat(mysqlConnection)
-  );
-  router.delete(
-    "/api/clients/:id/boats/:name",
-    Boats.DeleteBoat(mysqlConnection)
-  );
+	router.get(
+		"/api/clients/:id/boats/",
+		validate({ params: Schema.ParamsGetBoatsByClient }),
+		Boats.GetBoatsByClient(mysqlConnection)
+	);
+	router.put(
+		"/api/clients/:id/boats/:name",
+		validate({ params: Schema.ParamsPutBoat, body: Schema.BodyPutBoat }),
+		Boats.PutBoat(mysqlConnection)
+	);
+	router.delete("/api/clients/:id/boats/:name", Boats.DeleteBoat(mysqlConnection));
 
-  app.use(router);
+	app.use(router);
 };
