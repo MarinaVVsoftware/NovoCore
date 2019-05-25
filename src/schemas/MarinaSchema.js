@@ -9,7 +9,7 @@ MarinaSchema.readList = {
 	type: "object",
 	required: [ "filterBy" ],
 	properties: {
-		filterBy: { type: "number", enum: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] }
+		filterBy: { type: "string", enum: [ "active", "draft", "cancelled", "deleted", "finished", "inactive" ] }
 	}
 };
 
