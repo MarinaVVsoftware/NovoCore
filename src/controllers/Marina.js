@@ -120,29 +120,38 @@ Marina.Update = (mysqlConnection) => {
 
 // Si se cicla, quiza no se ha puesto el res.status.send
 // Promises.all, el resultado de cada promesa es una row.
-
 Marina.ReadList = (mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			const quotationStatus = [ [ 1 ], [ 2, 3, 4, 5, 6 ], [ 8 ], [ 7 ], [ 9 ] ];
-			let statusSelected = [];
-			quotationStatus.forEach((element) => {
-				if (element.includes(req.body.filterBy)) {
-					statusSelected = element;
-					return;
-				}
-			});
+			// Objeto para seleccionar el grupo de cotizaciones a base de su status
+			const quotationStatus = {
+				active: [ 2, 3, 4, 5, 6 ],
+				draft: [ 1 ],
+				cancelled: [ 8 ],
+				deleted: [ 9 ],
+				finished: [ 7 ]
+			};
+
+			const statusSelected = quotationStatus.hasOwnProperty(req.params.filterBy)
+				? quotationStatus[req.params.filterBy]
+				: quotationStatus[active];
+
+			// Convierte el array a string delimitado por comas para la base de datos.
 			Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATIONS_LIST (?)", [ statusSelected.toString() ])
 				.then(([ rows, fields ]) => {
 					const quotations = [];
 					const Promises = [];
 					const data = [];
+
+					// Se ejecuta UNA promesa y se hace un push a las nuevas promesas para la electricidad.
 					rows[0].forEach((element, index) => {
 						Promises.push(
 							Query(mysqlConnection, "CALL SP_READ_BOAT_ELECTRICITY_BY_BOAT (?)", [ element.boat_id ])
 						);
 						quotations.push(element);
 					});
+
+					// Se ejecuta las promesas sincronas y se crea un objeto nuevo por cada iteración.
 					Promise.all(Promises)
 						.then((result) => {
 							result.forEach((element, index) => {

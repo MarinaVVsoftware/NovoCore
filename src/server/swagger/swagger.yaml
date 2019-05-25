@@ -20,6 +20,8 @@ tags:
     description: Métodos para iniciar sesión con Firebase Auth.
   - name: User
     description: Basic CRUD for the user.
+  - name: Marina
+    description: Methods for Marina and Marina Quotations.
 schemes:
   # tip: remove http to make production-grade
   #- https
@@ -111,6 +113,10 @@ paths:
         '404':
           description: >-
             No se existe ningún usuario o la petición es incorrecta.
+  /Marina/ReadList:
+    get:
+      tags:
+        - Marina
 definitions:
   User:
     type: object
