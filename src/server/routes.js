@@ -47,6 +47,16 @@ const MarinaPaymentTypes = require(path.resolve(
   __dirname,
   "../routes/MarinaPaymentTypes"
 ));
+/* Rutas de Marina: Slips */
+const SlipOccupations = require(path.resolve(
+  __dirname,
+  "../routes/marina/SlipOccupations"
+));
+const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
+const SlipTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/SlipTypes"
+));
 /* Imports de Boats */
 const BoatDocuments = require(path.resolve(
   __dirname,
@@ -56,13 +66,21 @@ const BoatDocumentTypes = require(path.resolve(
   __dirname,
   "../routes/boats/BoatDocumentTypes"
 ));
+const BoatElectricity = require(path.resolve(
+  __dirname,
+  "../routes/boats/BoatElectricity"
+));
 const Boats = require(path.resolve(__dirname, "../routes/boats/Boats"));
 const CableTypes = require(path.resolve(
   __dirname,
   "../routes/boats/CableTypes"
 ));
-const Slips = require(path.resolve(__dirname, "../routes/boats/Slips"));
-const SlipTypes = require(path.resolve(__dirname, "../routes/boats/SlipTypes"));
+const Captains = require(path.resolve(__dirname, "../routes/boats/Captains"));
+const Engines = require(path.resolve(__dirname, "../routes/boats/Engines"));
+const Responsible = require(path.resolve(
+  __dirname,
+  "../routes/boats/Responsible"
+));
 const SocketTypes = require(path.resolve(
   __dirname,
   "../routes/boats/SocketTypes"
@@ -95,13 +113,20 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   MarinaPayments(app, router, mysqlConnection);
   MarinaPaymentTypes(app, router, mysqlConnection);
 
+  /* Rutas del modelo de Marina: Slips */
+  SlipOccupations(...instances);
+  Slips(...instances);
+  SlipTypes(...instances);
+
   /* Rutas del Modelo de Boats */
   BoatDocuments(...instances);
   BoatDocumentTypes(...instances);
+  BoatElectricity(...instances);
   Boats(...instances);
   CableTypes(...instances);
-  Slips(...instances);
-  SlipTypes(...instances);
+  Captains(...instances);
+  Engines(...instances);
+  Responsible(...instances);
   SocketTypes(...instances);
 
   /* Middleware: Manejo de Errores */

@@ -8,7 +8,7 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
-    "/api/boat-document-types/",
+    "/api/boats/boat-document-types/",
     BoatDocumentTypes.GetBoatDocumentTypes(...instances)
   );
 
