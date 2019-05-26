@@ -1,3 +1,5 @@
+const path = require("path");
+const constants = require(path.resolve(__dirname, "../../helpers/Constants"));
 /* Modelos de validación de los endpoints de BoatDocuments */
 const BoatDocumentsSchema = {};
 
@@ -29,7 +31,7 @@ BoatDocumentsSchema.BodyPutBoatDocuments = {
   properties: {
     documents: {
       /* cantidad de documentos. debe ser igual a la cantidad de tipos de docs existentes */
-      minItems: 5,
+      minItems: constants.boats.boatDocumentsLength,
       type: "array",
       items: {
         allOf: [
