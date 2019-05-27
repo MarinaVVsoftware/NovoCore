@@ -218,10 +218,45 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
   };
 };
 
+Boats.PatchBoat = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
+    try {
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(parseInt(req.params.id)))
+        next(newError('el param "clientId" no es un número válido.', 500));
+
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+      decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 500));
+
+      Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
+        req.params.id,
+        req.params.name,
+        req.body.boat.name,
+        req.body.boat.model,
+        req.body.boat.loa,
+        req.body.boat.draft,
+        req.body.boat.beam
+      ])
+        .then(() => {
+          res.status(200).send({ status: "barco actualizado." });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
 Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      console.log(req.params);
       /* Elimina el barco */
       Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
         req.params.id,

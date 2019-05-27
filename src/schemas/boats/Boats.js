@@ -1,10 +1,10 @@
 const path = require("path");
 const constants = require(path.resolve(__dirname, "../../helpers/Constants"));
 /* Modelos de validación de los endpoints de Boats */
-const BoatSchema = {};
+const Boats = {};
 
 /* Valida los params de la url */
-BoatSchema.ParamsGetBoatsByClient = {
+Boats.ParamsGetBoatsByClient = {
   type: "object",
   required: ["id"],
   properties: {
@@ -15,7 +15,7 @@ BoatSchema.ParamsGetBoatsByClient = {
 };
 
 /* Valida los params de la url */
-BoatSchema.ParamsPutBoat = {
+Boats.ParamsPutBoat = {
   type: "object",
   required: ["id", "name"],
   properties: {
@@ -29,7 +29,7 @@ BoatSchema.ParamsPutBoat = {
 };
 
 /* Schema para el body de "PutBoat" */
-BoatSchema.BodyPutBoat = {
+Boats.BodyPutBoat = {
   type: "object",
   required: ["boat", "documents"],
   properties: {
@@ -173,7 +173,48 @@ BoatSchema.BodyPutBoat = {
   }
 };
 
-BoatSchema.DeleteBoat = {
+Boats.ParamsPatchBoat = {
+  type: "object",
+  required: ["id", "name"],
+  properties: {
+    id: {
+      type: "string"
+    },
+    name: {
+      type: "string"
+    }
+  }
+};
+
+Boats.BodyPatchBoat = {
+  type: "object",
+  required: ["boat"],
+  properties: {
+    boat: {
+      required: ["name", "model", "loa", "draft", "beam"],
+      type: "object",
+      properties: {
+        name: {
+          type: "string"
+        },
+        model: {
+          type: ["string", "null"]
+        },
+        loa: {
+          type: "number"
+        },
+        draft: {
+          type: ["number", "null"]
+        },
+        beam: {
+          type: ["number", "null"]
+        }
+      }
+    }
+  }
+};
+
+Boats.DeleteBoat = {
   type: "object",
   required: ["boatId"],
   properties: {
@@ -183,4 +224,4 @@ BoatSchema.DeleteBoat = {
   }
 };
 
-module.exports = BoatSchema;
+module.exports = Boats;
