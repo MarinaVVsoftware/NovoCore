@@ -241,7 +241,7 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
             Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOAT (?);", [
               boatId
             ]),
-            Query(mysqlConnection, "CALL SP_DELETE_ENGINES_BY_BOAT (?);", [
+            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOAT (?);", [
               boatId
             ]),
             Query(
