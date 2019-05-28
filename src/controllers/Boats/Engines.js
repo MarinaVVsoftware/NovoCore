@@ -11,7 +11,7 @@ Engines.GetEngines = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 500));
 
       Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_BOAT(?);", [
-        req.params.name
+        decodeURIComponent(req.params.name)
       ])
         .then(result => {
           res.status(200).send({ engines: result[0][0] });
@@ -38,7 +38,7 @@ Engines.PostEngine = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 500));
 
       Query(mysqlConnection, "CALL SP_CREATE_ENGINE_BY_BOAT(?, ?, ?);", [
-        req.params.name,
+        decodeURIComponent(req.params.name),
         req.body.engine.model,
         req.body.engine.brand
       ])
@@ -74,7 +74,7 @@ Engines.PutEngine = (newError, Query, mysqlConnection) => {
         next(newError('el param "id" no es un número válido.', 500));
 
       Query(mysqlConnection, "CALL SP_UPDATE_ENGINE_BY_ID(?, ?, ?, ?);", [
-        req.params.name,
+        decodeURIComponent(req.params.name),
         req.params.id,
         req.body.engine.model,
         req.body.engine.brand

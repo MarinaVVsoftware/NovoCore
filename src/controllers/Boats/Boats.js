@@ -232,7 +232,7 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
 
       Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
         req.params.id,
-        req.params.name,
+        decodeURIComponent(req.params.name),
         req.body.boat.name,
         req.body.boat.model,
         req.body.boat.loa,
@@ -260,7 +260,7 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
       /* Elimina el barco */
       Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
         req.params.id,
-        req.params.name
+        decodeURIComponent(req.params.name)
       ])
         .then(result => {
           /* retorna un status con el id. con el id del bote hay que hacer

@@ -11,7 +11,7 @@ BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 500));
 
       Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_BOAT(?);", [
-        req.params.name
+        decodeURIComponent(req.params.name)
       ])
         .then(result => {
           res.status(200).send({ boatDocuments: result[0][0] });
