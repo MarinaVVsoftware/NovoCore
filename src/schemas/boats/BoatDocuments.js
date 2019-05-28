@@ -8,7 +8,7 @@ BoatDocumentsSchema.ParamsGetBoatDocuments = {
   type: "object",
   required: ["name"],
   properties: {
-    id: {
+    name: {
       type: "string"
     }
   }

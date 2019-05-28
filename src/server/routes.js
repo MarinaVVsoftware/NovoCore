@@ -50,7 +50,7 @@ const MarinaPaymentTypes = require(path.resolve(
 /* Rutas de Marina: Slips */
 const SlipOccupations = require(path.resolve(
   __dirname,
-  "../routes/marina/SlipOccupations"
+  "../routes/marina/SlipsOccupation"
 ));
 const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
 const SlipTypes = require(path.resolve(

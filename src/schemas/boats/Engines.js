@@ -6,7 +6,7 @@ EnginesSchema.ParamsGetEngines = {
   type: "object",
   required: ["name"],
   properties: {
-    id: {
+    name: {
       type: "string"
     }
   }
@@ -17,7 +17,7 @@ EnginesSchema.ParamsPostEngine = {
   type: "object",
   required: ["name"],
   properties: {
-    id: {
+    name: {
       type: "string"
     }
   }
