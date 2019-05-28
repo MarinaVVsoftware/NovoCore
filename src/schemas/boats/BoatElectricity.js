@@ -26,16 +26,19 @@ BoatElectricitySchema.ParamsPostBoatElectricity = {
 /* Body -> PostBoatElectricity */
 BoatElectricitySchema.BodyPostBoatElectricity = {
   type: "object",
-  required: ["boatName", "cableTypeId", "SocketTypeId"],
+  required: ["boatElectricity"],
   properties: {
-    boatName: {
-      type: "string"
-    },
-    cableTypeId: {
-      type: "number"
-    },
-    SocketTypeId: {
-      type: "number"
+    boatElectricity: {
+      type: "object",
+      required: ["cableTypeId", "socketTypeId"],
+      properties: {
+        cableTypeId: {
+          type: "number"
+        },
+        socketTypeId: {
+          type: "number"
+        }
+      }
     }
   }
 };
@@ -57,16 +60,19 @@ BoatElectricitySchema.ParamsPutBoatElectricity = {
 /* Body -> PutBoatElectricity */
 BoatElectricitySchema.BodyPutBoatElectricity = {
   type: "object",
-  required: ["boatName", "cableTypeId", "SocketTypeId"],
+  required: ["boatElectricity"],
   properties: {
-    boatName: {
-      type: "string"
-    },
-    cableTypeId: {
-      type: "number"
-    },
-    SocketTypeId: {
-      type: "number"
+    boatElectricity: {
+      type: "object",
+      required: ["cableTypeId", "socketTypeId"],
+      properties: {
+        cableTypeId: {
+          type: "number"
+        },
+        socketTypeId: {
+          type: "number"
+        }
+      }
     }
   }
 };
