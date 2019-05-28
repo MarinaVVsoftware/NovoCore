@@ -26,32 +26,34 @@ CaptainsSchema.ParamsPutCaptain = {
 /* Body -> PutCaptain */
 CaptainsSchema.BodyPutCaptain = {
   type: "object",
-  required: [
-    "boatName",
-    "name",
-    "phone",
-    "email",
-    "paymentPermission",
-    "aceptationPermission"
-  ],
+  required: ["captain"],
   properties: {
-    boatName: {
-      type: "string"
-    },
-    name: {
-      type: "string"
-    },
-    phone: {
-      type: "string"
-    },
-    email: {
-      type: "string"
-    },
-    paymentPermission: {
-      type: "boolean"
-    },
-    aceptationPermission: {
-      type: "boolean"
+    captain: {
+      type: "object",
+      required: [
+        "name",
+        "phone",
+        "email",
+        "paymentPermission",
+        "aceptationPermission"
+      ],
+      properties: {
+        name: {
+          type: "string"
+        },
+        phone: {
+          type: "string"
+        },
+        email: {
+          type: "string"
+        },
+        paymentPermission: {
+          type: "boolean"
+        },
+        aceptationPermission: {
+          type: "boolean"
+        }
+      }
     }
   }
 };
