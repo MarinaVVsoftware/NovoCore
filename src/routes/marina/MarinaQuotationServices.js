@@ -5,24 +5,24 @@ const { MarinaQuotationServicesSchema } = require("../../schemas/MarinaSchema");
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
 	const instances = [ newError, Query, mysqlConnection ];
 
-	router.get("/api/Marina-Quotation-Service/Read", MarinaQuotationServices.Read(...instances));
+	router.get("/api/marina/quotations/services/read", MarinaQuotationServices.Read(...instances));
 	router.delete(
-		"/api/Marina-Quotation-Service/Erase",
+		"/api/marina/quotations/services/erase",
 		validate({ body: MarinaQuotationServicesSchema.erase }),
 		MarinaQuotationServices.Erase(...instances)
 	);
 	router.patch(
-		"/api/Marina-Quotation-Service/Delete",
+		"/api/marina/quotations/services/delete",
 		validate({ body: MarinaQuotationServicesSchema.erase }),
 		MarinaQuotationServices.Delete(...instances)
 	);
 	router.post(
-		"/api/Marina-Quotation-Service/Create",
+		"/api/marina/quotations/services/create",
 		validate({ body: MarinaQuotationServicesSchema.create }),
 		MarinaQuotationServices.Create(...instances)
 	);
 	router.put(
-		"/api/Marina-Quotation-Service/Update",
+		"/api/marina/quotations/services/update",
 		validate({ body: MarinaQuotationServicesSchema.update }),
 		MarinaQuotationServices.Update(...instances)
 	);

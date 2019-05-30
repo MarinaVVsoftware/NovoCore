@@ -5,19 +5,19 @@ const { MarinaPaymentsSchema } = require("../../schemas/MarinaSchema");
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
 	const instances = [ newError, Query, mysqlConnection ];
 
-	router.get("/api/Marina-Payment/Read", MarinaPayments.Read(...instances));
+	router.get("/api/marina/quotations/payment/read", MarinaPayments.Read(...instances));
 	router.delete(
-		"/api/Marina-Payment/Erase",
+		"/api/marina/quotations/payment/erase",
 		validate({ body: MarinaPaymentsSchema.erase }),
 		MarinaPayments.Erase(...instances)
 	);
 	router.post(
-		"/api/Marina-Payment/Create",
+		"/api/marina/quotations/payment/create",
 		validate({ body: MarinaPaymentsSchema.create }),
 		MarinaPayments.Create(...instances)
 	);
 	router.put(
-		"/api/Marina-Payment/Update",
+		"/api/marina/quotations/payment/update",
 		validate({ body: MarinaPaymentsSchema.update }),
 		MarinaPayments.Update(...instances)
 	);
