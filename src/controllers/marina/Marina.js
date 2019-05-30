@@ -160,4 +160,16 @@ Marina.ReadList = (newError, Query, mysqlConnection) => {
 	};
 };
 
+// Redireccionamiento de /api/marina/quotation/active
+Marina.GetDefault = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+			res.redirect("active");
+		} catch (error) {
+			console.log(error);
+			next(newError(error, 500));
+		}
+	};
+};
+
 module.exports = Marina;
