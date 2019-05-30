@@ -16,33 +16,38 @@ const Query = require(path.resolve(__dirname, "../helpers/query"));
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
-module.exports = app => {
-  /* SETTINGS */
-  //establece el puerto, ya sea por variable de entorno o predeterminado.
-  app.set("port", process.env.PORT || 8080);
+module.exports = (app) => {
+	/* SETTINGS */
+	//establece el puerto, ya sea por variable de entorno o predeterminado.
+	app.set("port", process.env.PORT || 8080);
 
-  /* MIDDLEWARES */
-  app.use(morgan("dev"));
-  app.use(express.json());
-  app.use(bodyParser.json());
-  app.use(cors);
+	/* MIDDLEWARES */
+	app.use(morgan("dev"));
+	app.use(express.json());
+	app.use(bodyParser.json());
+	app.use(cors);
 
-  var validator = new Validator({ allErrors: true });
-  var validate = validator.validate;
-  // crea el objeto de routing
-  const router = express.Router();
-  // instancia de swagger
-  swagger(app, router);
-  // inicia el servicio de monitoreo
-  app.use(monitor(monitorConfig));
+	var validator = new Validator({ allErrors: true });
+	var validate = validator.validate;
+	// crea el objeto de routing
+	const router = express.Router();
+	// instancia de swagger
+	swagger(app, router);
+	// inicia el servicio de monitoreo
+	app.use(monitor(monitorConfig));
 
-  const mysqlConnection = mysql();
+	const mysqlConnection = mysql();
 
-  /* ROUTES */
-  // recibe todas las instancias que debe propagar a través
-  // de los diferentes endpoints de la API.
-  routes(app, router, newError, Query, validate, mysqlConnection);
+	/* ROUTES */
+	// recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
+	// app - Objeto de la aplicación.
+	// router - Router de express.
+	// newError - Manejador personalizado de errores.
+	// Query - Función para la promesa de Mysql
+	// validate - Objeto del validador de Schemas.
+	// mysqlConnection - Conexión con mysql.
+	routes(app, router, newError, Query, validate, mysqlConnection);
 
-  Log.Success("Configuración del servidor establecida.");
-  return app;
+	Log.Success("Configuración del servidor establecida.");
+	return app;
 };

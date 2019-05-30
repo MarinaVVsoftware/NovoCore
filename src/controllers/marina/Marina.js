@@ -1,19 +1,18 @@
-const Log = require("../helpers/Logs");
-const newError = require("../helpers/newError");
-const Query = require("../helpers/query");
+const Log = require("../../helpers/Logs");
 
 // Marina - Controller
 const Marina = {};
 
 // Read all the Marina Quotation
-Marina.Read = (mysqlConnection) => {
+Marina.Read = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query("CALL SP_READ_MARINA_QUOTATION", (err, rows, fields) => {
-				if (err) next(newError(err, 400));
-				rows.pop();
-				res.status(200).send(JSON.stringify(rows));
-			});
+			Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION")
+				.then(([ rows, fields ]) => {
+					rows.pop();
+					res.status(200).send(JSON.stringify(rows[0]));
+				})
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
@@ -22,13 +21,14 @@ Marina.Read = (mysqlConnection) => {
 };
 
 // Erase the record (DELETE)
-Marina.Erase = (mysqlConnection) => {
+Marina.Erase = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query("CALL SP_DELETE_MARINA_QUOTATION (?);", [ req.body.id ], (err, rows, fields) => {
-				if (err) next(newError(err, 400));
-				res.status(200).send({ status: "QUOTATION DELETED" });
-			});
+			Query(mysqlConnection, "CALL SP_DELETE_MARINA_QUOTATION (?);", [ req.body.id ])
+				.then((result) => {
+					res.status(200).send({ status: "QUOTATION DELETED" });
+				})
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
@@ -37,17 +37,14 @@ Marina.Erase = (mysqlConnection) => {
 };
 
 // Update the state
-Marina.Delete = (mysqlConnection) => {
+Marina.Delete = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query(
-				"CALL SP_LOGICAL_DELETED_MARINA_QUOTATION (?,?);",
-				[ req.body.id, req.body.delete ],
-				(err, rows, fields) => {
-					if (err) next(newError(err, 400));
-					res.status(200).send({ status: "Success" });
-				}
-			);
+			Query(mysqlConnection, "CALL SP_LOGICAL_DELETED_MARINA_QUOTATION (?,?);", [ req.body.id, req.body.delete ])
+				.then((result) => {
+					res.status(200).send({ status: "QUOTATION DELETED" });
+				})
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
@@ -56,29 +53,26 @@ Marina.Delete = (mysqlConnection) => {
 };
 
 // Create a new record
-Marina.Create = (mysqlConnection) => {
+Marina.Create = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query(
-				"CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?)",
-				[
-					req.body.boatId,
-					req.body.quotationStatusId,
-					req.body.mooringRateId,
-					req.body.arrivalDate,
-					req.body.departureDate,
-					req.body.arrivalStatus,
-					req.body.daysStay,
-					req.body.discountStay,
-					req.body.tax,
-					req.body.total,
-					req.body.subtotal
-				],
-				(err, rows, fields) => {
-					if (err) next(newError(err, 400));
-					res.status(200).send({ status: "Success" });
-				}
-			);
+			Query(mysqlConnection, "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?)", [
+				req.body.boatId,
+				req.body.quotationStatusId,
+				req.body.mooringRateId,
+				req.body.arrivalDate,
+				req.body.departureDate,
+				req.body.arrivalStatus,
+				req.body.daysStay,
+				req.body.discountStay,
+				req.body.tax,
+				req.body.total,
+				req.body.subtotal
+			])
+				.then((result) => {
+					res.status(200).send({ status: "QUOTATION CREATED" });
+				})
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
@@ -87,30 +81,27 @@ Marina.Create = (mysqlConnection) => {
 };
 
 // Update a record
-Marina.Update = (mysqlConnection) => {
+Marina.Update = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
-			mysqlConnection.query(
-				"CALL SP_UPDATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?)",
-				[
-					req.body.quotationId,
-					req.body.boatId,
-					req.body.quotationStatusId,
-					req.body.mooringRateId,
-					req.body.arrivalDate,
-					req.body.departureDate,
-					req.body.arrivalStatus,
-					req.body.daysStay,
-					req.body.discountStay,
-					req.body.tax,
-					req.body.total,
-					req.body.subtotal
-				],
-				(err, rows, fields) => {
-					if (err) next(newError(err, 400));
+			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?)", [
+				req.body.quotationId,
+				req.body.boatId,
+				req.body.quotationStatusId,
+				req.body.mooringRateId,
+				req.body.arrivalDate,
+				req.body.departureDate,
+				req.body.arrivalStatus,
+				req.body.daysStay,
+				req.body.discountStay,
+				req.body.tax,
+				req.body.total,
+				req.body.subtotal
+			])
+				.then((result) => {
 					res.status(200).send({ status: "QUOTATION UPDATED" });
-				}
-			);
+				})
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
@@ -120,7 +111,7 @@ Marina.Update = (mysqlConnection) => {
 
 // Si se cicla, quiza no se ha puesto el res.status.send
 // Promises.all, el resultado de cada promesa es una row.
-Marina.ReadList = (mysqlConnection) => {
+Marina.ReadList = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 			// Objeto para seleccionar el grupo de cotizaciones a base de su status
@@ -161,9 +152,7 @@ Marina.ReadList = (mysqlConnection) => {
 						})
 						.catch((error) => next(error));
 				})
-				.catch((error) => {
-					next(error);
-				});
+				.catch((error) => next(error));
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
