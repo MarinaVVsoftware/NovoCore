@@ -7,8 +7,8 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "clientId" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
 
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
@@ -91,13 +91,13 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "clientId" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       let boat = req.body.boat;
       let captain = req.body.captain;
@@ -185,11 +185,11 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           if (documents)
             documents.forEach(doc => {
               Promises.push(
-                Query(
-                  mysqlConnection,
-                  "CALL SP_CREATE_BOAT_DOCUMENT (?,?,?);",
-                  [boatId, doc.boat_document_type_id, doc.url]
-                )
+                Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
+                  decodeURIComponent(req.params.name),
+                  doc.boat_document_type_id,
+                  doc.url
+                ])
               );
             });
 
@@ -222,13 +222,13 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "clientId" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
         req.params.id,

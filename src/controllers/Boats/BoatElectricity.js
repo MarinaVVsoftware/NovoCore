@@ -8,7 +8,7 @@ BoatElectricity.GetBoatElectricity = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       Query(mysqlConnection, "CALL SP_READ_BOAT_ELECTRICITY_BY_BOATNAME (?);", [
         decodeURIComponent(req.params.name)
@@ -35,7 +35,7 @@ BoatElectricity.PostBoatElectricity = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       Query(
         mysqlConnection,
@@ -47,7 +47,7 @@ BoatElectricity.PostBoatElectricity = (newError, Query, mysqlConnection) => {
         ]
       )
         .then(result => {
-          res.status(200).send({ status: "relación eléctrica creada." });
+          res.status(200).send({ status: "Relación eléctrica creada." });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -68,11 +68,11 @@ BoatElectricity.PutBoatElectricity = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       /* Valida manualmente el tipado de id */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "id" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
 
       console.log(req.body.boatElectricity);
 
@@ -83,7 +83,7 @@ BoatElectricity.PutBoatElectricity = (newError, Query, mysqlConnection) => {
         req.body.boatElectricity.socketTypeId
       ])
         .then(result => {
-          res.status(200).send({ status: "relación eléctrica creada." });
+          res.status(200).send({ status: "Relación eléctrica actualizada." });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -104,18 +104,18 @@ BoatElectricity.DeleteBoatElectricity = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       /* Valida manualmente el tipado de id */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "id" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
 
       Query(mysqlConnection, "CALL SP_DELETE_BOAT_ELECTRICITY (?,?);", [
         decodeURIComponent(req.params.name),
         req.params.id
       ])
         .then(() => {
-          res.status(200).send({ status: "BoatElectricity Eliminado." });
+          res.status(200).send({ status: "Relación eléctrica eliminada." });
         })
         .catch(error => {
           /* retorna el mensaje de error */

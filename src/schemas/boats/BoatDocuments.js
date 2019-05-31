@@ -32,6 +32,7 @@ BoatDocumentsSchema.BodyPutBoatDocuments = {
     documents: {
       /* cantidad de documentos. debe ser igual a la cantidad de tipos de docs existentes */
       minItems: constants.boats.boatDocumentsLength,
+      maxItems: constants.boats.boatDocumentsLength,
       type: "array",
       items: {
         allOf: [

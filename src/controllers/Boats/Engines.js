@@ -5,12 +5,17 @@ const Engines = {};
 Engines.GetEngines = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_BOAT(?);", [
+      Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_BOAT(?, ?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {
@@ -32,12 +37,17 @@ Engines.GetEngines = (newError, Query, mysqlConnection) => {
 Engines.PostEngine = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_CREATE_ENGINE_BY_BOAT(?, ?, ?);", [
+      Query(mysqlConnection, "CALL SP_CREATE_ENGINE_BY_BOAT(?, ?, ?, ?);", [
+        req.params.id,
         decodeURIComponent(req.params.name),
         req.body.engine.model,
         req.body.engine.brand
@@ -64,22 +74,27 @@ Engines.PostEngine = (newError, Query, mysqlConnection) => {
 Engines.PutEngine = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "id" no es un número válido.', 500));
+      if (isNaN(req.params.engineid))
+        next(newError('el param "engineid" no es un número válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_UPDATE_ENGINE_BY_ID(?, ?, ?, ?);", [
-        decodeURIComponent(req.params.name),
+      Query(mysqlConnection, "CALL SP_UPDATE_ENGINE_BY_ID(?, ?, ?, ?, ?);", [
         req.params.id,
+        decodeURIComponent(req.params.name),
+        req.params.engineid,
         req.body.engine.model,
         req.body.engine.brand
       ])
-        .then(result => {
+        .then(() => {
           res.status(200).send({
             status: "Engine actualizado."
           });
@@ -100,17 +115,25 @@ Engines.PutEngine = (newError, Query, mysqlConnection) => {
 Engines.DeleteEngine = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "id" no es un número válido.', 500));
+      if (isNaN(req.params.engineid))
+        next(newError('el param "engineid" no es un número válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_ID(?);", [req.params.id])
-        .then(result => {
+      Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_ID(?,?,?);", [
+        req.params.id,
+        decodeURIComponent(req.params.name),
+        req.params.engineid
+      ])
+        .then(() => {
           res.status(200).send({
             status: "Engine eliminado."
           });

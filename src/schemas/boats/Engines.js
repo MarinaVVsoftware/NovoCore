@@ -4,8 +4,11 @@ const EnginesSchema = {};
 /* Params -> GetEngines */
 EnginesSchema.ParamsGetEngines = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -15,8 +18,11 @@ EnginesSchema.ParamsGetEngines = {
 /* Params -> PostEngine */
 EnginesSchema.ParamsPostEngine = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -46,12 +52,15 @@ EnginesSchema.BodyPostEngine = {
 /* Params -> PutEngine */
 EnginesSchema.ParamsPutEngine = {
   type: "object",
-  required: ["name", "id"],
+  required: ["id", "name", "engineid"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     },
-    id: {
+    engineid: {
       type: "string"
     }
   }
@@ -80,12 +89,15 @@ EnginesSchema.BodyPutEngine = {
 /* Params -> DeleteEngine */
 EnginesSchema.ParamsDeleteEngine = {
   type: "object",
-  required: ["name", "id"],
+  required: ["id", "name", "engineid"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     },
-    id: {
+    engineid: {
       type: "string"
     }
   }

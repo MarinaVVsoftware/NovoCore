@@ -5,12 +5,17 @@ const Captains = {};
 Captains.GetCaptain = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_CAPTAIN(?);", [
+      Query(mysqlConnection, "CALL SP_READ_CAPTAIN(?,?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {
@@ -32,12 +37,17 @@ Captains.GetCaptain = (newError, Query, mysqlConnection) => {
 Captains.PutCaptain = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_UPDATE_CAPTAIN_BY_BOAT(?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_PUT_CAPTAIN_BY_BOAT(?,?,?,?,?,?,?);", [
+        req.params.id,
         decodeURIComponent(req.params.name),
         req.body.captain.name,
         req.body.captain.phone,
@@ -64,12 +74,17 @@ Captains.PutCaptain = (newError, Query, mysqlConnection) => {
 Captains.DeleteCaptain = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_DELETE_CAPTAIN_BY_BOATNAME(?);", [
+      Query(mysqlConnection, "CALL SP_DELETE_CAPTAIN_BY_BOATNAME(?,?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {

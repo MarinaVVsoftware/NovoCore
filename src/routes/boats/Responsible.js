@@ -12,12 +12,12 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
-    "/api/boats/:name/responsable/",
+    "/api/clients/:id/boats/:name/responsable/",
     validate({ params: Schema.ParamsGetResponsable }),
     Responsible.GetResponsable(...instances)
   );
   router.put(
-    "/api/boats/:name/responsable/",
+    "/api/clients/:id/boats/:name/responsable/",
     validate({
       params: Schema.ParamsPutResponsable,
       body: Schema.BodyPostResponsable
@@ -25,7 +25,7 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
     Responsible.PutResponsable(...instances)
   );
   router.delete(
-    "/api/boats/:name/responsable/",
+    "/api/clients/:id/boats/:name/responsable/",
     validate({ params: Schema.ParamsDeleteResponsable }),
     Responsible.DeleteResponsable(...instances)
   );

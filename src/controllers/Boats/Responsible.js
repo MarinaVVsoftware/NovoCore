@@ -5,12 +5,17 @@ const Responsible = {};
 Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_RESPONSABLE(?);", [
+      Query(mysqlConnection, "CALL SP_READ_RESPONSABLE(?, ?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {
@@ -32,15 +37,20 @@ Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
 Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       Query(
         mysqlConnection,
-        "CALL SP_UPDATE_RESPONSABLE_BY_BOAT(?,?,?,?,?,?);",
+        "CALL SP_PUT_RESPONSABLE_BY_BOAT(?, ?,?,?,?,?,?);",
         [
+          req.params.id,
           decodeURIComponent(req.params.name),
           req.body.responsable.name,
           req.body.responsable.phone,
@@ -68,12 +78,17 @@ Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
 Responsible.DeleteResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME(?);", [
+      Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME(?, ?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {

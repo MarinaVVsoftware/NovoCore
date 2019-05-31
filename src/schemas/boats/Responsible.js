@@ -4,8 +4,11 @@ const ResponsibleSchema = {};
 /* Params -> GetResponsable */
 ResponsibleSchema.ParamsGetResponsable = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -15,8 +18,11 @@ ResponsibleSchema.ParamsGetResponsable = {
 /* Params -> PutResponsable */
 ResponsibleSchema.ParamsPutResponsable = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -28,7 +34,7 @@ ResponsibleSchema.BodyPostResponsable = {
   type: "object",
   required: ["responsable"],
   properties: {
-    captain: {
+    responsable: {
       type: "object",
       required: [
         "name",
@@ -60,8 +66,11 @@ ResponsibleSchema.BodyPostResponsable = {
 /* Params -> DeleteResponsable */
 ResponsibleSchema.ParamsDeleteResponsable = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }

@@ -8,7 +8,7 @@ BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_BOAT(?);", [
         decodeURIComponent(req.params.name)
@@ -35,7 +35,7 @@ BoatDocuments.PutBoatDocuments = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       let documents = req.body.documents;
       let Promises = [];
@@ -73,11 +73,11 @@ BoatDocuments.PutBoatDocumentByType = (newError, Query, mysqlConnection) => {
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 500));
+        next(newError('el param "name" no es un string válido.', 400));
 
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.typeid)))
-        next(newError('el param "typeid" no es un número válido.', 500));
+      if (isNaN(req.params.typeid))
+        next(newError('el param "typeid" no es un número válido.', 400));
 
       let document = req.body.document;
 

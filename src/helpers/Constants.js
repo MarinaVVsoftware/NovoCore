@@ -3,6 +3,6 @@ para hacer sencillo la modificación o alteración de valores hardcode y mantene
 limpio el código. */
 module.exports = {
   boats: {
-    boatDocumentsLength: 6
+    boatDocumentsLength: 5
   }
 };

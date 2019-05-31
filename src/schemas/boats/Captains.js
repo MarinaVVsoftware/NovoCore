@@ -4,8 +4,11 @@ const CaptainsSchema = {};
 /* Params -> GetCaptain */
 CaptainsSchema.ParamsGetCaptain = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -15,8 +18,11 @@ CaptainsSchema.ParamsGetCaptain = {
 /* Params -> PutCaptain */
 CaptainsSchema.ParamsPutCaptain = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -60,8 +66,11 @@ CaptainsSchema.BodyPutCaptain = {
 /* Params -> DeleteCaptain */
 CaptainsSchema.ParamsDeleteCaptain = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
