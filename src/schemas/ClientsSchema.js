@@ -12,12 +12,9 @@ ClientsSchema.erase = {
 
 ClientsSchema.delete = {
   type: "object",
-  required: ["id", "delete"],
+  required: ["id"],
   properties: {
     id: {
-      type: "number"
-    },
-    delete: {
       type: "number"
     }
   }
