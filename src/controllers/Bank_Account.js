@@ -1,11 +1,11 @@
 const Log = require("../helpers/Logs");
 const newError = require("../helpers/newError");
 
-// Marina - Controller
-const Marina = {};
+// Bank_Account - Controller
+const Bank_Account = {};
 
-// Read all the Marina Quotation
-Marina.Read = mysqlConnection => {
+// Read all the Bank_Account Quotation
+Bank_Account.Read = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -24,7 +24,7 @@ Marina.Read = mysqlConnection => {
 };
 
 // Erase the record (DELETE)
-Marina.Erase = mysqlConnection => {
+Bank_Account.Erase = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -35,6 +35,7 @@ Marina.Erase = mysqlConnection => {
           res.status(200).send({ status: "QUOTATION DELETED" });
         }
       );
+      88;
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -43,7 +44,7 @@ Marina.Erase = mysqlConnection => {
 };
 
 // Update the state
-Marina.Delete = mysqlConnection => {
+Bank_Account.Delete = mysqlConnection => {
   return (req, res, next) => {
     if (!req.body.id || req.body.delete === null)
       res.status(400).send({ error: "Undefined Object" });
@@ -64,7 +65,7 @@ Marina.Delete = mysqlConnection => {
 };
 
 // Create a new record
-Marina.Create = mysqlConnection => {
+Bank_Account.Create = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -90,7 +91,7 @@ Marina.Create = mysqlConnection => {
 };
 
 // Update a record
-Marina.Update = mysqlConnection => {
+Bank_Account.Update = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -116,4 +117,4 @@ Marina.Update = mysqlConnection => {
   };
 };
 
-module.exports = Marina;
+module.exports = Bank_Account;

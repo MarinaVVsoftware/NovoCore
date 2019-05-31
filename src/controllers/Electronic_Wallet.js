@@ -1,11 +1,11 @@
 const Log = require("../helpers/Logs");
 const newError = require("../helpers/newError");
 
-// Marina - Controller
-const Marina = {};
+// Electronic_Wallet - Controller
+const Electronic_Wallet = {};
 
-// Read all the Marina Quotation
-Marina.Read = mysqlConnection => {
+// Read all the Electronic_Wallet Quotation
+Electronic_Wallet.Read = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -24,7 +24,7 @@ Marina.Read = mysqlConnection => {
 };
 
 // Erase the record (DELETE)
-Marina.Erase = mysqlConnection => {
+Electronic_Wallet.Erase = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
@@ -43,7 +43,7 @@ Marina.Erase = mysqlConnection => {
 };
 
 // Update the state
-Marina.Delete = mysqlConnection => {
+Electronic_Wallet.Delete = mysqlConnection => {
   return (req, res, next) => {
     if (!req.body.id || req.body.delete === null)
       res.status(400).send({ error: "Undefined Object" });
@@ -64,13 +64,13 @@ Marina.Delete = mysqlConnection => {
 };
 
 // Create a new record
-Marina.Create = mysqlConnection => {
+Electronic_Wallet.Create = mysqlConnection => {
   return (req, res, next) => {
     try {
       var ld = 0;
       mysqlConnection.query(
         "CALL SP_CREATE_ELECTRONIC_WALLET (?,?)",
-        [req.body.marina_amount, ld],
+        [req.body.Electronic_Wallet_amount, ld],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           res.status(200).send({ status: "Success" });
@@ -84,14 +84,14 @@ Marina.Create = mysqlConnection => {
 };
 
 // Update a record
-Marina.Update = mysqlConnection => {
+Electronic_Wallet.Update = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
         "CALL SP_UPDATE_ELECTRONIC_WALLET (?,?,?)",
         [
           req.body.electronic_wallet_id,
-          req.body.marina_amount,
+          req.body.Electronic_Wallet_amount,
           req.body.logical_deleted
         ],
         (err, rows, fields) => {
@@ -106,4 +106,4 @@ Marina.Update = mysqlConnection => {
   };
 };
 
-module.exports = Marina;
+module.exports = Electronic_Wallet;

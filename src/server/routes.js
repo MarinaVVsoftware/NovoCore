@@ -80,7 +80,8 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   Roles(app, router, mysqlConnection);
 
   /* Rutas del Modelo de Clients */
-  Clients(app, router, mysqlConnection);
+  // Clients(app, router, mysqlConnection);
+  Clients(...instances);
   Bank_Account(app, router, mysqlConnection);
   Social_Reason(app, router, mysqlConnection);
   Electronic_Wallet_Historic(app, router, mysqlConnection);
