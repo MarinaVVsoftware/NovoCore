@@ -7,7 +7,7 @@ const CableTypes = require(path.resolve(
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
-  router.get("/api/cable-types/", CableTypes.GetCableTypes(...instances));
+  router.get("/api/boats/cable-types/", CableTypes.GetCableTypes(...instances));
 
   app.use(router);
 };

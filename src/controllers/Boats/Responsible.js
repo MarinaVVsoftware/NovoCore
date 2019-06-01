@@ -1,20 +1,25 @@
-// BoatDocuments - Controller
-const BoatDocuments = {};
+// Responsible - Controller
+const Responsible = {};
 
-/* Trae la lista de BoatDocuments */
-BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
+/* Trae el responsable de un bote */
+Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_BOAT(?);", [
+      Query(mysqlConnection, "CALL SP_READ_RESPONSABLE(?, ?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {
-          res.status(200).send({ boatDocuments: result[0][0] });
+          res.status(200).send({ responsable: result[0][0][0] });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -28,31 +33,34 @@ BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
   };
 };
 
-/* Inserta todos los documentos de un bote en conjunto. */
-BoatDocuments.PutBoatDocuments = (newError, Query, mysqlConnection) => {
+/* Modifica un responsable de un bote basado en su id natural */
+Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      let documents = req.body.documents;
-      let Promises = [];
-
-      documents.forEach(doc => {
-        Promises.push(
-          Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
-            decodeURIComponent(req.params.name),
-            doc.boat_document_type_id,
-            doc.url
-          ])
-        );
-      });
-
-      Promise.all(Promises)
-        .then(() => {
-          res.status(200).send({ status: "documentos actualizados." });
+      Query(
+        mysqlConnection,
+        "CALL SP_PUT_RESPONSABLE_BY_BOAT(?, ?,?,?,?,?,?);",
+        [
+          req.params.id,
+          decodeURIComponent(req.params.name),
+          req.body.responsable.name,
+          req.body.responsable.phone,
+          req.body.responsable.email,
+          req.body.responsable.paymentPermission,
+          req.body.responsable.aceptationPermission
+        ]
+      )
+        .then(result => {
+          res.status(200).send({ status: "Capitan creado o actualizado." });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -66,28 +74,25 @@ BoatDocuments.PutBoatDocuments = (newError, Query, mysqlConnection) => {
   };
 };
 
-/* Inserta un documento de un barco por su tipo */
-BoatDocuments.PutBoatDocumentByType = (newError, Query, mysqlConnection) => {
+/* Elimina un responsable de un bote basado en su id natural */
+Responsible.DeleteResponsable = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      /* Valida manualmente el tipado de clientId */
-      if (isNaN(req.params.typeid))
-        next(newError('el param "typeid" no es un número válido.', 400));
-
-      let document = req.body.document;
-
-      Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
-        decodeURIComponent(req.params.name),
-        document.boat_document_type_id,
-        document.url
+      Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME(?, ?);", [
+        req.params.id,
+        decodeURIComponent(req.params.name)
       ])
-        .then(() => {
-          res.status(200).send({ status: "documento actualizado." });
+        .then(result => {
+          res.status(200).send({ status: "capitan eliminado." });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -101,4 +106,4 @@ BoatDocuments.PutBoatDocumentByType = (newError, Query, mysqlConnection) => {
   };
 };
 
-module.exports = BoatDocuments;
+module.exports = Responsible;

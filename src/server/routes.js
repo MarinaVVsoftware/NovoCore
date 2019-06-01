@@ -20,20 +20,25 @@ const Electronic_Wallet_Historic = require(path.resolve(
 const Electronic_wallet = require(path.resolve(__dirname, "../routes/electronicWallet/Electronic_Wallet"));
 const ElectronicSignature = require(path.resolve(__dirname, "../routes/electronicSignature/ElectronicSignature"));
 /* Imports de Marina */
-const Marina = require(path.resolve(__dirname, "../routes/marina/Marina"));
-const MarinaServices = require(path.resolve(__dirname, "../routes/marina/MarinaServices"));
-const MarinaQuotationServices = require(path.resolve(__dirname, "../routes/marina/MarinaQuotationServices"));
-const MarinaDebts = require(path.resolve(__dirname, "../routes/marina/MarinaDebts"));
-const MarinaPayments = require(path.resolve(__dirname, "../routes/marina/MarinaPayments"));
-const MarinaPaymentTypes = require(path.resolve(__dirname, "../routes/marina/MarinaPaymentTypes"));
-
+const Marina = require(path.resolve(__dirname, "../routes/Marina"));
+const MarinaServices = require(path.resolve(__dirname, "../routes/MarinaServices"));
+const MarinaQuotationServices = require(path.resolve(__dirname, "../routes/MarinaQuotationServices"));
+const MarinaDebts = require(path.resolve(__dirname, "../routes/MarinaDebts"));
+const MarinaPayments = require(path.resolve(__dirname, "../routes/MarinaPayments"));
+const MarinaPaymentTypes = require(path.resolve(__dirname, "../routes/MarinaPaymentTypes"));
+/* Rutas de Marina: Slips */
+const SlipOccupations = require(path.resolve(__dirname, "../routes/marina/SlipsOccupation"));
+const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
+const SlipTypes = require(path.resolve(__dirname, "../routes/marina/SlipTypes"));
 /* Imports de Boats */
 const BoatDocuments = require(path.resolve(__dirname, "../routes/boats/BoatDocuments"));
 const BoatDocumentTypes = require(path.resolve(__dirname, "../routes/boats/BoatDocumentTypes"));
+const BoatElectricity = require(path.resolve(__dirname, "../routes/boats/BoatElectricity"));
 const Boats = require(path.resolve(__dirname, "../routes/boats/Boats"));
 const CableTypes = require(path.resolve(__dirname, "../routes/boats/CableTypes"));
-const Slips = require(path.resolve(__dirname, "../routes/boats/Slips"));
-const SlipTypes = require(path.resolve(__dirname, "../routes/boats/SlipTypes"));
+const Captains = require(path.resolve(__dirname, "../routes/boats/Captains"));
+const Engines = require(path.resolve(__dirname, "../routes/boats/Engines"));
+const Responsible = require(path.resolve(__dirname, "../routes/boats/Responsible"));
 const SocketTypes = require(path.resolve(__dirname, "../routes/boats/SocketTypes"));
 
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
@@ -47,7 +52,8 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
 	Roles(app, router, mysqlConnection);
 
 	/* Rutas del Modelo de Clients */
-	Clients(app, router, mysqlConnection);
+	// Clients(app, router, mysqlConnection);
+	Clients(...instances);
 	Bank_Account(app, router, mysqlConnection);
 	Social_Reason(app, router, mysqlConnection);
 	Electronic_Wallet_Historic(app, router, mysqlConnection);
@@ -62,13 +68,20 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
 	MarinaPayments(...instances);
 	MarinaPaymentTypes(...instances);
 
+	/* Rutas del modelo de Marina: Slips */
+	SlipOccupations(...instances);
+	Slips(...instances);
+	SlipTypes(...instances);
+
 	/* Rutas del Modelo de Boats */
 	BoatDocuments(...instances);
 	BoatDocumentTypes(...instances);
+	BoatElectricity(...instances);
 	Boats(...instances);
 	CableTypes(...instances);
-	Slips(...instances);
-	SlipTypes(...instances);
+	Captains(...instances);
+	Engines(...instances);
+	Responsible(...instances);
 	SocketTypes(...instances);
 
 	/* Middleware: Manejo de Errores */

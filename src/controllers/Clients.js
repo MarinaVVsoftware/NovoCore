@@ -1,29 +1,27 @@
-const Log = require("../helpers/Logs");
-const newError = require("../helpers/newError");
-
 // Controller - Clients
 const Clients = {};
 
 //funcion para llamar y leer la informaion dentro de los usuarios en general
-Clients.Read = function(mysqlConnection) {
-  return function(req, res, next) {
-    try {
-      mysqlConnection.query("CALL SP_READ_CLIENTS", (err, rows, fields) => {
-        if (err) throw "Mysql Error";
-        rows.pop();
-        res.status(200).send(JSON.stringify(rows));
+Clients.Read = function(newError, Query, mysqlConnection) {
+  return (req, res, next) => {
+    console.log("lo que sea");
+    Query(mysqlConnection, "CALL SP_READ_CLIENTS(); ").then(result => {
+      let clients = result[0][0];
+      console.log(clients);
+      let response = {};
+      clients.map(client => {
+        response[client.client_id] = { client };
       });
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
+
+      res.status(200).send(response);
+    });
   };
 };
 
 //Funcion para llamar La informacion de 1 usuario a travez de su Id
 
 // Funcion para eliminar usuarios por su ID
-Clients.Delete = function(mysqlConnection) {
+Clients.Delete = function(newError, Query, mysqlConnection) {
   return function(req, res, next) {
     try {
       const query = "CALL SP_DELETE_CLIENTS(?);";
