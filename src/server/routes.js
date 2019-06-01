@@ -20,12 +20,12 @@ const Electronic_Wallet_Historic = require(path.resolve(
 const Electronic_wallet = require(path.resolve(__dirname, "../routes/electronicWallet/Electronic_Wallet"));
 const ElectronicSignature = require(path.resolve(__dirname, "../routes/electronicSignature/ElectronicSignature"));
 /* Imports de Marina */
-const Marina = require(path.resolve(__dirname, "../routes/Marina"));
-const MarinaServices = require(path.resolve(__dirname, "../routes/MarinaServices"));
-const MarinaQuotationServices = require(path.resolve(__dirname, "../routes/MarinaQuotationServices"));
-const MarinaDebts = require(path.resolve(__dirname, "../routes/MarinaDebts"));
-const MarinaPayments = require(path.resolve(__dirname, "../routes/MarinaPayments"));
-const MarinaPaymentTypes = require(path.resolve(__dirname, "../routes/MarinaPaymentTypes"));
+const Marina = require(path.resolve(__dirname, "../routes/marina/Marina"));
+const MarinaServices = require(path.resolve(__dirname, "../routes/marina/MarinaServices"));
+const MarinaQuotationServices = require(path.resolve(__dirname, "../routes/marina/MarinaQuotationServices"));
+const MarinaDebts = require(path.resolve(__dirname, "../routes/marina/MarinaDebts"));
+const MarinaPayments = require(path.resolve(__dirname, "../routes/marina/MarinaPayments"));
+const MarinaPaymentTypes = require(path.resolve(__dirname, "../routes/marina/MarinaPaymentTypes"));
 /* Rutas de Marina: Slips */
 const SlipOccupations = require(path.resolve(__dirname, "../routes/marina/SlipsOccupation"));
 const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
