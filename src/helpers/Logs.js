@@ -1,7 +1,7 @@
 const Log = {};
 
 /** función que ayuda a mostrar errores en la consola. */
-Log.ErrorLog = function(message) {
+Log.Error = function(message) {
   // Rojo
   console.log("\x1b[31m", message);
 };

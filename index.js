@@ -15,10 +15,12 @@ const Log = require("./src/helpers/Logs");
 const config = require("./src/server/config"); //importa la configuración
 
 // se pasa como parámetro la instancia de express al módulo de config
-const app = config(express());
+const { app, vars } = config(express());
 
-//start server on port: 8080
-const server = app.listen(8080, function() {
-  Log.Success("API inicializó exitósamente.");
-  Log.Success("server listening at http://localhost:" + server.address().port);
-});
+if (app) {
+  //start server
+  app.listen(vars.port, function() {
+    Log.Success("API inicializó exitosamente.");
+    Log.Success("Server escuchando en: " + vars.host);
+  });
+}

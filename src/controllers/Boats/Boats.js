@@ -1,18 +1,14 @@
-const Log = require("../helpers/Logs");
-const newError = require("../helpers/newError");
-const Query = require("../helpers/query");
-
 // Marina - Controller
 const Boats = {};
 
 /* Trae la lista de botes que pertenecen a un cliente
 mediante el id del cliente. */
-Boats.GetBoatsByClient = mysqlConnection => {
+Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "clientId" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
 
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
@@ -81,6 +77,7 @@ Boats.GetBoatsByClient = mysqlConnection => {
           );
         })
         .catch(error => {
+          console.log(error);
           next(error);
         });
     } catch (error) {
@@ -90,16 +87,17 @@ Boats.GetBoatsByClient = mysqlConnection => {
   };
 };
 
-Boats.PutBoat = mysqlConnection => {
+Boats.PutBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de clientId */
-      if (isNaN(parseInt(req.params.id)))
-        next(newError('el param "clientId" no es un número válido.', 500));
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
 
-      /* Valida manualmente si el nombre del barco es un string alfanumérico válido */
-      if (!/^[a-z0-9]+$/i.test(req.params.name))
-        next(newError('el param "name" no es un string válido.', 500));
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+      decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 400));
 
       let boat = req.body.boat;
       let captain = req.body.captain;
@@ -108,7 +106,7 @@ Boats.PutBoat = mysqlConnection => {
       let electricity = req.body.electricity;
       let documents = req.body.documents;
 
-      /* Promise bien chonchote para insertar un barco 
+      /* Promise bien chonchote para insertar un barco
       Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
       En los casos de engines, electricity y documents, se hacen los inserts en paralelo
       si son más de uno. */
@@ -187,11 +185,11 @@ Boats.PutBoat = mysqlConnection => {
           if (documents)
             documents.forEach(doc => {
               Promises.push(
-                Query(
-                  mysqlConnection,
-                  "CALL SP_CREATE_BOAT_DOCUMENT (?,?,?);",
-                  [boatId, doc.boat_document_type_id, doc.url]
-                )
+                Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
+                  decodeURIComponent(req.params.name),
+                  doc.boat_document_type_id,
+                  doc.url
+                ])
               );
             });
 
@@ -220,23 +218,92 @@ Boats.PutBoat = mysqlConnection => {
   };
 };
 
-Boats.DeleteBoat = mysqlConnection => {
+Boats.PatchBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      console.log(req.params);
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
+
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+      decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 400));
+
+      Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
+        req.params.id,
+        decodeURIComponent(req.params.name),
+        req.body.boat.name,
+        req.body.boat.model,
+        req.body.boat.loa,
+        req.body.boat.draft,
+        req.body.boat.beam
+      ])
+        .then(() => {
+          res.status(200).send({ status: "barco actualizado." });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
+    try {
       /* Elimina el barco */
       Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
         req.params.id,
-        req.params.name
+        decodeURIComponent(req.params.name)
       ])
         .then(result => {
-          /* retorna un status con el id */
-          res.status(200).send(
-            JSON.stringify({
-              status:
-                "Barco eliminado correctamente. Id: " + result[0][0][0].boat_id
+          /* retorna un status con el id. con el id del bote hay que hacer
+          borrado lógico del resto de información del bote en las otras tablas. */
+          let boatId = result[0][0][0].boat_id;
+
+          /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
+          eléctricas y motores de cada barco. */
+          let Promises = [
+            Query(mysqlConnection, "CALL SP_DELETE_CAPTAIN_BY_BOAT (?);", [
+              boatId
+            ]),
+            Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOAT (?);", [
+              boatId
+            ]),
+            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOAT (?);", [
+              boatId
+            ]),
+            Query(
+              mysqlConnection,
+              "CALL SP_DELETE_BOAT_ELECTRICITY_BY_BOAT (?);",
+              [boatId]
+            ),
+            Query(
+              mysqlConnection,
+              "CALL SP_DELETE_BOAT_DOCUMENTS_BY_BOAT (?);",
+              [boatId]
+            )
+          ];
+
+          /* Realiza todos los deletes juntos y devuelve el id del bote con un mensaje. */
+          Promise.all(Promises)
+            .then(() => {
+              res.status(200).send(
+                JSON.stringify({
+                  status: "Barco eliminado correctamente. Id: " + boatId
+                })
+              );
             })
-          );
+            .catch(error => {
+              console.log(error);
+              next(error);
+            });
         })
         .catch(error => {
           /* retorna el mensaje de error */
