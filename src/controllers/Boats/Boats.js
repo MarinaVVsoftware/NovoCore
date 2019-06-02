@@ -257,37 +257,47 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
 Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(req.params.id))
+        next(newError('el param "clientId" no es un número válido.', 400));
+
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+     decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 400));
+
       /* Elimina el barco */
       Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
-        .then(result => {
-          /* retorna un status con el id. con el id del bote hay que hacer
-          borrado lógico del resto de información del bote en las otras tablas. */
-          let boatId = result[0][0][0].boat_id;
-
+        .then(() => {
           /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
           eléctricas y motores de cada barco. */
           let Promises = [
-            Query(mysqlConnection, "CALL SP_DELETE_CAPTAIN_BY_BOAT (?);", [
-              boatId
-            ]),
-            Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOAT (?);", [
-              boatId
-            ]),
-            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOAT (?);", [
-              boatId
-            ]),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_ELECTRICITY_BY_BOAT (?);",
-              [boatId]
+              "CALL SP_DELETE_CAPTAIN_BY_BOATNAME (?,?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
             ),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_DOCUMENTS_BY_BOAT (?);",
-              [boatId]
+              "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME (?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
+            ),
+            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOATNAME (?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
+            ]),
+            Query(
+              mysqlConnection,
+              "CALL SP_DELETE_BOAT_ELECTRICITY_BY_BOATNAME (?,?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
+            ),
+            Query(
+              mysqlConnection,
+              "CALL SP_DELETE_BOAT_DOCUMENTS_BY_BOATNAME (?,?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
             )
           ];
 
@@ -296,7 +306,9 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
             .then(() => {
               res.status(200).send(
                 JSON.stringify({
-                  status: "Barco eliminado correctamente. Id: " + boatId
+                  status:
+                    "Barco eliminado correctamente. Bote: " +
+                    decodeURIComponent(req.params.name)
                 })
               );
             })

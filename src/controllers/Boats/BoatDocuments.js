@@ -5,12 +5,17 @@ const BoatDocuments = {};
 BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de clientId */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_BOAT(?);", [
+      Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_BOATNAME(?,?);", [
+        req.params.id,
         decodeURIComponent(req.params.name)
       ])
         .then(result => {
