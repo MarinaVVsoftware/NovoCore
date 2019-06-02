@@ -13,7 +13,7 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
       let Promises = [
-        Query(mysqlConnection, "CALL SP_READ_BOATS_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_Boats_GetByClient (?);", [
           req.params.id
         ]),
         Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_CLIENT (?);", [
@@ -110,7 +110,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
       Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
       En los casos de engines, electricity y documents, se hacen los inserts en paralelo
       si son más de uno. */
-      Query(mysqlConnection, "CALL SP_PUT_BOAT_BY_NAME (?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PutBoat (?,?,?,?,?,?);", [
         boat.client_id,
         boat.name,
         boat.model,
@@ -231,16 +231,16 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
 Boats.PatchBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      /* Valida manualmente el tipado de clientId */
+      /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "clientId" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PatchBoat (?,?,?,?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.body.boat.name,
@@ -277,7 +277,7 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 400));
 
       /* Elimina el barco */
-      Query(mysqlConnection, "CALL SP_DELETE_BOAT (?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_DeleteBoat (?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
