@@ -5,7 +5,7 @@ const BoatDocumentTypes = {};
 BoatDocumentTypes.GetBoatDocumentTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENT_TYPES();")
+      Query(mysqlConnection, "CALL SP_BoatDocumentTypes_GetTypes();")
         .then(result => {
           res.status(200).send({ boatDocuments: result[0][0] });
         })

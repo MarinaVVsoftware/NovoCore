@@ -155,8 +155,8 @@ Marina.ReadList = (newError, Query, mysqlConnection) => {
             Promises.push(
               Query(
                 mysqlConnection,
-                "CALL SP_READ_BOAT_ELECTRICITY_BY_BOATNAME (?)",
-                [element.boat_name]
+                "CALL SP_BoatElectricity_GetByBoat (?,?)",
+                [element.client_id, element.boat_name]
               )
             );
             quotations.push(element);

@@ -10,12 +10,12 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
-    "/api/boats/:name/boat-documents/",
+    "/api/clients/:id/boats/:name/boat-documents",
     validate({ params: Schema.ParamsGetBoatDocuments }),
     BoatDocuments.GetBoatDocuments(...instances)
   );
   router.put(
-    "/api/boats/:name/boat-documents/",
+    "/api/clients/:id/boats/:name/boat-documents/",
     validate({
       params: Schema.ParamsPutBoatDocuments,
       body: Schema.BodyPutBoatDocuments
@@ -23,7 +23,7 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
     BoatDocuments.PutBoatDocuments(...instances)
   );
   router.put(
-    "/api/boats/:name/boat-documents/:typeid",
+    "/api/clients/:id/boats/:name/boat-documents/:typeid",
     validate({
       params: Schema.ParamsPutBoatDocumentsByType,
       body: Schema.BodyPutBoatDocumentsByType

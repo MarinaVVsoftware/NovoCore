@@ -6,19 +6,25 @@ const BoatDocumentsSchema = {};
 /* Params -> GetBoatDocuments */
 BoatDocumentsSchema.ParamsGetBoatDocuments = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
   }
 };
 
-/* Params -> PutBoat Documents */
+/* Params -> PutBoatDocuments */
 BoatDocumentsSchema.ParamsPutBoatDocuments = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -56,8 +62,11 @@ BoatDocumentsSchema.BodyPutBoatDocuments = {
 
 BoatDocumentsSchema.ParamsPutBoatDocumentsByType = {
   type: "object",
-  required: ["name", "typeid"],
+  required: ["id", "name", "typeid"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     },
@@ -73,11 +82,8 @@ BoatDocumentsSchema.BodyPutBoatDocumentsByType = {
   properties: {
     document: {
       type: "object",
-      required: ["boat_document_type_id", "url"],
+      required: ["url"],
       properties: {
-        boat_document_type_id: {
-          type: "number"
-        },
         url: {
           type: "string"
         }

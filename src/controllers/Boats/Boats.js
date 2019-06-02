@@ -19,10 +19,10 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_CLIENT (?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_BOAT_ELECTRICITY_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_BoatElectricity_GetByClient (?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_BoatDocuments_GetByClient (?);", [
           req.params.id
         ])
       ];
@@ -90,9 +90,9 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
 Boats.PutBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      /* Valida manualmente el tipado de clientId */
+      /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "clientId" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
@@ -175,8 +175,13 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_CREATE_BOAT_ELECTRICITY (?,?,?);",
-                  [boatId, electr.cable_type_id, electr.socket_type_id]
+                  "CALL SP_BoatElectricity_PostByBoat (?,?,?);",
+                  [
+                    req.params.id,
+                    decodeURIComponent(req.params.name),
+                    electr.cable_type_id,
+                    electr.socket_type_id
+                  ]
                 )
               );
             });
@@ -185,11 +190,16 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           if (documents)
             documents.forEach(doc => {
               Promises.push(
-                Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
-                  decodeURIComponent(req.params.name),
-                  doc.boat_document_type_id,
-                  doc.url
-                ])
+                Query(
+                  mysqlConnection,
+                  "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);",
+                  [
+                    req.params.id,
+                    decodeURIComponent(req.params.name),
+                    doc.boat_document_type_id,
+                    doc.url
+                  ]
+                )
               );
             });
 
@@ -257,9 +267,9 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
 Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      /* Valida manualmente el tipado de clientId */
+      /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "clientId" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
      decodifica el string de la uri. %20 significa espacio. */
@@ -267,7 +277,7 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 400));
 
       /* Elimina el barco */
-      Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
+      Query(mysqlConnection, "CALL SP_DELETE_BOAT (?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
@@ -291,12 +301,12 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
             ]),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_ELECTRICITY_BY_BOATNAME (?,?);",
+              "CALL SP_Boatelectricity_DeleteByBoat (?,?);",
               [req.params.id, decodeURIComponent(req.params.name)]
             ),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_DOCUMENTS_BY_BOATNAME (?,?);",
+              "CALL SP_BoatDocuments_DeleteByBoat (?,?);",
               [req.params.id, decodeURIComponent(req.params.name)]
             )
           ];
