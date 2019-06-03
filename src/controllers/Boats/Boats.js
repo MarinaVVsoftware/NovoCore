@@ -182,7 +182,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_BoatElectricity_PostByBoat(?,?,?);",
+                  "CALL SP_BoatElectricity_PostByBoat(?,?,?,?);",
                   [
                     req.params.id,
                     decodeURIComponent(req.params.name),

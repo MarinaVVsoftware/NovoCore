@@ -44,7 +44,7 @@ Clients.Create = function(mysqlConnection) {
   return function(req, res, next) {
     try {
       mysqlConnection.query(
-        "CALL SP_CREATE_CLIENTS(?,?,?,?,?,?,?,?,?);",
+        "CALL SP_CREATE_CLIENTS(?,?,?,?,?,?,?,?);",
         [
           req.body.status_id,
           req.body.rol_id,
@@ -53,12 +53,11 @@ Clients.Create = function(mysqlConnection) {
           req.body.email,
           req.body.phone,
           req.body.address,
-          req.body.creation_date,
           req.body.electronic_wallet_id
         ],
         (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER CREATED" });
+          if (err) next("Mysql Error: " + err);
+          else res.status(200).send({ status: "USER CREATED" });
         }
       );
     } catch (error) {

@@ -46,7 +46,7 @@ BoatElectricity.PostBoatElectricity = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_BoatElectricity_PostByBoat (?,?,?);", [
+      Query(mysqlConnection, "CALL SP_BoatElectricity_PostByBoat (?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.body.boatElectricity.cableTypeId,

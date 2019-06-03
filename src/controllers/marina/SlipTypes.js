@@ -5,7 +5,7 @@ const SlipTypes = {};
 SlipTypes.GetSlipTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_SLIP_TYPES();")
+      Query(mysqlConnection, "CALL SP_SlipTypes_GetSlipTypes();")
         .then(result => {
           res.status(200).send({ slipTypes: result[0][0] });
         })
