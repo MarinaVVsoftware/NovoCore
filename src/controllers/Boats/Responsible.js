@@ -14,7 +14,7 @@ Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_RESPONSABLE(?, ?);", [
+      Query(mysqlConnection, "CALL SP_Responsible_GetByBoat(?, ?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
@@ -46,19 +46,15 @@ Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(
-        mysqlConnection,
-        "CALL SP_PUT_RESPONSABLE_BY_BOAT(?, ?,?,?,?,?,?);",
-        [
-          req.params.id,
-          decodeURIComponent(req.params.name),
-          req.body.responsable.name,
-          req.body.responsable.phone,
-          req.body.responsable.email,
-          req.body.responsable.paymentPermission,
-          req.body.responsable.aceptationPermission
-        ]
-      )
+      Query(mysqlConnection, "CALL SP_Responsible_PutByBoat(?,?,?,?,?,?,?);", [
+        req.params.id,
+        decodeURIComponent(req.params.name),
+        req.body.responsable.name,
+        req.body.responsable.phone,
+        req.body.responsable.email,
+        req.body.responsable.paymentPermission,
+        req.body.responsable.aceptationPermission
+      ])
         .then(result => {
           res.status(200).send({ status: "Capitan creado o actualizado." });
         })
@@ -87,7 +83,7 @@ Responsible.DeleteResponsable = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME(?, ?);", [
+      Query(mysqlConnection, "CALL SP_Responsible_DeleteByBoat(?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])

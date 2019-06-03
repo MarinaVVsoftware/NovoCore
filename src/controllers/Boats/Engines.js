@@ -14,7 +14,7 @@ Engines.GetEngines = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_BOAT(?, ?);", [
+      Query(mysqlConnection, "CALL SP_Engines_GetByBoat(?, ?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
@@ -46,7 +46,7 @@ Engines.PostEngine = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_CREATE_ENGINE_BY_BOAT(?, ?, ?, ?);", [
+      Query(mysqlConnection, "CALL SP_Engines_PostByBoat(?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.body.engine.model,
@@ -87,7 +87,7 @@ Engines.PutEngine = (newError, Query, mysqlConnection) => {
       if (isNaN(req.params.engineid))
         next(newError('el param "engineid" no es un número válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_UPDATE_ENGINE_BY_ID(?, ?, ?, ?, ?);", [
+      Query(mysqlConnection, "CALL SP_Engines_PutEngineById(?,?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.params.engineid,
@@ -128,7 +128,7 @@ Engines.DeleteEngine = (newError, Query, mysqlConnection) => {
       if (isNaN(req.params.engineid))
         next(newError('el param "engineid" no es un número válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_ID(?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Engines_DeleteById(?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.params.engineid

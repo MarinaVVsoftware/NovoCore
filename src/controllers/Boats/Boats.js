@@ -13,16 +13,16 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
       let Promises = [
-        Query(mysqlConnection, "CALL SP_Boats_GetByClient (?);", [
+        Query(mysqlConnection, "CALL SP_Boats_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_Engines_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_BoatElectricity_GetByClient (?);", [
+        Query(mysqlConnection, "CALL SP_BoatElectricity_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_BoatDocuments_GetByClient (?);", [
+        Query(mysqlConnection, "CALL SP_BoatDocuments_GetByClient(?);", [
           req.params.id
         ])
       ];
@@ -110,7 +110,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
       Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
       En los casos de engines, electricity y documents, se hacen los inserts en paralelo
       si son más de uno. */
-      Query(mysqlConnection, "CALL SP_Boats_PutBoat (?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PutBoat(?,?,?,?,?,?);", [
         boat.client_id,
         boat.name,
         boat.model,
@@ -130,14 +130,19 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           /* Si se estableció un capitán, se inserta. */
           if (captain)
             Promises.push(
-              Query(mysqlConnection, "CALL SP_CREATE_CAPTAIN (?,?,?,?,?,?);", [
-                boatId,
-                captain.name,
-                captain.phone,
-                captain.email,
-                captain.payment_permission,
-                captain.aceptation_permission
-              ])
+              Query(
+                mysqlConnection,
+                "CALL SP_Captains_PutByBoat(?,?,?,?,?,?,?);",
+                [
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
+                  captain.name,
+                  captain.phone,
+                  captain.email,
+                  captain.payment_permission,
+                  captain.aceptation_permission
+                ]
+              )
             );
 
           /* Si se estableció un responsable, se inserta. */
@@ -145,9 +150,10 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
             Promises.push(
               Query(
                 mysqlConnection,
-                "CALL SP_CREATE_RESPONSABLE (?,?,?,?,?,?);",
+                "CALL SP_Responsible_PutByBoat(?,?,?,?,?,?,?);",
                 [
-                  boatId,
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
                   responsable.name,
                   responsable.phone,
                   responsable.email,
@@ -161,8 +167,9 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           if (engines)
             engines.forEach(engine => {
               Promises.push(
-                Query(mysqlConnection, "CALL SP_CREATE_ENGINE (?,?,?);", [
-                  boatId,
+                Query(mysqlConnection, "CALL SP_Engines_PostByBoat(?,?,?,?);", [
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
                   engine.model,
                   engine.brand
                 ])
@@ -175,7 +182,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_BoatElectricity_PostByBoat (?,?,?);",
+                  "CALL SP_BoatElectricity_PostByBoat(?,?,?);",
                   [
                     req.params.id,
                     decodeURIComponent(req.params.name),
@@ -192,7 +199,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);",
+                  "CALL SP_BoatDocuments_PutByBoat(?,?,?,?);",
                   [
                     req.params.id,
                     decodeURIComponent(req.params.name),
@@ -240,7 +247,7 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_Boats_PatchBoat (?,?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PatchBoat(?,?,?,?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.body.boat.name,
@@ -277,7 +284,7 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
         next(newError('el param "name" no es un string válido.', 400));
 
       /* Elimina el barco */
-      Query(mysqlConnection, "CALL SP_Boats_DeleteBoat (?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_DeleteBoat(?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
@@ -285,17 +292,15 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
           /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
           eléctricas y motores de cada barco. */
           let Promises = [
-            Query(
-              mysqlConnection,
-              "CALL SP_DELETE_CAPTAIN_BY_BOATNAME (?,?);",
-              [req.params.id, decodeURIComponent(req.params.name)]
-            ),
-            Query(
-              mysqlConnection,
-              "CALL SP_DELETE_RESPONSABLE_BY_BOATNAME (?);",
-              [req.params.id, decodeURIComponent(req.params.name)]
-            ),
-            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOATNAME (?,?);", [
+            Query(mysqlConnection, "CALL SP_Captains_DeleteByBoat(?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
+            ]),
+            Query(mysqlConnection, "CALL SP_Responsible_DeleteByBoat (?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
+            ]),
+            Query(mysqlConnection, "CALL SP_Engines_DeleteByBoat(?,?);", [
               req.params.id,
               decodeURIComponent(req.params.name)
             ]),
