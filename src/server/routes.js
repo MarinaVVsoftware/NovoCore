@@ -92,9 +92,29 @@ const SocketTypes = require(path.resolve(
   __dirname,
   "../routes/boats/SocketTypes"
 ));
+/* Import de Dropbox */
+const Dropbox = require(path.resolve(__dirname, "../routes/Dropbox"));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
-  const instances = [app, router, newError, Query, validate, mysqlConnection];
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox
+) => {
+  const instances = [
+    app,
+    router,
+    newError,
+    Query,
+    validate,
+    mysqlConnection,
+    multer,
+    dropbox
+  ];
 
   /* Middleware: Autenticación */
   //Auth(app);
@@ -136,6 +156,9 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   Engines(...instances);
   Responsible(...instances);
   SocketTypes(...instances);
+
+  /* Ruta de Dropbox */
+  Dropbox(...instances);
 
   /* Middleware: Manejo de Errores */
   ErrorHandler(app);
