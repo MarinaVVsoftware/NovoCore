@@ -92,8 +92,6 @@ const SocketTypes = require(path.resolve(
   __dirname,
   "../routes/boats/SocketTypes"
 ));
-/* Import de Dropbox */
-const Dropbox = require(path.resolve(__dirname, "../routes/Dropbox"));
 
 module.exports = (
   app,
@@ -156,9 +154,6 @@ module.exports = (
   Engines(...instances);
   Responsible(...instances);
   SocketTypes(...instances);
-
-  /* Ruta de Dropbox */
-  Dropbox(...instances);
 
   /* Middleware: Manejo de Errores */
   ErrorHandler(app);

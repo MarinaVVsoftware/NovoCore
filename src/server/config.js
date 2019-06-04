@@ -10,7 +10,7 @@ const envs = require("./envs");
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
 const mysql = require(path.resolve(__dirname, "../helpers/database"));
-const dropbox = require("../helpers/dropbox");
+const Dropbox = require("../helpers/Dropbox");
 const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
 var { Validator } = require("express-json-validator-middleware");
@@ -86,7 +86,7 @@ module.exports = app => {
   const mysqlConnection = mysql(mysqlConfig);
 
   // Obtiene la instancia de dropbox
-  const dropboxManager = dropbox(dropboxConfig);
+  const dropbox = new Dropbox(dropboxConfig);
 
   /* ROUTES */
   // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
@@ -104,11 +104,11 @@ module.exports = app => {
     validate,
     mysqlConnection,
     Multer,
-    dropboxManager
+    dropbox
   );
 
   /* Si no se instancian las dependencias clave, truena el server. */
-  if (mysqlConnection && dropboxManager) {
+  if (mysqlConnection) {
     Log.Success("Configuración del servidor establecida.");
     return { app, vars };
   } else {
