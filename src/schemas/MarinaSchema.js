@@ -5,6 +5,17 @@ const MarinaServicesSchema = {};
 const MarinaPaymentTypeSchema = {};
 const MarinaQuotationServicesSchema = {};
 
+MarinaSchema.read = {
+	type: "object",
+	required: [ "id" ],
+	properties: {
+		id: {
+			type: "string",
+			pattern: "^[0-9]*$"
+		}
+	}
+};
+
 MarinaSchema.readList = {
 	type: "object",
 	required: [ "filterBy" ],

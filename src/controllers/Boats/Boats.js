@@ -13,16 +13,16 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
       /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
       eléctricas y motores de cada barco. */
       let Promises = [
-        Query(mysqlConnection, "CALL SP_READ_BOATS_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_Boats_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_ENGINES_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_Engines_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_BOAT_ELECTRICITY_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_BoatElectricity_GetByClient(?);", [
           req.params.id
         ]),
-        Query(mysqlConnection, "CALL SP_READ_BOAT_DOCUMENTS_BY_CLIENT (?);", [
+        Query(mysqlConnection, "CALL SP_BoatDocuments_GetByClient(?);", [
           req.params.id
         ])
       ];
@@ -90,9 +90,9 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
 Boats.PutBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      /* Valida manualmente el tipado de clientId */
+      /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "clientId" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
@@ -110,7 +110,7 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
       Valida cada objeto que es requerido o no, y si contiene datos, entonces los inserta.
       En los casos de engines, electricity y documents, se hacen los inserts en paralelo
       si son más de uno. */
-      Query(mysqlConnection, "CALL SP_PUT_BOAT_BY_NAME (?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PutBoat(?,?,?,?,?,?);", [
         boat.client_id,
         boat.name,
         boat.model,
@@ -130,14 +130,19 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           /* Si se estableció un capitán, se inserta. */
           if (captain)
             Promises.push(
-              Query(mysqlConnection, "CALL SP_CREATE_CAPTAIN (?,?,?,?,?,?);", [
-                boatId,
-                captain.name,
-                captain.phone,
-                captain.email,
-                captain.payment_permission,
-                captain.aceptation_permission
-              ])
+              Query(
+                mysqlConnection,
+                "CALL SP_Captains_PutByBoat(?,?,?,?,?,?,?);",
+                [
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
+                  captain.name,
+                  captain.phone,
+                  captain.email,
+                  captain.payment_permission,
+                  captain.aceptation_permission
+                ]
+              )
             );
 
           /* Si se estableció un responsable, se inserta. */
@@ -145,9 +150,10 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
             Promises.push(
               Query(
                 mysqlConnection,
-                "CALL SP_CREATE_RESPONSABLE (?,?,?,?,?,?);",
+                "CALL SP_Responsible_PutByBoat(?,?,?,?,?,?,?);",
                 [
-                  boatId,
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
                   responsable.name,
                   responsable.phone,
                   responsable.email,
@@ -161,8 +167,9 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           if (engines)
             engines.forEach(engine => {
               Promises.push(
-                Query(mysqlConnection, "CALL SP_CREATE_ENGINE (?,?,?);", [
-                  boatId,
+                Query(mysqlConnection, "CALL SP_Engines_PostByBoat(?,?,?,?);", [
+                  req.params.id,
+                  decodeURIComponent(req.params.name),
                   engine.model,
                   engine.brand
                 ])
@@ -175,8 +182,13 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_CREATE_BOAT_ELECTRICITY (?,?,?);",
-                  [boatId, electr.cable_type_id, electr.socket_type_id]
+                  "CALL SP_BoatElectricity_PostByBoat(?,?,?,?);",
+                  [
+                    req.params.id,
+                    decodeURIComponent(req.params.name),
+                    electr.cable_type_id,
+                    electr.socket_type_id
+                  ]
                 )
               );
             });
@@ -185,11 +197,16 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           if (documents)
             documents.forEach(doc => {
               Promises.push(
-                Query(mysqlConnection, "CALL SP_PUT_BOAT_DOCUMENT (?,?,?);", [
-                  decodeURIComponent(req.params.name),
-                  doc.boat_document_type_id,
-                  doc.url
-                ])
+                Query(
+                  mysqlConnection,
+                  "CALL SP_BoatDocuments_PutByBoat(?,?,?,?);",
+                  [
+                    req.params.id,
+                    decodeURIComponent(req.params.name),
+                    doc.boat_document_type_id,
+                    doc.url
+                  ]
+                )
               );
             });
 
@@ -221,16 +238,16 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
 Boats.PatchBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      /* Valida manualmente el tipado de clientId */
+      /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "clientId" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 400));
 
       /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_UPDATE_BOAT (?,?,?,?,?,?,?);", [
+      Query(mysqlConnection, "CALL SP_Boats_PatchBoat(?,?,?,?,?,?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name),
         req.body.boat.name,
@@ -257,37 +274,45 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
 Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
+      /* Valida manualmente si el nombre del barco es un string alfanumérico válido.
+     decodifica el string de la uri. %20 significa espacio. */
+      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
+        next(newError('el param "name" no es un string válido.', 400));
+
       /* Elimina el barco */
-      Query(mysqlConnection, "CALL SP_DELETE_BOAT (?, ?);", [
+      Query(mysqlConnection, "CALL SP_Boats_DeleteBoat(?,?);", [
         req.params.id,
         decodeURIComponent(req.params.name)
       ])
-        .then(result => {
-          /* retorna un status con el id. con el id del bote hay que hacer
-          borrado lógico del resto de información del bote en las otras tablas. */
-          let boatId = result[0][0][0].boat_id;
-
+        .then(() => {
           /* trae todos los barcos del cliente, y junto trae todos los engines, relaciones
           eléctricas y motores de cada barco. */
           let Promises = [
-            Query(mysqlConnection, "CALL SP_DELETE_CAPTAIN_BY_BOAT (?);", [
-              boatId
+            Query(mysqlConnection, "CALL SP_Captains_DeleteByBoat(?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
             ]),
-            Query(mysqlConnection, "CALL SP_DELETE_RESPONSABLE_BY_BOAT (?);", [
-              boatId
+            Query(mysqlConnection, "CALL SP_Responsible_DeleteByBoat (?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
             ]),
-            Query(mysqlConnection, "CALL SP_DELETE_ENGINE_BY_BOAT (?);", [
-              boatId
+            Query(mysqlConnection, "CALL SP_Engines_DeleteByBoat(?,?);", [
+              req.params.id,
+              decodeURIComponent(req.params.name)
             ]),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_ELECTRICITY_BY_BOAT (?);",
-              [boatId]
+              "CALL SP_Boatelectricity_DeleteByBoat (?,?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
             ),
             Query(
               mysqlConnection,
-              "CALL SP_DELETE_BOAT_DOCUMENTS_BY_BOAT (?);",
-              [boatId]
+              "CALL SP_BoatDocuments_DeleteByBoat (?,?);",
+              [req.params.id, decodeURIComponent(req.params.name)]
             )
           ];
 
@@ -296,7 +321,9 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
             .then(() => {
               res.status(200).send(
                 JSON.stringify({
-                  status: "Barco eliminado correctamente. Id: " + boatId
+                  status:
+                    "Barco eliminado correctamente. Bote: " +
+                    decodeURIComponent(req.params.name)
                 })
               );
             })

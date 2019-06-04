@@ -60,5 +60,8 @@ module.exports = {
       password: process.env.DB_PROD_PASS,
       database: process.env.DB_PROD_NAME
     }
+  },
+  dropbox: {
+    key: process.env.DROPBOX_KEY
   }
 };

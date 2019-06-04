@@ -5,7 +5,7 @@ const CableTypes = {};
 CableTypes.GetCableTypes = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_CABLE_TYPES();")
+      Query(mysqlConnection, "CALL SP_CableTypes_GetTypes();")
         .then(result => {
           res.status(200).send({ cableTypes: result[0][0] });
         })

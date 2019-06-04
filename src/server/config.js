@@ -5,10 +5,12 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
 const monitor = require("express-status-monitor");
+const multer = require("multer");
 const envs = require("./envs");
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
 const mysql = require(path.resolve(__dirname, "../helpers/database"));
+const dropbox = require("../helpers/dropbox");
 const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
 var { Validator } = require("express-json-validator-middleware");
@@ -20,6 +22,7 @@ const Query = require(path.resolve(__dirname, "../helpers/query"));
 module.exports = app => {
   let redisConfig = {};
   let mysqlConfig = {};
+  let dropboxConfig = {};
   let vars = {};
   /* SETTINGS */
   //establece las configuraciones de host y port
@@ -45,6 +48,10 @@ module.exports = app => {
         app.set("host", "http://localhost:8085/");
         break;
     }
+
+    //carga de variables que no dependen del entorno
+    dropboxConfig = envs.dropbox;
+
     Log.Success(
       "\nVariables de entorno cargadas. Entorno: " + envs.env.NODE_ENV
     );
@@ -63,6 +70,7 @@ module.exports = app => {
   app.use(express.json());
   app.use(bodyParser.json());
   app.use(cors);
+  const Multer = multer();
 
   // crea el middleware para validación de endpoints
   var validator = new Validator({ allErrors: true });
@@ -74,19 +82,39 @@ module.exports = app => {
   // inicia el servicio de monitoreo
   app.use(monitor(monitorConfig));
 
+  // Obtiene el conector de mysql
   const mysqlConnection = mysql(mysqlConfig);
 
+  // Obtiene la instancia de dropbox
+  const dropboxManager = dropbox(dropboxConfig);
+
   /* ROUTES */
-  // recibe todas las instancias que debe propagar a través
-  // de los diferentes endpoints de la API.
-  routes(app, router, newError, Query, validate, mysqlConnection);
+  // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
+  // app - Objeto de la aplicación.
+  // router - Router de express.
+  // newError - Manejador personalizado de errores.
+  // Query - Función para la promesa de Mysql
+  // validate - Objeto del validador de Schemas.
+  // mysqlConnection - Conexión con mysql.
+  routes(
+    app,
+    router,
+    newError,
+    Query,
+    validate,
+    mysqlConnection,
+    Multer,
+    dropboxManager
+  );
 
   /* Si no se instancian las dependencias clave, truena el server. */
-  if (mysqlConnection) {
+  if (mysqlConnection && dropboxManager) {
     Log.Success("Configuración del servidor establecida.");
     return { app, vars };
   } else {
-    Log.Error("No se ha podido instanciar mysql. El servidor ha fallado.");
+    Log.Error(
+      "lgo ha fallado con las configuraciones de la API. El servidor ha fallado."
+    );
     return null;
   }
 };

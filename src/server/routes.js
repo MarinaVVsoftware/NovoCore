@@ -18,34 +18,41 @@ const Social_Reason = require(path.resolve(
 ));
 const Electronic_Wallet_Historic = require(path.resolve(
   __dirname,
-  "../routes/Electronic_Wallet_Historic"
+  "../routes/electronicWallet/Electronic_Wallet_Historic"
 ));
 const Electronic_wallet = require(path.resolve(
   __dirname,
-  "../routes/Electronic_Wallet"
+  "../routes/electronicWallet/Electronic_Wallet"
 ));
 const ElectronicSignature = require(path.resolve(
   __dirname,
-  "../routes/ElectronicSignature"
+  "../routes/electronicSignature/ElectronicSignature"
 ));
 /* Imports de Marina */
-const Marina = require(path.resolve(__dirname, "../routes/Marina"));
+const Marina = require(path.resolve(__dirname, "../routes/marina/Marina"));
 const MarinaServices = require(path.resolve(
   __dirname,
-  "../routes/MarinaServices"
+  "../routes/marina/MarinaServices"
 ));
 const MarinaQuotationServices = require(path.resolve(
   __dirname,
-  "../routes/MarinaQuotationServices"
+  "../routes/marina/MarinaQuotationServices"
 ));
-const MarinaDebts = require(path.resolve(__dirname, "../routes/MarinaDebts"));
+const MarinaQuotationTimelineTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationTimelineTypes"
+));
+const MarinaDebts = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaDebts"
+));
 const MarinaPayments = require(path.resolve(
   __dirname,
-  "../routes/MarinaPayments"
+  "../routes/marina/MarinaPayments"
 ));
 const MarinaPaymentTypes = require(path.resolve(
   __dirname,
-  "../routes/MarinaPaymentTypes"
+  "../routes/marina/MarinaPaymentTypes"
 ));
 /* Rutas de Marina: Slips */
 const SlipOccupations = require(path.resolve(
@@ -85,12 +92,31 @@ const SocketTypes = require(path.resolve(
   __dirname,
   "../routes/boats/SocketTypes"
 ));
+/* Import de Dropbox */
+const Dropbox = require(path.resolve(__dirname, "../routes/Dropbox"));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
-  const instances = [app, router, newError, Query, validate, mysqlConnection];
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox
+) => {
+  const instances = [
+    app,
+    router,
+    newError,
+    Query,
+    validate,
+    mysqlConnection,
+    multer,
+    dropbox
+  ];
 
   /* Middleware: Autenticación */
-  //Toma como argumento app para la verificación del JWT
   //Auth(app);
 
   /* Rutas del Modelo de Users y RRHH */
@@ -104,15 +130,16 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   Social_Reason(app, router, mysqlConnection);
   Electronic_Wallet_Historic(app, router, mysqlConnection);
   Electronic_wallet(app, router, mysqlConnection);
-  ElectronicSignature(app, router, mysqlConnection);
+  ElectronicSignature(...instances);
 
   /* Rutas del Modelo de Marina */
-  Marina(app, router, mysqlConnection);
-  MarinaServices(app, router, mysqlConnection);
-  MarinaQuotationServices(app, router, mysqlConnection);
-  MarinaDebts(app, router, mysqlConnection);
-  MarinaPayments(app, router, mysqlConnection);
-  MarinaPaymentTypes(app, router, mysqlConnection);
+  Marina(...instances);
+  MarinaServices(...instances);
+  MarinaQuotationServices(...instances);
+  MarinaQuotationTimelineTypes(...instances);
+  MarinaDebts(...instances);
+  MarinaPayments(...instances);
+  MarinaPaymentTypes(...instances);
 
   /* Rutas del modelo de Marina: Slips */
   SlipOccupations(...instances);
@@ -129,6 +156,9 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   Engines(...instances);
   Responsible(...instances);
   SocketTypes(...instances);
+
+  /* Ruta de Dropbox */
+  Dropbox(...instances);
 
   /* Middleware: Manejo de Errores */
   ErrorHandler(app);
