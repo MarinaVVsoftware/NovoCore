@@ -52,15 +52,22 @@ MarinaSchema.create = {
 	required: [
 		"boatId",
 		"quotationStatusId",
-		"mooringRateId",
+		"mooringTariffId",
 		"arrivalDate",
 		"departureDate",
 		"arrivalStatus",
+		"mooringTariff",
+		"loa",
 		"daysStay",
-		"discountStay",
+		"discountStayPercentage",
+		"currencyAmount",
 		"tax",
+		"subtotal",
 		"total",
-		"subtotal"
+		"monthlyQuotation",
+		"annualQuotation",
+		"semiannualQuotation",
+		"creationResponsable"
 	],
 	properties: {
 		boatId: {
@@ -69,7 +76,7 @@ MarinaSchema.create = {
 		quotationStatusId: {
 			type: "number"
 		},
-		mooringRateId: {
+		mooringTariffId: {
 			type: "number"
 		},
 		arrivalDate: {
@@ -81,19 +88,61 @@ MarinaSchema.create = {
 		arrivalStatus: {
 			type: "boolean"
 		},
+		mooringTariff: {
+			type: "number"
+		},
+		loa: {
+			type: "number"
+		},
 		daysStay: {
 			type: "number"
 		},
-		discountStay: {
+		discountStayPercentage: {
+			type: "number"
+		},
+		currencyAmount: {
 			type: "number"
 		},
 		tax: {
 			type: "number"
 		},
+		subtotal: {
+			type: "number"
+		},
 		total: {
 			type: "number"
 		},
-		subtotal: {
+		monthlyQuotation: {
+			type: "boolean"
+		},
+		annualQuotation: {
+			type: "boolean"
+		},
+		semiannualQuotation: {
+			type: "boolean"
+		},
+		creationResponsable: {
+			type: "string"
+		},
+		electricityTariff: {
+			type: "number"
+		},
+		totalElectricityDays: {
+			type: "number"
+		},
+		discountElectricityPercentage: {
+			type: "number"
+		},
+		currencyElectricityAmount: {
+			type: "number"
+		},
+		electricityTax: {
+			type: "number"
+		},
+		electricitySubtotal: {
+			type: "number"
+		},
+		electricityTotal: {
 			type: "number"
 		}
 	}
