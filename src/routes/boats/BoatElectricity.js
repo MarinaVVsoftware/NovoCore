@@ -12,14 +12,14 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
-    "/api/boats/:name/boat-electricity/",
+    "/api/clients/:id/boats/:name/boat-electricity/",
     validate({
       params: Schema.ParamsGetBoatElectricity
     }),
     BoatElectricity.GetBoatElectricity(...instances)
   );
   router.post(
-    "/api/boats/:name/boat-electricity/",
+    "/api/clients/:id/boats/:name/boat-electricity/",
     validate({
       params: Schema.ParamsPostBoatElectricity,
       body: Schema.BodyPostBoatElectricity
@@ -27,7 +27,7 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
     BoatElectricity.PostBoatElectricity(...instances)
   );
   router.put(
-    "/api/boats/:name/boat-electricity/:id",
+    "/api/clients/:id/boats/:name/boat-electricity/:electricityid",
     validate({
       params: Schema.ParamsPutBoatElectricity,
       body: Schema.BodyPutBoatElectricity
@@ -35,7 +35,7 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
     BoatElectricity.PutBoatElectricity(...instances)
   );
   router.delete(
-    "/api/boats/:name/boat-electricity/:id",
+    "/api/clients/:id/boats/:name/boat-electricity/:electricityid",
     validate({
       params: Schema.ParamsDeleteBoatElectricity
     }),

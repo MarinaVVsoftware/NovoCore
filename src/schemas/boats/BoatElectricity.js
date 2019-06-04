@@ -4,8 +4,11 @@ const BoatElectricitySchema = {};
 /* Params -> GetBoatElectricity */
 BoatElectricitySchema.ParamsGetBoatElectricity = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -15,8 +18,11 @@ BoatElectricitySchema.ParamsGetBoatElectricity = {
 /* Params -> PostBoatElectricity */
 BoatElectricitySchema.ParamsPostBoatElectricity = {
   type: "object",
-  required: ["name"],
+  required: ["id", "name"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     }
@@ -46,12 +52,15 @@ BoatElectricitySchema.BodyPostBoatElectricity = {
 /* Params -> PutBoatElectricity */
 BoatElectricitySchema.ParamsPutBoatElectricity = {
   type: "object",
-  required: ["name", "id"],
+  required: ["id", "name", "electricityid"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     },
-    id: {
+    electricityid: {
       type: "string"
     }
   }
@@ -80,12 +89,15 @@ BoatElectricitySchema.BodyPutBoatElectricity = {
 /* Params -> DeleteBoatElectricity */
 BoatElectricitySchema.ParamsDeleteBoatElectricity = {
   type: "object",
-  required: ["name", "id"],
+  required: ["id", "name", "electricityid"],
   properties: {
+    id: {
+      type: "string"
+    },
     name: {
       type: "string"
     },
-    id: {
+    electricityid: {
       type: "string"
     }
   }

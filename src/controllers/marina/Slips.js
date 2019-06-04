@@ -5,7 +5,7 @@ const Slips = {};
 Slips.GetSlips = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_SLIPS();")
+      Query(mysqlConnection, "CALL SP_Slips_GetSlips();")
         .then(result => {
           res.status(200).send({ slips: result[0][0] });
         })

@@ -1,13 +1,17 @@
 // BoatDocumentTypes - Controller
-const BoatDocumentTypes = {};
+const MarinaQuotationTimelineTypes = {};
 
 /* Trae la lista de BoatDocumentTypes */
-BoatDocumentTypes.GetBoatDocumentTypes = (newError, Query, mysqlConnection) => {
+MarinaQuotationTimelineTypes.GetTimelineTypes = (
+  newError,
+  Query,
+  mysqlConnection
+) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_BoatDocumentTypes_GetTypes();")
+      Query(mysqlConnection, "CALL SP_MarinaQuotationTimelineTypes_GetTypes();")
         .then(result => {
-          res.status(200).send({ boatDocuments: result[0][0] });
+          res.status(200).send({ TimelineTypes: result[0][0] });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -21,4 +25,4 @@ BoatDocumentTypes.GetBoatDocumentTypes = (newError, Query, mysqlConnection) => {
   };
 };
 
-module.exports = BoatDocumentTypes;
+module.exports = MarinaQuotationTimelineTypes;
