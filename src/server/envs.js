@@ -22,17 +22,20 @@ module.exports = {
     local: {
       host: process.env.REDIS_LOCAL_HOST,
       port: process.env.REDIS_LOCAL_PORT,
-      db: process.env.REDIS_LOCAL_DB
+      db: process.env.REDIS_LOCAL_DB,
+      password: process.env.REDIS_LOCAL_PASSWORD
     },
     dev: {
       host: process.env.REDIS_DEV_HOST,
       port: process.env.REDIS_DEV_PORT,
-      db: process.env.REDIS_DEV_DB
+      db: process.env.REDIS_DEV_DB,
+      password: process.env.REDIS_DEV_PASSWORD
     },
     prod: {
       host: process.env.REDIS_PROD_HOST,
       port: process.env.REDIS_PROD_PORT,
-      db: process.env.REDIS_PROD_DB
+      db: process.env.REDIS_PROD_DB,
+      password: process.env.REDIS_PROD_PASSWORD
     }
   },
   mysql: {

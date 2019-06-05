@@ -9,7 +9,8 @@ const multer = require("multer");
 const envs = require("./envs");
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
-const mysql = require(path.resolve(__dirname, "../helpers/database"));
+const Redis = require("../helpers/redis/RedisClient");
+const Mysql = require(path.resolve(__dirname, "../helpers/database"));
 const Dropbox = require("../helpers/Dropbox");
 const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
@@ -82,33 +83,28 @@ module.exports = app => {
   // inicia el servicio de monitoreo
   app.use(monitor(monitorConfig));
 
+  // Obtiene la instancia de redis
+  const redis = new Redis(redisConfig);
+
   // Obtiene el conector de mysql
-  const mysqlConnection = mysql(mysqlConfig);
+  const mysql = Mysql(mysqlConfig);
 
   // Obtiene la instancia de dropbox
   const dropbox = new Dropbox(dropboxConfig);
 
   /* ROUTES */
   // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
-  // app - Objeto de la aplicación.
-  // router - Router de express.
-  // newError - Manejador personalizado de errores.
-  // Query - Función para la promesa de Mysql
-  // validate - Objeto del validador de Schemas.
-  // mysqlConnection - Conexión con mysql.
-  routes(
-    app,
-    router,
-    newError,
-    Query,
-    validate,
-    mysqlConnection,
-    Multer,
-    dropbox
-  );
+  // app: Objeto de la aplicación.
+  // router: Router de express.
+  // newError: Manejador personalizado de errores.
+  // Query: Función para la promesa de Mysql
+  // validate: Objeto del validador de Schemas.
+  // mysqlConnection: Conexión con mysql.
+  // redis: Instancia de redis.
+  routes(app, router, newError, Query, validate, mysql, Multer, dropbox, redis);
 
   /* Si no se instancian las dependencias clave, truena el server. */
-  if (mysqlConnection) {
+  if (mysql) {
     Log.Success("Configuración del servidor establecida.");
     return { app, vars };
   } else {

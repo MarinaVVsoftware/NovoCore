@@ -4,8 +4,14 @@
 // necesarias.
 const path = require("path");
 const Log = require(path.resolve(__dirname, "../helpers/Logs"));
-const Auth = require(path.resolve(__dirname, "../routes/Auth"));
-const ErrorHandler = require(path.resolve(__dirname, "../routes/ErrorHandler"));
+/* Middlewares! */
+const Auth = require(path.resolve(__dirname, "../middlewares/Auth"));
+const ErrorHandler = require(path.resolve(
+  __dirname,
+  "../middlewares/ErrorHandler"
+));
+const RedisHandler = require("../middlewares/RedisHandler");
+
 /* Imports de Users y RRHH */
 const Users = require(path.resolve(__dirname, "../routes/Users"));
 const Roles = require(path.resolve(__dirname, "../routes/Roles"));
@@ -105,7 +111,8 @@ module.exports = (
   validate,
   mysqlConnection,
   multer,
-  dropbox
+  dropbox,
+  redis
 ) => {
   const instances = [
     app,
@@ -115,11 +122,13 @@ module.exports = (
     validate,
     mysqlConnection,
     multer,
-    dropbox
+    dropbox,
+    redis
   ];
 
   /* Middleware: Autenticación */
   //Auth(app);
+  RedisHandler(app, redis);
 
   /* Rutas del Modelo de Users y RRHH */
   Users(app, router, mysqlConnection);
