@@ -1,5 +1,6 @@
 const path = require("path");
 const MarinaQuotationTimeline = require(path.resolve(
+  __dirname,
   "../../controllers/marina/MarinaQuotationTimeline"
 ));
 const Schema = require(path.resolve(
