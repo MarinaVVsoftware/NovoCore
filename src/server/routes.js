@@ -10,7 +10,7 @@ const ErrorHandler = require(path.resolve(
   __dirname,
   "../middlewares/ErrorHandler"
 ));
-const RedisHandler = require("../middlewares/RedisHandler");
+const redisHandler = require("../middlewares/RedisHandler");
 
 /* Imports de Users y RRHH */
 const Users = require(path.resolve(__dirname, "../routes/Users"));
@@ -123,12 +123,12 @@ module.exports = (
     mysqlConnection,
     multer,
     dropbox,
-    redis
+    redis,
+    redisHandler
   ];
 
   /* Middleware: Autenticación */
   //Auth(app);
-  RedisHandler(app, redis);
 
   /* Rutas del Modelo de Users y RRHH */
   Users(app, router, mysqlConnection);
