@@ -16,7 +16,7 @@ module.exports = (
   multer,
   dropbox
 ) => {
-  const instances = [newError, dropbox];
+  const instances = [newError, Query, mysqlConnection, dropbox];
 
   router.get(
     "/api/clients/:id/boats/:name/boat-documents",

@@ -37,7 +37,12 @@ BoatDocuments.GetBoatDocuments = (newError, Query, mysqlConnection) => {
 };
 
 /* Inserta todos los documentos de un bote en conjunto. */
-BoatDocuments.PutBoatDocuments = (newError, dropbox) => {
+BoatDocuments.PutBoatDocuments = (
+  newError,
+  Query,
+  mysqlConnection,
+  dropbox
+) => {
   return (req, res, next) => {
     try {
       /* Valida manualmente el tipado de id */
@@ -69,15 +74,13 @@ BoatDocuments.PutBoatDocuments = (newError, dropbox) => {
       let UploadPromises = [];
       let LinkPromises = [];
       let SqlPromises = [];
-      let filenames = [];
 
       /* Construye los nombres de todos los archivos */
-      let date = Date.now();
+      let date = Date.now(); // timestamp para el nombre del archivo
       req.files.forEach((file, index) => {
-        if (body.documents[index].sent) {
-          console.log("documento " + ++index + " es nulo. abortado.");
-          return;
-        }
+        // si en el body se especifica que no se recibió archivo, se descarta
+        if (body.documents[index].sent) return;
+        // calcula la extensión del archivo
         const extension = (fileExtension = mime.extension(file.mimetype));
         const extensions = constants.boatDocuments.extensions;
 
@@ -89,10 +92,8 @@ BoatDocuments.PutBoatDocuments = (newError, dropbox) => {
             decodeURIComponent(req.params.name) +
             "/";
           let name = ++index + "-" + date + "." + extension;
-          filenames.push(path + name);
 
           UploadPromises.push(dropbox.UploadFile(path + name, file.buffer));
-          LinkPromises.push(dropbox.GetLink(path + name));
         } else {
           next(
             newError("No se proporcionó un archivo con extensión válida.", 400)
@@ -100,40 +101,49 @@ BoatDocuments.PutBoatDocuments = (newError, dropbox) => {
         }
       });
 
+      /* Sube todos los archivos */
       Promise.all(UploadPromises)
-        .then(result => {
-          res.status(201).send({ result });
+        .then(results => {
+          results.forEach(result => {
+            LinkPromises.push(dropbox.GetLink(result.path_display));
+          });
+
+          /* Genera todos los shared links */
+          Promise.all(LinkPromises)
+            .then(results => {
+              /* Crea todos los llamados SQL a ejecutar */
+              results.forEach(result => {
+                SqlPromises.push(
+                  Query(
+                    mysqlConnection,
+                    "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);",
+                    [
+                      req.params.id,
+                      decodeURIComponent(req.params.name),
+                      // extrae el primer char del nombre, que representa el tipo de documento
+                      result.name.substring(0, 1),
+                      // obtiene la shared url para guardarla
+                      result.url
+                    ]
+                  )
+                );
+
+                /* Ejecuta las promesas y finaliza el endpoint */
+                Promise.all(SqlPromises)
+                  .then(() => {
+                    res
+                      .status(200)
+                      .send({ status: "documentos actualizados." });
+                  })
+                  .catch(error => {
+                    console.log(error);
+                    next(error);
+                  });
+              });
+            })
+            .catch(error => next(error));
         })
-        .catch(error => {
-          console.log(error);
-          // next(error);
-        });
-
-      // res.send({ filenames: filenames });
-
-      // let documents = req.body.documents;
-      // let Promises = [];
-
-      // documents.forEach(doc => {
-      //   Promises.push(
-      //     Query(mysqlConnection, "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);", [
-      //       req.params.id,
-      //       decodeURIComponent(req.params.name),
-      //       doc.boat_document_type_id,
-      //       doc.url
-      //     ])
-      //   );
-      // });
-
-      // Promise.all(Promises)
-      //   .then(() => {
-      //     res.status(200).send({ status: "documentos actualizados." });
-      //   })
-      //   .catch(error => {
-      //     /* retorna el mensaje de error */
-      //     console.log(error);
-      //     next(error);
-      //   });
+        .catch(error => next(error));
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
