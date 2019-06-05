@@ -1,4 +1,5 @@
 const Log = require("../../helpers/Logs");
+const SendMail = require("../../helpers/SendMail");
 
 // Marina - Controller
 const Marina = {};
@@ -141,37 +142,13 @@ Marina.StatusSent = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		/* INCLUIR LA OPCIOND DE ENVIAR CORREO. */
 		try {
-			/* _____________________________________________________________ */
-			const nodemailer = require("nodemailer");
-			let testAccount = nodemailer.createTestAccount();
-
-			let transporter = nodemailer.createTransport({
-				host: "smtp.sthereal.email",
-				port: 587,
-				secure: false,
-				auth: {
-					user: testAccount.user,
-					pass: testAccount.pass
-				}
-			});
-
-			let info = transporter.sendMail({
-				from: '"Fred Foo 👻" <manu.gtzp@gmail.com>', // sender address
-				to: "manu.gtzp@gmail.com", // list of receivers
-				subject: "Hello ✔", // Subject line
-				text: "Hello world?", // plain text body
-				html: "<b>Hello world?</b>" // html body
-			});
-			console.log("Message sent: %s", info.messageId);
-			// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-			// Preview only available when sending through an Ethereal account
-			console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-			// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-			/* _____________________________________________________________ */
 			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [ req.params.id, 9 ])
 				.then((result) => {
-					res.status(200).send({ status: "QUOTATION UPDATED TO STATUS SENT." });
+					SendMail("manu.gtzp@gmail.com", "test", "test", "<h1>test</h1>")
+						.then((result) => {
+							res.status(200).send({ status: "QUOTATION UPDATED TO STATUS SENT." });
+						})
+						.catch((error) => next(error));
 				})
 				.catch((error) => next(error));
 		} catch (error) {
