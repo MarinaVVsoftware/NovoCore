@@ -35,7 +35,6 @@ const ElectronicSignature = require(path.resolve(
   "../routes/electronicSignature/ElectronicSignature"
 ));
 /* Imports de Marina */
-const Marina = require(path.resolve(__dirname, "../routes/marina/Marina"));
 const MarinaServices = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaServices"
@@ -144,7 +143,6 @@ module.exports = (
   ElectronicSignature(...instances);
 
   /* Rutas del Modelo de Marina */
-  Marina(...instances);
   MarinaServices(...instances);
   MarinaQuotationServices(...instances);
   MarinaQuotationTimeline(...instances);
