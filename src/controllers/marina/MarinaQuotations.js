@@ -216,7 +216,42 @@ Marina.StatusWithOutPay = (newError, Query, mysqlConnection) => {
 	};
 };
 
-Marina.StatusWithPay = (newError, Query, mysqlConnection) => {
+Marina.StatusPartialPaid = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusMoratoriumCharge = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusSuspension = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusPaid = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusFinished = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusCancelled = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 		} catch (error) {}
