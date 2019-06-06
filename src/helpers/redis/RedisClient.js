@@ -52,7 +52,6 @@ class RedisClass {
   }
 
   CreateSchema(schema) {
-    console.log(schema);
     return schema;
   }
 

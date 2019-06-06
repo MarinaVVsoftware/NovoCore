@@ -31,7 +31,6 @@ module.exports = (
     validate({
       params: Schema.ParamsPutBoatDocuments
     }),
-    redisHandler(redis),
     BoatDocuments.PutBoatDocuments(...instances)
   );
   router.put(
@@ -40,7 +39,8 @@ module.exports = (
     validate({
       params: Schema.ParamsPutBoatDocumentsByType
     }),
-    BoatDocuments.PutBoatDocumentByType(...instances)
+    BoatDocuments.PutBoatDocumentByType(...instances),
+    redisHandler.WriteCache(redis)
   );
 
   app.use(router);

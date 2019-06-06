@@ -19,7 +19,8 @@ MarinaQuotationTimeline.GetTimelineByQuotation = (
         [req.params.id]
       )
         .then(result => {
-          res.status(200).send({ Timeline: result[0][0] });
+          res.status(200);
+          res.json({ Timeline: result[0][0] });
         })
         .catch(error => next(error));
     } catch (error) {

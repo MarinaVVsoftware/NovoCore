@@ -25,7 +25,7 @@ module.exports = (
   router.get(
     "/api/marina/quotation/:id/timeline/",
     validate({ params: Schema.ParamsGetTimelineByQuotation }),
-    redisHandler(redis),
+    redisHandler.ReadCache(redis),
     MarinaQuotationTimeline.GetTimelineByQuotation(...instances)
   );
 

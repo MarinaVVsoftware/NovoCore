@@ -210,9 +210,11 @@ BoatDocuments.PutBoatDocumentByType = (
                   ]
                 )
                   .then(() => {
-                    res.status(200).send({
+                    res.status(200);
+                    res.json({
                       status: "documento actualizado. nueva url: " + result.url
                     });
+                    next();
                   })
                   .catch(error => next(error));
               })
