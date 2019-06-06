@@ -138,6 +138,7 @@ Marina.GetDefault = (newError, Query, mysqlConnection) => {
 	};
 };
 
+/*------------------------------ Quotation Status --------------------------------------*/
 Marina.StatusSent = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
@@ -252,6 +253,20 @@ Marina.StatusFinished = (newError, Query, mysqlConnection) => {
 };
 
 Marina.StatusCancelled = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusExpired = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
+	};
+};
+
+Marina.StatusDeleted = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
 		} catch (error) {}
