@@ -75,11 +75,11 @@ Marina.ReadList = (newError, Query, mysqlConnection) => {
 		try {
 			// Objeto para seleccionar el grupo de cotizaciones a base de su status
 			const quotationStatus = {
-				active: [ 2, 3, 4, 5, 6 ],
+				active: [ 2, 3, 4, 6, 7, 8, 9, 10 ],
 				draft: [ 1 ],
-				cancelled: [ 8 ],
-				deleted: [ 9 ],
-				finished: [ 7 ]
+				cancelled: [ 5, 12, 13 ],
+				deleted: [ 14 ],
+				finished: [ 11 ]
 			};
 
 			const statusSelected = quotationStatus.hasOwnProperty(req.query.filterBy)
@@ -140,10 +140,10 @@ Marina.GetDefault = (newError, Query, mysqlConnection) => {
 
 Marina.StatusSent = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
-		/* INCLUIR LA OPCIOND DE ENVIAR CORREO. */
 		try {
 			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [ req.params.id, 9 ])
 				.then((result) => {
+					// Send a mail as a promise.
 					SendMail("manu.gtzp@gmail.com", "test", "test", "<h1>test</h1>")
 						.then((result) => {
 							res.status(200).send({ status: "QUOTATION UPDATED TO STATUS SENT." });
@@ -155,6 +155,71 @@ Marina.StatusSent = (newError, Query, mysqlConnection) => {
 			console.log(error);
 			next(newError(error, 500));
 		}
+	};
+};
+
+Marina.StatusAccepted = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+				req.params.id,
+				2
+			]).then((result) => {
+				res.status(200).send({ status: "QUOTATION UPDATED TO STATUS ACCEPTED " });
+			});
+		} catch (error) {
+			console.log(error);
+			next(newError(error, 500));
+		}
+	};
+};
+
+Marina.StatusValidated = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+				req.params.id,
+				3
+			]).then((result) => {
+				res.status(200).send({ status: "QUOTATION UPDATED TO STATUS VALIDATED" });
+			});
+		} catch (error) {
+			console.log(errorr);
+			next(newError(error, 500));
+		}
+	};
+};
+
+Marina.StatusDeclined = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+			Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+				req.params.id,
+				2
+			]).then((result) => {
+				res.status(200).send({ status: "QUOTATION HAS BEEN DECLINED" });
+			});
+		} catch (error) {
+			console.log(errorr);
+			next(newError(error, 500));
+		}
+	};
+};
+
+Marina.StatusWithOutPay = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {
+			console.log(error);
+			next(newError(error, 500));
+		}
+	};
+};
+
+Marina.StatusWithPay = (newError, Query, mysqlConnection) => {
+	return (req, res, next) => {
+		try {
+		} catch (error) {}
 	};
 };
 
