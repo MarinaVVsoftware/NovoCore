@@ -14,9 +14,7 @@ module.exports = (
   validate,
   mysqlConnection,
   multer,
-  dropbox,
-  redis,
-  redisHandler
+  dropbox
 ) => {
   const instances = [newError, Query, mysqlConnection, dropbox];
 
@@ -39,8 +37,7 @@ module.exports = (
     validate({
       params: Schema.ParamsPutBoatDocumentsByType
     }),
-    BoatDocuments.PutBoatDocumentByType(...instances),
-    redisHandler.WriteCache(redis)
+    BoatDocuments.PutBoatDocumentByType(...instances)
   );
 
   app.use(router);

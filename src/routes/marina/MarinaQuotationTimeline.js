@@ -16,16 +16,13 @@ module.exports = (
   validate,
   mysqlConnection,
   multer,
-  dropbox,
-  redis,
-  redisHandler
+  dropbox
 ) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
     "/api/marina/quotation/:id/timeline/",
     validate({ params: Schema.ParamsGetTimelineByQuotation }),
-    redisHandler.ReadCache(redis),
     MarinaQuotationTimeline.GetTimelineByQuotation(...instances)
   );
 

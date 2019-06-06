@@ -3,7 +3,18 @@ const path = require("path");
 const Boats = require(path.resolve(__dirname, "../../controllers/boats/Boats"));
 const Schema = require(path.resolve(__dirname, "../../schemas/boats/Boats"));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   /* Rutas de Boats */
