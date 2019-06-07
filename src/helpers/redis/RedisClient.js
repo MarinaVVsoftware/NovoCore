@@ -1,9 +1,10 @@
-var redis = require("redis");
+var redis = require("async-redis");
 var RedisSchema = require("./RedisSchema");
 
 class RedisClass {
-  constructor(config) {
+  constructor(config, host) {
     try {
+      this.host = host;
       var instance = redis.createClient({
         host: config.host,
         port: config.port,
@@ -54,8 +55,6 @@ class RedisClass {
   CreateSchema(schema) {
     return schema;
   }
-
-  UpdateSchema() {}
 }
 
 module.exports = RedisClass;

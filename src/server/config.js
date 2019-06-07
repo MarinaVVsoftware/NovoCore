@@ -84,7 +84,7 @@ module.exports = app => {
   app.use(monitor(monitorConfig));
 
   // Obtiene la instancia de redis
-  const redis = new Redis(redisConfig);
+  const redis = new Redis(redisConfig, vars.host);
 
   // Obtiene el conector de mysql
   const mysql = Mysql(mysqlConfig);

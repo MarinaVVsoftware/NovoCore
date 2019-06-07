@@ -54,22 +54,56 @@
  */
 const RedisHandler = {};
 
-RedisHandler.ReadCache = redis => {
+/* Escritura de caché. Por aquí pasan todos los endpoints de tipo put, post, patch y delete. */
+RedisHandler.ReadCache = (redis, key) => {
   return (req, res, next) => {
     try {
-      //si no debe pasar por redis, entonces debe dejar pasar al endpoint con normalidad
-      // res.send({ route: req.route, res: res.headersSent });
-      // next();
+      const method = req.route.stack[0].method;
+      /* Obtiene las reglas de ese endpoint */
+      const rule = redis.schema[key].read[req.route.path];
+      /* Obtiene el param que funciona como key para ese endpoint */
+      const hash = req.params[rule.hash];
+      /* Obtiene el Header para evitar el ciclo infinito de caché */
+      const header = req.get("cache-request");
+      console.log("header: " + header);
 
-      if (req.route.stack[0].method == "get") {
-        console.log("redis de lectura");
-        console.log({
-          route: req.route.path,
-          method: req.route.stack[0].method
+      /* valida que se haya obtenido correctamente el hash del esquema */
+      if (hash === undefined)
+        res.status(500).send({
+          error:
+            "The redis server has failed. The hash obtained from the schema threw undefined."
         });
-        next();
-      } else {
-        return;
+      else {
+        /* Evita por accidente leer caché de un método que no es get */
+        if (method == "get" && header === undefined) {
+          /* Si existe la key y hash asociada, trae el valor */
+          IfHashExists(redis, key, hash)
+            .then(result => {
+              if (result == 1) {
+                /* Trae la caché */
+                GetHash(redis, key, hash)
+                  .then(result => {
+                    /* Envía los datos en caché */
+                    console.log(
+                      "endpoint obtenido de caché: " + req.route.path
+                    );
+                    res.status(200).send(result);
+                  })
+                  .catch(error => {
+                    console.log("Redis Failed: " + error);
+                    next();
+                  });
+              } else {
+                next();
+              }
+            })
+            .catch(error => {
+              console.log("Redis Failed: " + error);
+              next();
+            });
+        } else {
+          return;
+        }
       }
     } catch (error) {
       res.status(500).send({ error: "El servidor redis ha fallado: " + error });
@@ -77,23 +111,94 @@ RedisHandler.ReadCache = redis => {
   };
 };
 
-RedisHandler.WriteCache = redis => {
-  return (req, res, next) => {
+/* Lectura de caché. Por aquó pasan todos los endpoints de tipo get */
+RedisHandler.WriteCache = (redis, key) => {
+  return (req, res) => {
     try {
-      if (req.route.stack[0].method == "post" || "put" || "patch" || "delete") {
-        console.log("redis de escritura");
-        console.log({
-          route: req.route.path,
-          method: req.route.stack[0].method
-        });
+      const method = req.route.stack[0].method;
+      /* Obtiene las reglas de ese endpoint */
+      const rule = redis.schema[key].write[req.route.path][method];
+      /* Obtiene el param que funciona como key para ese endpoint */
+      const hash = req.params[rule.hash];
+      const url = rule.url(hash);
+
+      /* valida que se haya obtenido correctamente el hash del esquema */
+      if (hash === undefined) {
+        console.log(
+          "The redis server has failed. The hash obtained from the schema threw undefined."
+        );
         res.send();
       } else {
-        return;
+        if (method == "post" || "put" || "patch" || "delete") {
+          /* Para delete borra la caché, el resto de los casos crea caché */
+          if (method != "delete") {
+            // para evitar ciclar infinitamente la caché, se manda un
+            // header que excluye la lectura por caché cuando se hace escritura.
+            var headers = new Headers();
+            headers.set("cache-request", "true");
+            console.log(headers);
+            /* Ejecuta el endpoint de lectura para obtener los datos y cachearlos */
+            GetWroteData(redis.host + url, {
+              method: "GET",
+              headers: { "cache-request": "true" }
+            })
+              .then(response => {
+                return response.json();
+              })
+              .then(json => {
+                SetHash(redis, key, hash, JSON.stringify(json))
+                  .then(() => {
+                    console.log("endpoint cacheado: " + url);
+                    res.send();
+                  })
+                  .catch(error => {
+                    console.log("Redis Failed: " + error);
+                    res.send();
+                  });
+              })
+              .catch(error => {
+                console.log("Redis Failed: " + error);
+                res.send();
+              });
+          } else {
+            DeleteHash(redis, key, hash)
+              .then(() => {
+                res.send();
+              })
+              .catch(error => {
+                console.log("Redis Failed: " + error);
+                res.send();
+              });
+          }
+        } else {
+          res.send();
+        }
       }
     } catch (error) {
-      res.status(500).send({ error: "El servidor redis ha fallado: " + error });
+      console.log("Redis Failed: " + error);
+      res.send();
     }
   };
 };
+
+async function GetWroteData(url) {
+  return await fetch(url);
+}
+
+async function SetHash(redis, key, hash, value) {
+  return await redis.redis.hset(key, hash, value);
+}
+
+async function GetHash(redis, key, hash) {
+  return await redis.redis.hget(key, hash);
+}
+
+async function IfHashExists(redis, key, hash) {
+  return await redis.redis.hexists(key, hash);
+}
+
+async function DeleteHash(redis, key, hash) {
+  return await redis.redis.hdel(key, hash);
+}
 
 module.exports = RedisHandler;

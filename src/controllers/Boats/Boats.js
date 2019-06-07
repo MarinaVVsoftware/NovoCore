@@ -6,6 +6,7 @@ mediante el id del cliente. */
 Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      console.log(req.headers);
       /* Valida manualmente el tipado de clientId */
       if (isNaN(req.params.id))
         next(newError('el param "clientId" no es un número válido.', 400));
@@ -213,11 +214,14 @@ Boats.PutBoat = (newError, Query, mysqlConnection) => {
           /* Ejecuta todas las promesas y las resuelve todas */
           Promise.all(Promises)
             .then(() => {
-              res.status(200).send(
+              res.status(200);
+              res.json(
                 JSON.stringify({
                   status: "Barco creado correctamente. id: " + boatId
                 })
               );
+              /* Modificación para pasar por caché */
+              next();
             })
             .catch(error => {
               console.log(error);
@@ -257,7 +261,10 @@ Boats.PatchBoat = (newError, Query, mysqlConnection) => {
         req.body.boat.beam
       ])
         .then(() => {
-          res.status(200).send({ status: "barco actualizado." });
+          res.status(200);
+          res.json({ status: "barco actualizado." });
+          /* Modificación para pasar por caché */
+          next();
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -319,13 +326,16 @@ Boats.DeleteBoat = (newError, Query, mysqlConnection) => {
           /* Realiza todos los deletes juntos y devuelve el id del bote con un mensaje. */
           Promise.all(Promises)
             .then(() => {
-              res.status(200).send(
+              res.status(200);
+              res.json(
                 JSON.stringify({
                   status:
                     "Barco eliminado correctamente. Bote: " +
                     decodeURIComponent(req.params.name)
                 })
               );
+              /* Modificación para pasar por caché */
+              next();
             })
             .catch(error => {
               console.log(error);

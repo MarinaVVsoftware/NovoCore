@@ -21,19 +21,26 @@ module.exports = (
   router.get(
     "/api/clients/:id/boats/",
     validate({ params: Schema.ParamsGetBoatsByClient }),
+    redisHandler.ReadCache(redis, "boats"),
     Boats.GetBoatsByClient(...instances)
   );
   router.put(
     "/api/clients/:id/boats/:name",
     validate({ params: Schema.ParamsPutBoat, body: Schema.BodyPutBoat }),
-    Boats.PutBoat(...instances)
+    Boats.PutBoat(...instances),
+    redisHandler.WriteCache(redis, "boats")
   );
   router.patch(
     "/api/clients/:id/boats/:name",
     validate({ params: Schema.ParamsPatchBoat, body: Schema.BodyPatchBoat }),
-    Boats.PatchBoat(...instances)
+    Boats.PatchBoat(...instances),
+    redisHandler.WriteCache(redis, "boats")
   );
-  router.delete("/api/clients/:id/boats/:name", Boats.DeleteBoat(...instances));
+  router.delete(
+    "/api/clients/:id/boats/:name",
+    Boats.DeleteBoat(...instances),
+    redisHandler.WriteCache(redis, "boats")
+  );
 
   app.use(router);
 };
