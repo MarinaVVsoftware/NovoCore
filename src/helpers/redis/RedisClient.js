@@ -2,12 +2,12 @@ var redis = require("async-redis");
 var RedisSchema = require("./RedisSchema");
 
 class RedisClass {
-  constructor(config, host) {
+  constructor(config, host, clean) {
     try {
       this.host = host;
       var instance = redis.createClient({
         host: config.host,
-        port: config.port,
+        port: "3555",
         db: config.db,
         password: config.password,
         retry_strategy: function(options) {
@@ -33,7 +33,7 @@ class RedisClass {
       /* Evento que maneja los errores de servidor de Redis. */
       instance.on("error", function(err) {
         console.log(
-          "Redis Error Event -> " +
+          "Redis Got Broken, stack error event -> " +
             instance.host +
             ": " +
             instance.port +
@@ -46,12 +46,16 @@ class RedisClass {
       // declaración de la instancia y las variables
       this.redis = instance;
       this.schema = this.CreateSchema(RedisSchema);
+
+      //limpia la caché al momento de correr la DB
+      if (clean) instance.flushall();
     } catch (error) {
       console.log("El servidor Redis ha fallado." + error);
       this.redis = null;
     }
   }
 
+  /* Carga el archivo del schema */
   CreateSchema(schema) {
     return schema;
   }

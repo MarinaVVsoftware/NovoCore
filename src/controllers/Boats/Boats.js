@@ -6,7 +6,9 @@ mediante el id del cliente. */
 Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      console.log(req.headers);
+      /* Setea un header que evita la lectura doble por el método "WriteCache" */
+      if (!req.get("Cache-Request")) res.setHeader("Cache-By-Read", "true");
+
       /* Valida manualmente el tipado de clientId */
       if (isNaN(req.params.id))
         next(newError('el param "clientId" no es un número válido.', 400));
@@ -70,12 +72,15 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
             });
           });
 
-          /* envia la data */
-          res.status(200).send(
-            JSON.stringify({
-              boats: response
-            })
-          );
+          res.status(200);
+          res.json({
+            boats: response
+          });
+          res.body = {
+            boats: response
+          };
+          /* Modificación para pasar por caché */
+          next();
         })
         .catch(error => {
           console.log(error);

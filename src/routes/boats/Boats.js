@@ -22,7 +22,8 @@ module.exports = (
     "/api/clients/:id/boats/",
     validate({ params: Schema.ParamsGetBoatsByClient }),
     redisHandler.ReadCache(redis, "boats"),
-    Boats.GetBoatsByClient(...instances)
+    Boats.GetBoatsByClient(...instances),
+    redisHandler.WriteCache(redis, "boats")
   );
   router.put(
     "/api/clients/:id/boats/:name",

@@ -13,6 +13,14 @@ module.exports = {
       }
     },
     write: {
+      "/api/clients/:id/boats/": {
+        get: {
+          hash: "id",
+          url: function(id) {
+            return "/api/clients/" + id + "/boats/";
+          }
+        }
+      },
       "/api/clients/:id/boats/:name": {
         put: {
           hash: "id",
