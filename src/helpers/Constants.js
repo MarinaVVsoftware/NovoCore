@@ -4,5 +4,9 @@ limpio el código. */
 module.exports = {
   boats: {
     boatDocumentsLength: 5
+  },
+  boatDocuments: {
+    folder: "/novonautica/dockmaster/",
+    extensions: ["doc", "dot", "docx", "pdf", "docm"]
   }
 };

@@ -9,8 +9,9 @@ const multer = require("multer");
 const envs = require("./envs");
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
-const mysql = require(path.resolve(__dirname, "../helpers/database"));
-const dropbox = require("../helpers/dropbox");
+const Redis = require("../helpers/redis/RedisClient");
+const Mysql = require(path.resolve(__dirname, "../helpers/database"));
+const Dropbox = require("../helpers/Dropbox");
 const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
 var { Validator } = require("express-json-validator-middleware");
@@ -82,33 +83,29 @@ module.exports = app => {
   // inicia el servicio de monitoreo
   app.use(monitor(monitorConfig));
 
+  // Obtiene la instancia de redis
+  // 3er parametro = habilitar limpieza de caché al arrancar el server
+  const redis = new Redis(redisConfig, vars.host, true);
+
   // Obtiene el conector de mysql
-  const mysqlConnection = mysql(mysqlConfig);
+  const mysql = Mysql(mysqlConfig);
 
   // Obtiene la instancia de dropbox
-  const dropboxManager = dropbox(dropboxConfig);
+  const dropbox = new Dropbox(dropboxConfig);
 
   /* ROUTES */
   // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
-  // app - Objeto de la aplicación.
-  // router - Router de express.
-  // newError - Manejador personalizado de errores.
-  // Query - Función para la promesa de Mysql
-  // validate - Objeto del validador de Schemas.
-  // mysqlConnection - Conexión con mysql.
-  routes(
-    app,
-    router,
-    newError,
-    Query,
-    validate,
-    mysqlConnection,
-    Multer,
-    dropboxManager
-  );
+  // app: Objeto de la aplicación.
+  // router: Router de express.
+  // newError: Manejador personalizado de errores.
+  // Query: Función para la promesa de Mysql
+  // validate: Objeto del validador de Schemas.
+  // mysqlConnection: Conexión con mysql.
+  // redis: Instancia de redis.
+  routes(app, router, newError, Query, validate, mysql, Multer, dropbox, redis);
 
   /* Si no se instancian las dependencias clave, truena el server. */
-  if (mysqlConnection && dropboxManager) {
+  if (mysql) {
     Log.Success("Configuración del servidor establecida.");
     return { app, vars };
   } else {
