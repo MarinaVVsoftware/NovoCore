@@ -4,7 +4,10 @@ const BoatDocuments = require(path.resolve(
   __dirname,
   "../../controllers/Boats/boatDocuments"
 ));
-const Schema = require("../../schemas/boats/BoatDocuments");
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/boats/BoatDocuments"
+));
 
 module.exports = (
   app,
@@ -14,9 +17,11 @@ module.exports = (
   validate,
   mysqlConnection,
   multer,
-  dropbox
+  dropbox,
+  redis,
+  redisHandler
 ) => {
-  const instances = [newError, Query, mysqlConnection, dropbox];
+  const instances = [newError, Query, mysqlConnection];
 
   router.get(
     "/api/clients/:id/boats/:name/boat-documents",

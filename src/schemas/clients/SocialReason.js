@@ -1,6 +1,6 @@
-const Social_Reason = {};
+const SocialReason = {};
 
-Social_Reason.erase = {
+SocialReason.erase = {
   type: "object",
   required: ["id"],
   properties: {
@@ -10,7 +10,7 @@ Social_Reason.erase = {
   }
 };
 
-Social_Reason.delete = {
+SocialReason.delete = {
   type: "object",
   required: ["id", "delete"],
   properties: {
@@ -23,7 +23,7 @@ Social_Reason.delete = {
   }
 };
 
-Social_Reason.create = {
+SocialReason.create = {
   type: "object",
   required: [
     "client_id",
@@ -60,15 +60,15 @@ Social_Reason.create = {
   }
 };
 
-Social_Reason.update = {
+SocialReason.update = {
   type: "object",
   required: ["id"],
   properties: {
     id: {
       type: "number"
     },
-    ...Social_Reason.create.properties
+    ...SocialReason.create.properties
   }
 };
 
-module.exports = Social_Reason;
+module.exports = SocialReason;

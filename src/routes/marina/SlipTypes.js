@@ -4,7 +4,18 @@ const SlipTypes = require(path.resolve(
   "../../controllers/marina/SlipTypes"
 ));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get("/api/marina/slip-types/", SlipTypes.GetSlipTypes(...instances));

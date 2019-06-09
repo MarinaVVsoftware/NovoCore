@@ -1,5 +1,6 @@
+const path = require("path");
 var redis = require("async-redis");
-var RedisSchema = require("./RedisSchema");
+var RedisSchema = require(path.resolve(__dirname, "./RedisSchema"));
 
 class RedisClass {
   constructor(config, host, clean) {

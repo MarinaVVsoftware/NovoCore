@@ -1,5 +1,5 @@
 {
-  "name": "mysql-nodejs-rest-api",
+  "name": "novocore",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,7 +19,7 @@
     "dropbox": "^4.0.17",
     "express": "^4.17.1",
     "express-json-validator-middleware": "^2.0.0",
-    "express-status-monitor": "^1.2.5",
+    "express-status-monitor": "^1.2.6",
     "flexqp": "^2.2.1",
     "isomorphic-fetch": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
@@ -29,7 +29,7 @@
     "nodemailer": "^6.2.1",
     "redis": "^2.8.0",
     "request": "^2.88.0",
-    "swagger-ui-express": "^4.0.4",
+    "swagger-ui-express": "^4.0.6",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

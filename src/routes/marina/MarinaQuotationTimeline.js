@@ -16,7 +16,9 @@ module.exports = (
   validate,
   mysqlConnection,
   multer,
-  dropbox
+  dropbox,
+  redis,
+  redisHandler
 ) => {
   const instances = [newError, Query, mysqlConnection];
 

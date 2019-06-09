@@ -1,6 +1,13 @@
 // Routes
-const Social_Reason = require("../controllers/Social_Reason");
-const Social_ReasonSchema = require("../schemas/Social_Reason");
+const path = require("path");
+const Social_Reason = require(path.resolve(
+  __dirname,
+  "../../controllers/clients/SocialReason"
+));
+const Social_ReasonSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/clients/SocialReason"
+));
 
 var { Validator } = require("express-json-validator-middleware");
 var validator = new Validator({ allErrors: true });

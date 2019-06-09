@@ -6,17 +6,17 @@ const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
 const monitor = require("express-status-monitor");
 const multer = require("multer");
-const envs = require("./envs");
-var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
-const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
-const Redis = require("../helpers/redis/RedisClient");
-const Mysql = require(path.resolve(__dirname, "../helpers/database"));
-const Dropbox = require("../helpers/Dropbox");
-const routes = require(path.resolve(__dirname, "./routes"));
+const envs = require(path.resolve(__dirname, "./Envs"));
+var monitorConfig = require(path.resolve(__dirname, "./MonitorConfig"));
+const swagger = require(path.resolve(__dirname, "./swagger/Swagger"));
+const Redis = require(path.resolve(__dirname, "../helpers/redis/RedisClient"));
+const Mysql = require(path.resolve(__dirname, "../helpers/Database"));
+const Dropbox = require(path.resolve(__dirname, "../helpers/Dropbox"));
+const routes = require(path.resolve(__dirname, "./Routes"));
 /* Helpers para los Controllers */
 var { Validator } = require("express-json-validator-middleware");
-const newError = require(path.resolve(__dirname, "../helpers/newError"));
-const Query = require(path.resolve(__dirname, "../helpers/query"));
+const newError = require(path.resolve(__dirname, "../helpers/NewError"));
+const query = require(path.resolve(__dirname, "../helpers/Query"));
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -71,6 +71,7 @@ module.exports = app => {
   app.use(express.json());
   app.use(bodyParser.json());
   app.use(cors);
+  //  dependencia para envío de archivos mediante multipart
   const Multer = multer();
 
   // crea el middleware para validación de endpoints
@@ -98,11 +99,11 @@ module.exports = app => {
   // app: Objeto de la aplicación.
   // router: Router de express.
   // newError: Manejador personalizado de errores.
-  // Query: Función para la promesa de Mysql
+  // query: Función para la promesa de Mysql
   // validate: Objeto del validador de Schemas.
   // mysqlConnection: Conexión con mysql.
   // redis: Instancia de redis.
-  routes(app, router, newError, Query, validate, mysql, Multer, dropbox, redis);
+  routes(app, router, newError, query, validate, mysql, Multer, dropbox, redis);
 
   /* Si no se instancian las dependencias clave, truena el server. */
   if (mysql) {
@@ -112,6 +113,6 @@ module.exports = app => {
     Log.Error(
       "lgo ha fallado con las configuraciones de la API. El servidor ha fallado."
     );
-    return null;
+    return { app: null, vars: null };
   }
 };

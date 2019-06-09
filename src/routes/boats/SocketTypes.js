@@ -4,7 +4,18 @@ const SocketTypes = require(path.resolve(
   "../../controllers/boats/SocketTypes"
 ));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(

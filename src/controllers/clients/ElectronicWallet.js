@@ -1,5 +1,5 @@
-const Log = require("../helpers/Logs");
-const newError = require("../helpers/newError");
+const path = require("path");
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
 
 // Marina - Controller
 const Marina = {};
@@ -9,7 +9,7 @@ Marina.Read = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_READ_SOCIAL_REASON",
+        "CALL SP_READ_ELECTRONIC_WALLET",
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           rows.pop();
@@ -28,11 +28,11 @@ Marina.Erase = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_DELETE_SOCIAL_REASON (?);",
-        [req.body.id],
+        "CALL SP_DELETE_ELECTRONIC_WALLET (?);",
+        [req.body.electronic_wallet_id],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
-          res.status(200).send({ status: "SOCIAL REASON DELETED" });
+          res.status(200).send({ status: "QUOTATION DELETED" });
         }
       );
     } catch (error) {
@@ -49,8 +49,8 @@ Marina.Delete = mysqlConnection => {
       res.status(400).send({ error: "Undefined Object" });
     try {
       mysqlConnection.query(
-        "CALL SP_LOGICAL_DELETE_SOCIAL_REASON (?,?);",
-        [req.body.id, req.body.delete],
+        "CALL SP_LOGICAL_DELETED_ELECTRONIC_WALLET (?,?);",
+        [req.body.electronic_wallet_id, req.body.logical_deleted],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           res.status(200).send({ status: "Success" });
@@ -67,17 +67,10 @@ Marina.Delete = mysqlConnection => {
 Marina.Create = mysqlConnection => {
   return (req, res, next) => {
     try {
+      var ld = 0;
       mysqlConnection.query(
-        "CALL SP_CREATE_SOCIAL_REASON (?,?,?,?,?,?,?)",
-        [
-          req.body.client_id,
-          req.body.email,
-          req.body.social_reason,
-          req.body.RCD,
-          req.body.CFDI,
-          req.body.address,
-          req.body.status_id
-        ],
+        "CALL SP_CREATE_ELECTRONIC_WALLET (?,?)",
+        [req.body.marina_amount, ld],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           res.status(200).send({ status: "Success" });
@@ -95,20 +88,15 @@ Marina.Update = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_UPDATE_SOCIAL_REASON (?,?,?,?,?,?,?,?)",
+        "CALL SP_UPDATE_ELECTRONIC_WALLET (?,?,?)",
         [
-          req.body.id,
-          req.body.client_id,
-          req.body.email,
-          req.body.social_reason,
-          req.body.RCD,
-          req.body.CFDI,
-          req.body.address,
-          req.body.status_id
+          req.body.electronic_wallet_id,
+          req.body.marina_amount,
+          req.body.logical_deleted
         ],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
-          res.status(200).send({ status: "SOCIAL REASON UPDATED" });
+          res.status(200).send({ status: "QUOTATION UPDATED" });
         }
       );
     } catch (error) {

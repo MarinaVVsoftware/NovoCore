@@ -1,6 +1,13 @@
 // Routes
-const Bank_Account = require("../controllers/Bank_Account");
-const Bank_AccountSchema = require("../schemas/Bank_AccountSchema");
+const path = require("path");
+const Bank_Account = require(path.resolve(
+  __dirname,
+  "../../controllers/clients/BankAccount"
+));
+const Bank_AccountSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/clients/BankAccount"
+));
 
 var { Validator } = require("express-json-validator-middleware");
 var validator = new Validator({ allErrors: true });
