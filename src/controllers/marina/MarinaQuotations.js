@@ -25,6 +25,20 @@ Marina.Read = (newError, Query, mysqlConnection) => {
 Marina.Create = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
+			// 1.- Revisar el tipo de cotizacion
+			// Si viene mensual
+
+			// 2.- Valida el quotationStatusId
+			// Casos: Suspendido
+
+			// 3.- Hacer las particiones de tiempo de las cotizaciones.
+
+			if (req.body.monthlyQuotation && !req.body.group_quotation) {
+				// Crear una cotización mensual normal.
+			} else {
+				// Cualquier cotización.
+			}
+
 			Query(
 				mysqlConnection,
 				"CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
