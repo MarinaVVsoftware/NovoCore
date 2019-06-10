@@ -4,9 +4,23 @@ const BoatDocuments = require(path.resolve(
   __dirname,
   "../../controllers/Boats/boatDocuments"
 ));
-const Schema = require("../../schemas/boats/BoatDocuments");
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/boats/BoatDocuments"
+));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
@@ -16,17 +30,17 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   );
   router.put(
     "/api/clients/:id/boats/:name/boat-documents/",
+    multer.array("documents"),
     validate({
-      params: Schema.ParamsPutBoatDocuments,
-      body: Schema.BodyPutBoatDocuments
+      params: Schema.ParamsPutBoatDocuments
     }),
     BoatDocuments.PutBoatDocuments(...instances)
   );
   router.put(
     "/api/clients/:id/boats/:name/boat-documents/:typeid",
+    multer.single("document"),
     validate({
-      params: Schema.ParamsPutBoatDocumentsByType,
-      body: Schema.BodyPutBoatDocumentsByType
+      params: Schema.ParamsPutBoatDocumentsByType
     }),
     BoatDocuments.PutBoatDocumentByType(...instances)
   );

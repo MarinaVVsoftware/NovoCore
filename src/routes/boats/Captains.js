@@ -6,7 +6,18 @@ const Captains = require(path.resolve(
 
 const Schema = require(path.resolve(__dirname, "../../schemas/boats/Captains"));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(

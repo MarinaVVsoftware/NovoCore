@@ -1,6 +1,13 @@
 // Routes
-const Clients = require("../controllers/Clients");
-const ClientsSchema = require("../schemas/ClientsSchema");
+const path = require("path");
+const Clients = require(path.resolve(
+  __dirname,
+  "../../controllers/clients/Clients"
+));
+const ClientsSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/clients/Clients"
+));
 
 var { Validator } = require("express-json-validator-middleware");
 var validator = new Validator({ allErrors: true });

@@ -1,26 +1,37 @@
 const path = require("path");
-const SlipOccupations = require(path.resolve(
+const SlipsOccupation = require(path.resolve(
   __dirname,
-  "../../controllers/marina/SlipOccupations"
+  "../../controllers/marina/SlipsOccupation"
 ));
 const Schema = require(path.resolve(
   __dirname,
   "../../schemas/marina/SlipsOccupation"
 ));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
     "/api/marina/slip-occupations/",
-    SlipOccupations.GetSlipOccupations(...instances)
+    SlipsOccupation.GetSlipsOccupation(...instances)
   );
   router.post(
     "/api/marina/slip-occupations/",
     validate({
       body: Schema.BodyPostSlipsOccupation
     }),
-    SlipOccupations.PostSlipOccupations(...instances)
+    SlipsOccupation.PostSlipsOccupation(...instances)
   );
   router.put(
     "/api/marina/slip-occupations/:id",
@@ -28,14 +39,14 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
       params: Schema.ParamsPutSlipsOccupation,
       body: Schema.BodyPutSlipsOccupation
     }),
-    SlipOccupations.PutSlipOccupations(...instances)
+    SlipsOccupation.PutSlipsOccupation(...instances)
   );
   router.delete(
     "/api/marina/slip-occupations/:id",
     validate({
       params: Schema.ParamsDeleteSlipsOccupation
     }),
-    SlipOccupations.DeleteSlipOccupations(...instances)
+    SlipsOccupation.DeleteSlipsOccupation(...instances)
   );
 
   app.use(router);

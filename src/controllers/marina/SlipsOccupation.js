@@ -1,8 +1,8 @@
-// SlipOccupations - Controller
-const SlipOccupations = {};
+// SlipsOccupation - Controller
+const SlipsOccupation = {};
 
 /* Trae la lista de ocupaciones de slip */
-SlipOccupations.GetSlipOccupations = (newError, Query, mysqlConnection) => {
+SlipsOccupation.GetSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.status(200).send("GetSlipOccupations");
@@ -14,7 +14,7 @@ SlipOccupations.GetSlipOccupations = (newError, Query, mysqlConnection) => {
 };
 
 /* Inserta una nueva ocupación de slip */
-SlipOccupations.PostSlipOccupations = (newError, Query, mysqlConnection) => {
+SlipsOccupation.PostSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.status(200).send("PostSlipOccupations");
@@ -26,7 +26,7 @@ SlipOccupations.PostSlipOccupations = (newError, Query, mysqlConnection) => {
 };
 
 /* Modifica una ocupación de slip basado en su id natural */
-SlipOccupations.PutSlipOccupations = (newError, Query, mysqlConnection) => {
+SlipsOccupation.PutSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.status(200).send("PutSlipOccupations");
@@ -38,7 +38,7 @@ SlipOccupations.PutSlipOccupations = (newError, Query, mysqlConnection) => {
 };
 
 /* Elimina una ocupación de slip basado en su id natural */
-SlipOccupations.DeleteSlipOccupations = (newError, Query, mysqlConnection) => {
+SlipsOccupation.DeleteSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.status(200).send("DeleteSlipOccupations");
@@ -49,4 +49,4 @@ SlipOccupations.DeleteSlipOccupations = (newError, Query, mysqlConnection) => {
   };
 };
 
-module.exports = SlipOccupations;
+module.exports = SlipsOccupation;

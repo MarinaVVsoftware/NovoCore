@@ -1,5 +1,5 @@
-const Log = require("../../helpers/Logs");
-const SendMail = require("../../helpers/SendMail");
+const path = require("path");
+const SendMail = require(path.resolve(__dirname, "../../helpers/SendMail"));
 
 // Marina - Controller
 const Marina = {};

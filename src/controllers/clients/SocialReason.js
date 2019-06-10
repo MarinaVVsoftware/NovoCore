@@ -1,15 +1,15 @@
-const Log = require("../helpers/Logs");
-const newError = require("../helpers/newError");
+const path = require("path");
+const newError = require(path.resolve(__dirname, "../../helpers/NewError"));
 
-// Bank_Account - Controller
-const Bank_Account = {};
+// Marina - Controller
+const Marina = {};
 
-// Read all the Bank_Account Quotation
-Bank_Account.Read = mysqlConnection => {
+// Read all the Marina Quotation
+Marina.Read = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_READ_BANK_ACCOUNT",
+        "CALL SP_READ_SOCIAL_REASON",
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
           rows.pop();
@@ -24,18 +24,17 @@ Bank_Account.Read = mysqlConnection => {
 };
 
 // Erase the record (DELETE)
-Bank_Account.Erase = mysqlConnection => {
+Marina.Erase = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_DELETE_BANK_ACCOUNT (?);",
+        "CALL SP_DELETE_SOCIAL_REASON (?);",
         [req.body.id],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
-          res.status(200).send({ status: "QUOTATION DELETED" });
+          res.status(200).send({ status: "SOCIAL REASON DELETED" });
         }
       );
-      88;
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -44,13 +43,13 @@ Bank_Account.Erase = mysqlConnection => {
 };
 
 // Update the state
-Bank_Account.Delete = mysqlConnection => {
+Marina.Delete = mysqlConnection => {
   return (req, res, next) => {
     if (!req.body.id || req.body.delete === null)
       res.status(400).send({ error: "Undefined Object" });
     try {
       mysqlConnection.query(
-        "CALL SP_LOGICAL_DELETED_BANK_ACCOUNT (?);",
+        "CALL SP_LOGICAL_DELETE_SOCIAL_REASON (?,?);",
         [req.body.id, req.body.delete],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
@@ -65,17 +64,18 @@ Bank_Account.Delete = mysqlConnection => {
 };
 
 // Create a new record
-Bank_Account.Create = mysqlConnection => {
+Marina.Create = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_CREATE_BANK_ACCOUNT (?,?,?,?,?)",
+        "CALL SP_CREATE_SOCIAL_REASON (?,?,?,?,?,?,?)",
         [
           req.body.client_id,
-          req.body.alias,
-          req.body.bank,
-          req.body.account_number,
-          req.body.clabe,
+          req.body.email,
+          req.body.social_reason,
+          req.body.RCD,
+          req.body.CFDI,
+          req.body.address,
           req.body.status_id
         ],
         (err, rows, fields) => {
@@ -91,23 +91,24 @@ Bank_Account.Create = mysqlConnection => {
 };
 
 // Update a record
-Bank_Account.Update = mysqlConnection => {
+Marina.Update = mysqlConnection => {
   return (req, res, next) => {
     try {
       mysqlConnection.query(
-        "CALL SP_UPDATE_BANK_ACCOUNT (?,?,?,?,?,?,?,?,?,?,?,?)",
+        "CALL SP_UPDATE_SOCIAL_REASON (?,?,?,?,?,?,?,?)",
         [
-          req.body.bank_account_id,
+          req.body.id,
           req.body.client_id,
-          req.body.alias,
-          req.body.bank,
-          req.body.account_number,
-          req.body.clabe,
+          req.body.email,
+          req.body.social_reason,
+          req.body.RCD,
+          req.body.CFDI,
+          req.body.address,
           req.body.status_id
         ],
         (err, rows, fields) => {
           if (err) next(newError(err, 400));
-          res.status(200).send({ status: "QUOTATION UPDATED" });
+          res.status(200).send({ status: "SOCIAL REASON UPDATED" });
         }
       );
     } catch (error) {
@@ -117,4 +118,4 @@ Bank_Account.Update = mysqlConnection => {
   };
 };
 
-module.exports = Bank_Account;
+module.exports = Marina;

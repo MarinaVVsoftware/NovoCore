@@ -1,24 +1,13 @@
-/** //- PROCESO DE INSTANCIA DE LA API
- *  1. Crea la configuración del servidor en src/server/config.js
- *  2. Carga las "keys" desde el archivo .env, es importante que este documento exista.
- *     debe contener datos sensibles para instanciar firebase.
- *  3. Carga morgan, json, cors y firebaseApp (requiere credenciales).
- *  4. Carga los Routes y Controllers.
- *        - Routes: Mapa de rutas de la API.
- *        - Controllers: Código de cada ruta de la API, estructurado.
- *  5. Carga la storage-session que mantendrá con la sesión del usuario.
- *  6. Inicia la aplicación.
- */
+const express = require("express");
+const path = require("path");
+const Log = require(path.resolve(__dirname, "./src/helpers/Logs"));
+const config = require(path.resolve(__dirname, "./src/server/Config"));
 
-const express = require("express"); //import express
-const Log = require("./src/helpers/Logs");
-const config = require("./src/server/config"); //importa la configuración
-
-// se pasa como parámetro la instancia de express al módulo de config
+// Se pasa como parámetro la instancia de express al módulo de config
 const { app, vars } = config(express());
 
+// Inicia el servidor si la configuración se ejecutó correctamente
 if (app) {
-  //start server
   app.listen(vars.port, function() {
     Log.Success("API inicializó exitosamente.");
     Log.Success("Server escuchando en: " + vars.host);
