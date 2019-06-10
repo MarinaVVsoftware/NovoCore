@@ -71,7 +71,7 @@ const RedisHandler = {};
 /* Escritura de caché. Por aquí pasan todos los endpoints de tipo put, post, patch y delete. */
 RedisHandler.ReadCache = (redis, key) => {
   return (req, res, next) => {
-    if (!redis.redis)
+    if (redis.redis.connected)
       try {
         /* Obtiene el metodo REST */
         const method = req.route.stack[0].method;
@@ -101,10 +101,10 @@ RedisHandler.ReadCache = (redis, key) => {
                   GetHash(redis, key, hash)
                     .then(result => {
                       /* Output de Debug */
-                      // console.log(
-                      //   "endpoint obtenido de caché: " + method + " - " + url
-                      // );
-
+                      if (redis.debug)
+                        console.log(
+                          "endpoint obtenido de caché: " + method + " - " + url
+                        );
                       /* Envía los datos en caché via response */
                       res.status(200).send(result);
                     })
@@ -134,7 +134,7 @@ RedisHandler.ReadCache = (redis, key) => {
 /* Lectura de caché. Por aquó pasan todos los endpoints de tipo get */
 RedisHandler.WriteCache = (redis, key) => {
   return (req, res) => {
-    if (!redis.redis)
+    if (redis.redis.connected)
       try {
         /* Obtiene el metodo REST */
         const method = req.route.stack[0].method;
@@ -173,7 +173,10 @@ RedisHandler.WriteCache = (redis, key) => {
                   SetHash(redis, key, hash, JSON.stringify(json))
                     .then(() => {
                       /* Output de Debug */
-                      // console.log("endpoint cacheado: " + method + " - " + url);
+                      if (redis.debug)
+                        console.log(
+                          "endpoint cacheado: " + method + " - " + url
+                        );
                       res.send();
                     })
                     .catch(error => {
@@ -205,7 +208,8 @@ RedisHandler.WriteCache = (redis, key) => {
                 SetHash(redis, key, hash, JSON.stringify(res.body))
                   .then(() => {
                     /* Output de Debug */
-                    // console.log("endpoint cacheado: " + method + " - " + url);
+                    if (redis.debug)
+                      console.log("endpoint cacheado: " + method + " - " + url);
                     res.send();
                   })
                   .catch(error => {
@@ -215,12 +219,13 @@ RedisHandler.WriteCache = (redis, key) => {
                 res.send();
               } else {
                 /* Output de Debug */
-                // console.log(
-                //   "missing header Cache-By-Read by endpoint: " +
-                //     method +
-                //     " - " +
-                //     url
-                // );
+                if (redis.debug)
+                  console.log(
+                    "missing header Cache-By-Read by endpoint: " +
+                      method +
+                      " - " +
+                      url
+                  );
                 res.send();
               }
               break;
