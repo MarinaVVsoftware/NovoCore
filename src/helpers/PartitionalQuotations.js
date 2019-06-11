@@ -15,7 +15,6 @@ function PartitionalQuotations(arrivalDate, departureDate) {
 
   // Variable range of the days.
   var missingDays = timeDiff;
-
   // Copy of the originals dates.
   var firstDateCopy = firstDate;
   // Copy the original day with day one.
@@ -48,7 +47,6 @@ function PartitionalQuotations(arrivalDate, departureDate) {
       fisrtDateDefaultDay.getMonth(),
       fisrtDateDefaultDay.getFullYear()
     );
-    missingDays = missingDays === 0 ? 1 : missingDays;
     // Different cases for the dates.
     if (missingDays === timeDiff) {
       // Get the days of the first date.
@@ -129,6 +127,7 @@ function PartitionalQuotations(arrivalDate, departureDate) {
       );
       missingDays = missingDays - daysMonth;
     }
+    missingDays = missingDays === 0 ? 1 : missingDays;
 
     // Add one to the actual month.
     fisrtDateDefaultDay.setMonth(fisrtDateDefaultDay.getMonth() + 1);
