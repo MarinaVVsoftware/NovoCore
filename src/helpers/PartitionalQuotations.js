@@ -1,5 +1,6 @@
 /**
  * Partitional the quotations between the dates.
+ * COTIZACIONES PARCIALES 3000 MAQUINA DE FUEGO, LA REVELION DE LAS FECHAS.
  * @param {string} arrivalDate Example yyyy/mm/dd.
  * @param {string} departureDate Example yyyy/mm/dd.
  */
