@@ -45,10 +45,14 @@ module.exports = app => {
         mysqlConfig = envs.mysql.prod;
         break;
       default:
-        app.set("port", 8085);
-        app.set("host", "http://localhost:8085/");
+        vars = envs.env.local;
+        redisConfig = envs.redis.local;
+        mysqlConfig = envs.mysql.local;
         break;
     }
+    // Guarda en express variables de uso global
+    app.set("port", vars.port);
+    app.set("host", vars.host);
 
     //carga de variables que no dependen del entorno
     dropboxConfig = envs.dropbox;
