@@ -70,6 +70,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
         if (partialQuotations.length === 0)
           throw new Error("No se pudo crear las cotizaciones.");
 
+        // Map the array
         partialQuotations.map((element, index) => {
           const quotationsObject = {
             ...params,
