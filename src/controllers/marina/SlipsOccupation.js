@@ -1,3 +1,5 @@
+const OccupationAvailability = require("../../helpers/occupationAlgorithms/OccupationAvailability");
+
 // SlipsOccupation - Controller
 const SlipsOccupation = {};
 
@@ -5,7 +7,34 @@ const SlipsOccupation = {};
 SlipsOccupation.GetSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      res.status(200).send("GetSlipOccupations");
+      Query(mysqlConnection, "CALL SP_SlipsOccupation_GetSlipsOccupation();")
+        .then(result => {
+          /* Convierte las fechas de mysql a javascript datetime */
+          slipsOccupation = result[0][0];
+
+          res.status(200).send({ SlipsOccupation: slipsOccupation });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+/* Trae la lista de ocupaciones de slip de una cotización */
+SlipsOccupation.GetSlipsOccupationByQuotation = (
+  newError,
+  Query,
+  mysqlConnection
+) => {
+  return (req, res, next) => {
+    try {
+      res.status(200).send("GetSlipsOccupationByQuotation");
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -14,10 +43,36 @@ SlipsOccupation.GetSlipsOccupation = (newError, Query, mysqlConnection) => {
 };
 
 /* Inserta una nueva ocupación de slip */
-SlipsOccupation.PostSlipsOccupation = (newError, Query, mysqlConnection) => {
+SlipsOccupation.PostSlipsOccupation = (
+  host,
+  newError,
+  Query,
+  mysqlConnection
+) => {
   return (req, res, next) => {
     try {
-      res.status(200).send("PostSlipOccupations");
+      Promises = [
+        fetch(host + "/api/marina/slip-types/"),
+        fetch(host + "/api/marina/slips/"),
+        fetch(host + "/api/marina/slips-occupation/")
+      ];
+
+      Promise.all(Promises)
+        .then(response => Promise.all(response.map(res => res.json())))
+        .then(result => {
+          let { slipsOccupation, error } = OccupationAvailability(
+            result[0].slipTypes,
+            result[1].slips,
+            result[2].slipsOccupation,
+            req.body.startDate,
+            req.body.endDate,
+            req.body.loa,
+            req.body.quotationId
+          );
+
+          res.status(200).send({ slipsOccupation, error });
+        })
+        .catch(error => console.log(error));
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -30,18 +85,6 @@ SlipsOccupation.PutSlipsOccupation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.status(200).send("PutSlipOccupations");
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
-  };
-};
-
-/* Elimina una ocupación de slip basado en su id natural */
-SlipsOccupation.DeleteSlipsOccupation = (newError, Query, mysqlConnection) => {
-  return (req, res, next) => {
-    try {
-      res.status(200).send("DeleteSlipOccupations");
     } catch (error) {
       console.log(error);
       next(newError(error, 500));

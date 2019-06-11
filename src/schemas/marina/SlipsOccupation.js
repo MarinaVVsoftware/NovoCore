@@ -1,8 +1,19 @@
 /* Schemas de validación de los endpoints de SlipsOccupation */
-const SlipsOccupationSchema = {};
+const SlipsOccupation = {};
+
+/* Params -> GetSlipsOccupationByQuotation */
+SlipsOccupation.ParamsGetSlipsOccupationByQuotation = {
+  type: "object",
+  required: ["quotation"],
+  properties: {
+    id: {
+      type: "string"
+    }
+  }
+};
 
 /* Body -> PostSlipsOccupation */
-SlipsOccupationSchema.BodyPostSlipsOccupation = {
+SlipsOccupation.BodyPostSlipsOccupation = {
   type: "object",
   required: ["slipId", "boatId", "startDate", "endDate", "creationResponsable"],
   properties: {
@@ -25,9 +36,9 @@ SlipsOccupationSchema.BodyPostSlipsOccupation = {
 };
 
 /* Params -> PutSlipsOccupation */
-SlipsOccupationSchema.ParamsPutSlipsOccupation = {
+SlipsOccupation.ParamsPutSlipsOccupation = {
   type: "object",
-  required: ["id"],
+  required: ["quotation"],
   properties: {
     id: {
       type: "string"
@@ -36,7 +47,7 @@ SlipsOccupationSchema.ParamsPutSlipsOccupation = {
 };
 
 /* Body -> PutSlipsOccupation */
-SlipsOccupationSchema.BodyPutSlipsOccupation = {
+SlipsOccupation.BodyPutSlipsOccupation = {
   type: "object",
   required: [
     "slipOccupationId",
@@ -68,15 +79,4 @@ SlipsOccupationSchema.BodyPutSlipsOccupation = {
   }
 };
 
-/* Params -> DeleteSlipsOccupation */
-SlipsOccupationSchema.ParamsDeleteSlipsOccupation = {
-  type: "object",
-  required: ["id"],
-  properties: {
-    id: {
-      type: "string"
-    }
-  }
-};
-
-module.exports = SlipsOccupationSchema;
+module.exports = SlipsOccupation;

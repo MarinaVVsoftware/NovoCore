@@ -45,10 +45,14 @@ module.exports = app => {
         mysqlConfig = envs.mysql.prod;
         break;
       default:
-        app.set("port", 8085);
-        app.set("host", "http://localhost:8085/");
+        vars = envs.env.local;
+        redisConfig = envs.redis.local;
+        mysqlConfig = envs.mysql.local;
         break;
     }
+    // Guarda en express variables de uso global
+    app.set("port", vars.port);
+    app.set("host", vars.host);
 
     //carga de variables que no dependen del entorno
     dropboxConfig = envs.dropbox;
@@ -85,8 +89,7 @@ module.exports = app => {
   app.use(monitor(monitorConfig));
 
   // Obtiene la instancia de redis
-  // 3er parametro = habilitar limpieza de caché al arrancar el server
-  const redis = new Redis(redisConfig, vars.host, true);
+  const redis = new Redis(redisConfig, vars.host);
 
   // Obtiene el conector de mysql
   const mysql = Mysql(mysqlConfig);

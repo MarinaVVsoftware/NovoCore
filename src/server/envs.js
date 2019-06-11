@@ -23,19 +23,25 @@ module.exports = {
       host: process.env.REDIS_LOCAL_HOST,
       port: process.env.REDIS_LOCAL_PORT,
       db: process.env.REDIS_LOCAL_DB,
-      password: process.env.REDIS_LOCAL_PASSWORD
+      password: process.env.REDIS_LOCAL_PASSWORD,
+      debug: process.env.REDIS_LOCAL_DEBUG_MODE,
+      flush: process.env.REDIS_LOCAL_FLUSH_ON_START
     },
     dev: {
       host: process.env.REDIS_DEV_HOST,
       port: process.env.REDIS_DEV_PORT,
       db: process.env.REDIS_DEV_DB,
-      password: process.env.REDIS_DEV_PASSWORD
+      password: process.env.REDIS_DEV_PASSWORD,
+      debug: process.env.REDIS_DEV_DEBUG_MODE,
+      flush: process.env.REDIS_DEV_FLUSH_ON_START
     },
     prod: {
       host: process.env.REDIS_PROD_HOST,
       port: process.env.REDIS_PROD_PORT,
       db: process.env.REDIS_PROD_DB,
-      password: process.env.REDIS_PROD_PASSWORD
+      password: process.env.REDIS_PROD_PASSWORD,
+      debug: process.env.REDIS_PROD_DEBUG_MODE,
+      flush: process.env.REDIS_PROD_FLUSH_ON_START
     }
   },
   mysql: {
