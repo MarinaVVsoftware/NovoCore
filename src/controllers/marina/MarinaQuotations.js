@@ -60,6 +60,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
         electricityTotal: req.body.electricityTotal
       };
 
+      // If the monthly quotation is true, call the partional quotations function.
       if (params.monthlyQuotation) {
         const partialQuotations = PartitionalQuotations(
           req.body.arrivalDate,
