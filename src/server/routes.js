@@ -80,7 +80,7 @@ const MarinaPaymentTypes = require(path.resolve(
 ));
 const MarinaQuotations = require(path.resolve(
   __dirname,
-  "../routes/marina/MarinaPaymentTypes"
+  "../routes/marina/MarinaQuotations"
 ));
 const MarinaQuotationServices = require(path.resolve(
   __dirname,

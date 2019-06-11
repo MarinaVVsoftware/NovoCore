@@ -1,5 +1,6 @@
 const path = require("path");
 const SendMail = require(path.resolve(__dirname, "../../helpers/SendMail"));
+const PartitionalQuotations = require(path.resolve(__dirname, "../../helpers/PartitionalQuotations"));
 
 // Marina - Controller
 const Marina = {};
@@ -25,21 +26,24 @@ Marina.Read = (newError, Query, mysqlConnection) => {
 Marina.Create = (newError, Query, mysqlConnection) => {
 	return (req, res, next) => {
 		try {
+			const quotations = PartitionalQuotations(req.body.arrivalDate, req.body.departureDate, req.body.daysRange);
+
+			if (quotations.length > 0) {
+				res.status(200).send({ quotations });
+			} else {
+				throw new Error("No se pudo completar nadie de naide");
+			}
 			// 1.- Revisar el tipo de cotizacion
 			// Si viene mensual
-
 			// 2.- Valida el quotationStatusId
 			// Casos: Suspendido
-
 			// 3.- Hacer las particiones de tiempo de las cotizaciones.
-
-			if (req.body.monthlyQuotation && !req.body.group_quotation) {
-				// Crear una cotización mensual normal.
-			} else {
-				// Cualquier cotización.
-			}
-
-			Query(
+			//if (req.body.monthlyQuotation && !req.body.group_quotation) {
+			// Crear una cotización mensual normal.
+			//} else {
+			// Cualquier cotización.
+			//}
+			/* Query(
 				mysqlConnection,
 				"CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				[
@@ -60,10 +64,9 @@ Marina.Create = (newError, Query, mysqlConnection) => {
 					req.body.monthlyQuotation,
 					req.body.annualQuotation,
 					req.body.semiannualQuotation,
-					req.body.creationResponsable,
-
-					/* Electricity */
-					req.body.electricityTariff,
+					req.body.creationResponsable,*/
+			/* Electricity */
+			/*req.body.electricityTariff,
 					req.body.totalElectricityDays,
 					req.body.discountElectricityPercentage,
 					req.body.currencyElectricityAmount,
@@ -75,7 +78,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
 				.then((result) => {
 					res.status(200).send({ status: "QUOTATION CREATED" });
 				})
-				.catch((error) => next(error));
+				.catch((error) => next(error));*/
 		} catch (error) {
 			console.log(error);
 			next(newError(error, 500));
