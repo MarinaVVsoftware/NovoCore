@@ -77,7 +77,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
             daysStay: element.days
           };
 
-          Query(
+          Query(:()
             mysqlConnection,
             "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             Object.values(quotationsObject)
