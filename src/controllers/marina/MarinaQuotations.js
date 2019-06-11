@@ -79,12 +79,18 @@ Marina.Create = (newError, Query, mysqlConnection) => {
             daysStay: element.days
           };
 
-          Query(
+          montlyQuotationQuery = Query(
             mysqlConnection,
             "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             Object.values(quotationsObject)
           );
         });
+
+        montlyQuotationQuery
+          .then(result => {
+            res.status(200).send({ status: "QUOTATIONS CREATED." });
+          })
+          .catch(error => next(error));
       } else {
       }
 
@@ -93,11 +99,6 @@ Marina.Create = (newError, Query, mysqlConnection) => {
       // 2.- Valida el quotationStatusId
       // Casos: Suspendido
       // 3.- Hacer las particiones de tiempo de las cotizaciones.
-      //if (req.body.monthlyQuotation && !req.body.group_quotation) {
-      // Crear una cotización mensual normal.
-      //} else {
-      // Cualquier cotización.
-      //}
       /*Query(
         mysqlConnection,
         "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
