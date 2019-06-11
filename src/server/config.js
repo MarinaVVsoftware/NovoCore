@@ -85,8 +85,7 @@ module.exports = app => {
   app.use(monitor(monitorConfig));
 
   // Obtiene la instancia de redis
-  // 3er parametro = habilitar limpieza de caché al arrancar el server
-  const redis = new Redis(redisConfig, vars.host, true);
+  const redis = new Redis(redisConfig, vars.host);
 
   // Obtiene el conector de mysql
   const mysql = Mysql(mysqlConfig);
