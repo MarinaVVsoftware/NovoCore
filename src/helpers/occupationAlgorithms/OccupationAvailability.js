@@ -36,17 +36,42 @@ module.exports = function OccupationAvailability(
     return { occupation, error };
   }
 
+  /* Reduce la cantidad de slips en el array a solo los del tipo de slip */
+  var slipsReduced = slips.filter(slip => {
+    if (slip.slip_type_id == slipType) return slip;
+  });
+
+  /* Reduce la cantidad de ocupaciones en el array a solo los del tipo de slip */
+  var slipsOccupationReduced = slipsOccupation.filter(slipOccupation => {
+    if (slipOccupation.slip_type_id == slipType) return slipOccupation;
+  });
+
   // "disponibilidad entera": slip que posea la mayor ocupación para las fechas de esa cotización
   /* busca el slip mas cercano disponible, que cumpla con la mejor "disponibilidad entera" */
+  for (let s = 0; s < slipsReduced.length; s++) {
+    // hace un filter de todas las ocupaciones con ese slip.
+    if (slipsOccupationReduced.length == 0) {
+      console.log("te quedaste sin ocupaciones para revisar!");
+      break;
+    } else
+      console.log("ocupaciones por revisar: " + slipsOccupationReduced.length);
+    var occupationBySlip = slipsOccupationReduced.filter((occup, index) => {
+      if (slipsReduced[s].slip_name == occup.slip_name) {
+        slipsOccupationReduced.splice(index, 1);
+        return occup;
+      }
+    });
+    // si encuentra cero ocupaciones, entonces lo setea directamente
+    if (occupationBySlip.length > 0) console.log(occupationBySlip);
 
-  for (let s = 0; s < slips.length; s++) {
-    /* Si el slip no es del tipo correcto, no lo usa */
-    if (s.slip_type_id != slipType) continue;
-    else {
-    }
+    // si retorna resultados, filtra todas las ocupaciones de ese slip por coincidencia de fecha
+    // si no hay ocupaciones entre las fechas de estadía, entonces lo setea directamente
+
+    // si se cumple que hay coincidencia tanto en el slip como en fechas, calcula la mejor disponibilidad.
+    // dado que no hubo disponibilidad entera, pasa al siguiente slip.
   }
 
-  return { occupation, error };
+  return { slipsReduced, slipsOccupationReduced };
 
   // /* algoritmo para cálculo de disponibilidad de estadía */
 
