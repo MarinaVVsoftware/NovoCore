@@ -101,10 +101,11 @@ RedisHandler.ReadCache = (redis, key) => {
                   GetHash(redis, key, hash)
                     .then(result => {
                       /* Output de Debug */
-                      if (redis.debug)
+                      if (redis.debug) {
                         console.log(
                           "endpoint obtenido de caché: " + method + " - " + url
                         );
+                      }
                       /* Envía los datos en caché via response */
                       res.status(200).send(result);
                     })
@@ -173,10 +174,11 @@ RedisHandler.WriteCache = (redis, key) => {
                   SetHash(redis, key, hash, JSON.stringify(json))
                     .then(() => {
                       /* Output de Debug */
-                      if (redis.debug)
+                      if (redis.debug) {
                         console.log(
                           "endpoint cacheado: " + method + " - " + url
                         );
+                      }
                       res.send();
                     })
                     .catch(error => {
@@ -208,8 +210,9 @@ RedisHandler.WriteCache = (redis, key) => {
                 SetHash(redis, key, hash, JSON.stringify(res.body))
                   .then(() => {
                     /* Output de Debug */
-                    if (redis.debug)
+                    if (redis.debug) {
                       console.log("endpoint cacheado: " + method + " - " + url);
+                    }
                     res.send();
                   })
                   .catch(error => {
@@ -219,13 +222,14 @@ RedisHandler.WriteCache = (redis, key) => {
                 res.send();
               } else {
                 /* Output de Debug */
-                if (redis.debug)
+                if (redis.debug) {
                   console.log(
                     "missing header Cache-By-Read by endpoint: " +
                       method +
                       " - " +
                       url
                   );
+                }
                 res.send();
               }
               break;

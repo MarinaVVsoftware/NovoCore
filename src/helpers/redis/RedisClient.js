@@ -34,7 +34,7 @@ class RedisClass {
       // declaración de la instancia y las variables
       this.redis = instance;
       this.schema = this.CreateSchema(RedisSchema);
-      this.debug = config.debug ? config.debug : false;
+      this.debug = config.debug == "true" ? true : false;
 
       /* Evento que maneja los errores de servidor de Redis. */
       instance.on("error", function(err) {
