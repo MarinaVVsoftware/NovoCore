@@ -48,9 +48,8 @@ function PartitionalQuotations(arrivalDate, departureDate) {
       fisrtDateDefaultDay.getMonth(),
       fisrtDateDefaultDay.getFullYear()
     );
-
+    missingDays = missingDays === 0 ? 1 : missingDays;
     // Different cases for the dates.
-
     if (missingDays === timeDiff) {
       // Get the days of the first date.
       const firstDateDays = firstDate.getDate();
@@ -99,6 +98,8 @@ function PartitionalQuotations(arrivalDate, departureDate) {
         )
       );
     } else if (missingDays < daysMonth) {
+      const days =
+        missingDays != endDate.getDate() ? missingDays + 1 : missingDays;
       quotations.push(
         setDates(
           new Date(
@@ -107,9 +108,9 @@ function PartitionalQuotations(arrivalDate, departureDate) {
           ),
           new Date(
             `${fisrtDateDefaultDay.getFullYear()}/${fisrtDateDefaultDay.getMonth() +
-              1}/${missingDays}`
+              1}/${endDate.getDate()}`
           ),
-          missingDays
+          days
         )
       );
     } else {
@@ -126,6 +127,7 @@ function PartitionalQuotations(arrivalDate, departureDate) {
           missingDays
         )
       );
+      missingDays = missingDays - daysMonth;
     }
 
     // Add one to the actual month.
