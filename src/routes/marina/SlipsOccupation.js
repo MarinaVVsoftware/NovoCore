@@ -23,8 +23,15 @@ module.exports = (
   const instances = [newError, Query, mysqlConnection];
 
   router.get(
-    "/api/marina/slip-occupations/",
+    "/api/marina/slips-occupations/",
     SlipsOccupation.GetSlipsOccupation(...instances)
+  );
+  router.get(
+    "/api/marina/slips-occupations/:quotation",
+    validate({
+      params: Schema.ParamsGetSlipsOccupationByQuotation
+    }),
+    SlipsOccupation.GetSlipsOccupationByQuotation(...instances)
   );
   router.post(
     "/api/marina/slip-occupations/",
@@ -34,19 +41,12 @@ module.exports = (
     SlipsOccupation.PostSlipsOccupation(...instances)
   );
   router.put(
-    "/api/marina/slip-occupations/:id",
+    "/api/marina/slip-occupations/:quotation",
     validate({
       params: Schema.ParamsPutSlipsOccupation,
       body: Schema.BodyPutSlipsOccupation
     }),
     SlipsOccupation.PutSlipsOccupation(...instances)
-  );
-  router.delete(
-    "/api/marina/slip-occupations/:id",
-    validate({
-      params: Schema.ParamsDeleteSlipsOccupation
-    }),
-    SlipsOccupation.DeleteSlipsOccupation(...instances)
   );
 
   app.use(router);
