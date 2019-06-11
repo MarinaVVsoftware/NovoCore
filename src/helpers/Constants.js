@@ -8,5 +8,6 @@ module.exports = {
   boatDocuments: {
     folder: "/novonautica/dockmaster/",
     extensions: ["doc", "dot", "docx", "pdf", "docm"]
-  }
+  },
+  host: ""
 };
