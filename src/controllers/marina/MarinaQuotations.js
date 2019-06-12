@@ -8,7 +8,7 @@ const PartitionalQuotations = require(path.resolve(
 // Marina - Controller
 const Marina = {};
 
-// Read all the Marina Quotation
+// Read a Marina Quotation.
 Marina.Read = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
@@ -61,7 +61,9 @@ Marina.Create = (newError, Query, mysqlConnection) => {
         electricityTotal: req.body.electricityTotal
       };
 
+      // If the status is different to nine, set one, otherwise set nine.
       params.quotationStatusId = params.quotationStatusId !== 9 ? 1 : 9;
+
       // If the monthly quotation is true, call the partional quotations function.
       if (params.monthlyQuotation) {
         Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION_GROUP;")
@@ -209,17 +211,30 @@ Marina.GetDefault = (newError, Query, mysqlConnection) => {
 Marina.StatusSent = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
-        req.params.id,
-        9
+      Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION (?);", [
+        req.params.id
       ])
-        .then(result => {
-          // Send a mail as a promise.
-          SendMail("manu.gtzp@gmail.com", "test", "test", "<h1>test</h1>")
+        .then(([rows, fields]) => {
+          rows.pop();
+          const idStatus = Number(rows[0][0]["marina_quotation_status_id"]);
+          if (idStatus > 2) {
+            throw new Error("QUOTATION HAS BEEN SENT");
+          }
+          Query(
+            mysqlConnection,
+            "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);",
+            [req.params.id, 2]
+          )
             .then(result => {
               res
                 .status(200)
                 .send({ status: "QUOTATION UPDATED TO STATUS SENT." });
+              // Send a mail as a promise.
+              SendMail("manu.gtzp@gmail.com", "test", "test", "<h1>ola</h1>")
+                .then(result => {
+                  console.log("EMAIL SENT");
+                })
+                .catch(error => next(error));
             })
             .catch(error => next(error));
         })
