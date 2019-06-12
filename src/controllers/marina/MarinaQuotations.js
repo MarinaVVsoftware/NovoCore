@@ -27,11 +27,10 @@ Marina.Read = (newError, Query, mysqlConnection) => {
   };
 };
 
-// Create a new record
+// Create a new quotation
 Marina.Create = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      // Group the body for easy handle.
       const params = {
         boatId: req.body.boatId,
         quotationStatusId: req.body.quotationStatusId,
@@ -50,7 +49,9 @@ Marina.Create = (newError, Query, mysqlConnection) => {
         monthlyQuotation: req.body.monthlyQuotation,
         annualQuotation: req.body.annualQuotation,
         semiannualQuotation: req.body.semiannualQuotation,
+        groupQuotation: null,
         creationResponsable: req.body.creationResponsable,
+        /* ELECTRICITY */
         electricityTariff: req.body.electricityTariff,
         totalElectricityDays: req.body.totalElectricityDays,
         discountElectricityPercentage: req.body.discountElectricityPercentage,
@@ -60,81 +61,71 @@ Marina.Create = (newError, Query, mysqlConnection) => {
         electricityTotal: req.body.electricityTotal
       };
 
+      params.quotationStatusId = params.quotationStatusId !== 9 ? 1 : 9;
       // If the monthly quotation is true, call the partional quotations function.
       if (params.monthlyQuotation) {
-        const partialQuotations = PartitionalQuotations(
-          req.body.arrivalDate,
-          req.body.departureDate
-        );
+        Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION_GROUP;")
+          .then(([rows, fields]) => {
+            rows.pop();
+            // If the value is not null, return rows, otherwise return one.
+            let id = rows[0][0]["group_quotation"]
+              ? Number(rows[0][0]["group_quotation"])
+              : 0;
+            id += 1;
+            return id;
+          })
+          .then(id => {
+            // Get the partial quotations
+            const partialQuotations = PartitionalQuotations(
+              req.body.arrivalDate,
+              req.body.departureDate
+            );
 
-        if (partialQuotations.length === 0)
-          throw new Error("No se pudo crear las cotizaciones.");
+            // Trhow an error if the quotations didn't create.
+            if (partialQuotations.length === 0) {
+              next(newError(partialQuotations, 400));
+            }
 
-        // Map the array
-        partialQuotations.map((element, index) => {
-          const quotationsObject = {
-            ...params,
-            arrivalDate: element.arrivalDate,
-            departureDate: element.departureDate,
-            daysStay: element.days
-          };
+            // Create the array of quotations.
+            const Promises = [];
+            // Map the result of the partial quotations.
+            partialQuotations.map((element, index) => {
+              // Overwrite the params.
+              const quotationParams = {
+                ...params,
+                arrivalDate: element.arrivalDate,
+                departureDate: element.departureDate,
+                daysStay: element.days,
+                groupQuotation: id
+              };
 
-          montlyQuotationQuery = Query(
-            mysqlConnection,
-            "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            Object.values(quotationsObject)
-          );
-        });
-
-        montlyQuotationQuery
-          .then(result => {
-            res.status(200).send({ status: "QUOTATIONS CREATED." });
+              // Push the create SP.
+              Promises.push(
+                Query(
+                  mysqlConnection,
+                  "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                  Object.values(quotationParams)
+                )
+              );
+            });
+            Promise.all(Promises)
+              .then(result => {
+                res.status(200).send({ status: "QUOTATIONS CREATED." });
+              })
+              .catch(error => next(error));
           })
           .catch(error => next(error));
       } else {
+        Query(
+          mysqlConnection,
+          "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          Object.values(params)
+        )
+          .then(result => {
+            res.status(200).send({ status: "QUOTATION CREATED." });
+          })
+          .catch(error => next(error));
       }
-
-      // 1.- Revisar el tipo de cotizacion
-      // Si viene mensual
-      // 2.- Valida el quotationStatusId
-      // Casos: Suspendido
-      // 3.- Hacer las particiones de tiempo de las cotizaciones.
-      /*Query(
-        mysqlConnection,
-        "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        [
-          req.body.boatId,
-          req.body.quotationStatusId,
-          req.body.mooringTariffId,
-          req.body.arrivalDate,
-          req.body.departureDate,
-          req.body.arrivalStatus,
-          req.body.mooringTariff,
-          req.body.loa,
-          req.body.daysStay,
-          req.body.discountStayPercentage,
-          req.body.currencyAmount,
-          req.body.tax,
-          req.body.subtotal,
-          req.body.total,
-          req.body.monthlyQuotation,
-          req.body.annualQuotation,
-          req.body.semiannualQuotation,
-          req.body.creationResponsable,*/
-      /* Electricity */
-      /* req.body.electricityTariff,
-          req.body.totalElectricityDays,
-          req.body.discountElectricityPercentage,
-          req.body.currencyElectricityAmount,
-          req.body.electricityTax,
-          req.body.electricitySubtotal,
-          req.body.electricityTotal
-        ]
-      )
-        .then(result => {
-          res.status(200).send({ status: "QUOTATION CREATED" });
-        })
-        .catch(error => next(error));*/
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
