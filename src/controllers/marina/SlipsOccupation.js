@@ -12,7 +12,7 @@ SlipsOccupation.GetSlipsOccupation = (newError, Query, mysqlConnection) => {
           /* Convierte las fechas de mysql a javascript datetime */
           slipsOccupation = result[0][0];
 
-          res.status(200).send({ SlipsOccupation: slipsOccupation });
+          res.status(200).send({ slipsOccupation: slipsOccupation });
         })
         .catch(error => {
           /* retorna el mensaje de error */
@@ -60,7 +60,7 @@ SlipsOccupation.PostSlipsOccupation = (
       Promise.all(Promises)
         .then(response => Promise.all(response.map(res => res.json())))
         .then(result => {
-          let { slipsOccupation, error } = OccupationAvailability(
+          let occupation = OccupationAvailability(
             result[0].slipTypes,
             result[1].slips,
             result[2].slipsOccupation,
@@ -70,7 +70,7 @@ SlipsOccupation.PostSlipsOccupation = (
             req.body.quotationId
           );
 
-          res.status(200).send({ slipsOccupation, error });
+          res.status(200).send({ occupation });
         })
         .catch(error => console.log(error));
     } catch (error) {
