@@ -63,6 +63,13 @@ module.exports = function OccupationAvailability(
 
       if (occupationBySlip.length > 0) {
         // create all fragments
+        fragments = CalculateFragments(
+          startDate,
+          endDate,
+          occupationBySlip,
+          slipsReduced[s].slip_name,
+          fragments
+        );
       } else {
         slipValid = slipsReduced[s].slip_name;
         break;
@@ -93,102 +100,94 @@ module.exports = function OccupationAvailability(
  * @param {array} fragments contenedor de intervalos de tiempo
  */
 function CalculateFragments(S, E, occupationsBySlip, slip, fragments) {
-  let n = occupationsBySlip.length; //cantidad de ocupaciones del slip
-  let days = null;
+  let n = occupationsBySlip.length;
 
-  /* tipos de intervalos */
-
-  // S <=> A : antes de la ocupación
-  // B <=> E : después de la ocupación
-
-  occupationsBySlip.forEach((occupation, index) => {
+  for (let o = 0; o < n; o++) {
+    const occupation = occupationsBySlip[o];
     let A = occupation.start_date;
     let B = occupation.end_date;
+    let BnLess = null;
+    if (o > 0) BnLess = occupationsBySlip[o - 1].end_date;
+
+    let debug = "81";
+
+    if (occupation.slip_name == debug) console.log(o);
+    if (occupation.slip_name == debug) console.log(occupation);
 
     if (S < A) {
-      if (S > B) {
-        /* caso especial, donde existe un intervalo antes de una ocupación */
-        days = FormatDatetime.TimeBetweenTwoDates(S, A);
-        fragments.push({
-          slip: slip,
-          startDate: S,
-          endDate: A,
-          days: days
-        });
-      }
-    } else {
-      /* si no es menor, es porque es una ocupación cuyo startDate (A)
-      se encuentra después de S. Aquí empiezan los intervalos normales. */
-
-      /* en el último caso, dado que no habrán más ocupaciones, el último fragmento
-      usa una fórmula diferente, donde F= B, E */
-      if (index < occupation.length) {
-        // casos normales, con formula normal
-        // si no hay dias entre ocupaciones, no se crea el fragmento
+      if (o == 0) {
+        if (E < B) {
+          fragments = CreateFragment(S, A, fragments, slip);
+          if (occupation.slip_name == debug)
+            console.log("CreateFragment S <=> A + break");
+          break;
+        } else {
+          fragments = CreateFragment(S, A, fragments, slip);
+          if (occupation.slip_name == debug)
+            console.log("CreateFragment S <=> A");
+        }
       } else {
-        // ultimo caso, con formula especial
+        if (E < B) {
+          if (E < A) {
+            if (E > BnLess) {
+              fragments = CreateFragment(BnLess, E, fragments, slip);
+              if (occupation.slip_name == debug)
+                console.log("CreateFragment BnLess <=> E + break");
+              break;
+            } else {
+              if (occupation.slip_name == debug) console.log("just break?");
+              break;
+            }
+          } else {
+            if (S < BnLess) {
+              fragments = CreateFragment(BnLess, A, fragments, slip);
+              if (occupation.slip_name == debug)
+                console.log("CreateFragment BnLess <=> A + break");
+              break;
+            } else {
+              fragments = CreateFragment(S, A, fragments, slip);
+              if (occupation.slip_name == debug)
+                console.log("CreateFragment S <=> A + break");
+              break;
+            }
+          }
+        } else {
+          if (S < BnLess) {
+            fragments = CreateFragment(BnLess, A, fragments, slip);
+            if (occupation.slip_name == debug)
+              console.log("CreateFragment BnLess <=> A");
+          } else {
+            fragments = CreateFragment(S, A, fragments, slip);
+            if (occupation.slip_name == debug)
+              console.log("CreateFragment S <=> A");
+          }
+
+          if (o == n - 1) {
+            fragments = CreateFragment(B, E, fragments, slip);
+            if (occupation.slip_name == debug)
+              console.log("CreateFragment B <=> E + break");
+            break;
+          }
+        }
       }
-    }
-  });
-
-  // primero hay que encontrar el caso especial, donde existe un intervalo antes
-  // de la primera ocupación. Si startDate es menor que la 1ra ocupación, existe el intervalo.
-  if (S < occupationsBySlip[0].start_date) {
-    days = FormatDatetime.TimeBetweenTwoDates(S, endDate);
-    fragments.push({
-      slip: slip,
-      startDate: S,
-      endDate: occupationsBySlip[0].start_date,
-      days: fragment
-    });
-  }
-}
-
-/** Calcula los intervalos de tiempo en los que el barco
- * podría quedarse porque están desocupados.
- *
- * @param {Date} S QuotationStartDate
- * @param {Date} E QuotationEndDate
- * @param {Date} A OccupationStartDate
- * @param {Date} B OccupationEndDate
- * @param {array} fragments contenedor de intervalos de tiempo
- */
-function GetDateFragments(S, E, A, B, fragments, slip) {
-  // Si llega después
-  if (S >= A) {
-    if (E >= B) {
-      // y se va después (3)
-      // obtengo la dif entre E y B
-      fragments = CreateFragment(B, E, fragments, slip);
-    }
-    // else = y se va antes (2)
-  } else {
-    // si llega antes
-    // y se va despues (1)
-    if (E >= B) {
-      // y se va antes (4)
-      // obtengo la dif entre A y S
-      fragments = CreateFragment(S, A, fragments, slip);
-      // obtengo la dif entre E y B
-      fragments = CreateFragment(B, E, fragments, slip);
     } else {
-      // obtengo la dif entre A y S
-      fragments = CreateFragment(S, A, fragments, slip);
+      if (occupation.slip_name == debug)
+        console.log("nothing to do here. just continue.");
+      continue;
     }
-
-    // si llega antes y se va después no hay intervalos disponibles.
   }
+
   return fragments;
 }
 
 function CreateFragment(startDate, endDate, fragments, slip) {
-  fragment = FormatDatetime.TimeBetweenTwoDates(startDate, endDate);
+  days = FormatDatetime.TimeBetweenTwoDates(startDate, endDate);
 
   fragments.push({
     slip: slip,
     startDate: startDate,
     endDate: endDate,
-    days: fragment
+    days: days
   });
 
   return fragments;
