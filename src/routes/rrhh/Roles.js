@@ -16,21 +16,21 @@ module.exports = (
 ) => {
   const instances = [newError, Query, mysqlConnection];
 
-  router.get("/api/roles/read", Roles.Read(mysqlConnection));
-  router.delete(
-    "/api/roles/erase",
-    validate({ body: Schema.erase }),
-    Roles.Erase(...instances)
-  );
-  router.post(
-    "/api/roles/create",
-    validate({ body: Schema.create }),
-    Roles.Create(...instances)
-  );
+  router.get("/api/users/roles/", Roles.GetRoles(...instances));
   router.put(
-    "/api/roles/update",
-    validate({ body: Schema.update }),
-    Roles.Update(...instances)
+    "/api/users/roles/:name",
+    validate({
+      params: Schema.ParamsPutRolByName,
+      body: Schema.BodyPutUserByName
+    }),
+    Roles.PutRolByName(...instances)
+  );
+  router.delete(
+    "/api/users/roles/:name",
+    validate({
+      params: Schema.ParamsDeleteRolByName
+    }),
+    Roles.DeleteRolByName(...instances)
   );
 
   app.use(router);

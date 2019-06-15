@@ -108,8 +108,15 @@ const SlipTypes = require(path.resolve(
   "../routes/marina/SlipTypes"
 ));
 /* Imports de Users y RRHH */
-const Users = require(path.resolve(__dirname, "../routes/rrhh/Users"));
+const Incidents = require(path.resolve(__dirname, "../routes/rrhh/Incidents"));
+const IncidentTypes = require(path.resolve(
+  __dirname,
+  "../routes/rrhh/IncidentTypes"
+));
+const Ranks = require(path.resolve(__dirname, "../routes/rrhh/Ranks"));
 const Roles = require(path.resolve(__dirname, "../routes/rrhh/Roles"));
+const Status = require(path.resolve(__dirname, "../routes/rrhh/Status"));
+const Users = require(path.resolve(__dirname, "../routes/rrhh/Users"));
 
 module.exports = (
   app,
@@ -171,8 +178,12 @@ module.exports = (
   SlipTypes(...instances);
 
   /* Rutas del Modelo de Users y RRHH */
-  Users(...instances);
+  Incidents(...instances);
+  IncidentTypes(...instances);
+  Ranks(...instances);
   Roles(...instances);
+  Status(...instances);
+  Users(...instances);
 
   /* Middleware: Manejo de Errores */
   ErrorHandler(app);

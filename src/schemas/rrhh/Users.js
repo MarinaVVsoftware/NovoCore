@@ -1,43 +1,60 @@
-const userSchema = {};
+/* Modelos de validación de los endpoints de Users */
+const Users = {};
 
-userSchema.email = {
+/* Valida los params de la url */
+Users.ParamsGetUserByName = {
   type: "object",
-  required: ["email"],
+  required: ["name"],
   properties: {
-    email: {
+    name: {
       type: "string"
     }
   }
 };
 
-userSchema.create = {
+/* Valida los params de la url */
+Users.ParamsPutUserByName = {
   type: "object",
-  required: ["userName", "email", "rol", "status"],
+  required: ["name"],
   properties: {
-    userName: {
+    name: {
       type: "string"
-    },
-    email: {
-      type: "string"
-    },
-    rol: {
-      type: "number"
-    },
-    status: {
-      type: "number"
     }
   }
 };
 
-userSchema.update = {
+/* Valida los params de la url */
+Users.BodyPutUserByName = {
   type: "object",
-  required: ["userId"],
+  required: ["rol_id", "status_id", "email", "username", "recruitment_date"],
   properties: {
-    userId: {
+    rol_id: {
       type: "number"
     },
-    ...userSchema.create.properties
+    status_id: {
+      type: "number"
+    },
+    email: {
+      type: "string"
+    },
+    username: {
+      type: "string"
+    },
+    recruitment_date: {
+      type: "string"
+    }
   }
 };
 
-module.exports = userSchema;
+/* Valida los params de la url */
+Users.ParamsDeleteUserByName = {
+  type: "object",
+  required: ["name"],
+  properties: {
+    name: {
+      type: "string"
+    }
+  }
+};
+
+module.exports = Users;

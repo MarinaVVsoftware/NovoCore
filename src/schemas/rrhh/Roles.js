@@ -1,37 +1,43 @@
-const rolSchema = {};
+/* Modelos de validación de los endpoints de Roles */
+const Roles = {};
 
-rolSchema.erase = {
-	type: "object",
-	required: [ "rolName" ],
-	properties: {
-		rolName: {
-			type: "string"
-		}
-	}
+/* Valida los params de la url */
+Roles.ParamsPutRolByName = {
+  type: "object",
+  required: ["name"],
+  properties: {
+    name: {
+      type: "string"
+    }
+  }
 };
 
-rolSchema.create = {
-	type: "object",
-	required: [ "rolName", "jsn", "idGrade" ],
-	properties: {
-		rolName: {
-			type: "string"
-		},
-		jsn: {
-			type: "object"
-		},
-		idGrade: {
-			type: "number"
-		}
-	}
+/* Valida los params de la url */
+Roles.BodyPutUserByName = {
+  type: "object",
+  required: ["rank_id", "rol_name", "permissions"],
+  properties: {
+    rank_id: {
+      type: "number"
+    },
+    rol_name: {
+      type: "string"
+    },
+    permissions: {
+      type: "string"
+    }
+  }
 };
 
-rolSchema.update = {
-	type: "object",
-	required: [ "rolName" ],
-	properties: {
-		...rolSchema.create.properties
-	}
+/* Valida los params de la url */
+Roles.ParamsDeleteRolByName = {
+  type: "object",
+  required: ["name"],
+  properties: {
+    name: {
+      type: "string"
+    }
+  }
 };
 
-module.exports = rolSchema;
+module.exports = Roles;

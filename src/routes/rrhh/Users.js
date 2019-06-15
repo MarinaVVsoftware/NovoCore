@@ -17,9 +17,24 @@ module.exports = (
   const instances = [newError, Query, mysqlConnection];
 
   router.get("/api/users/", Users.GetUsers(...instances));
-  router.get("/api/users/:name", Users.GetUserByName(...instances));
-  router.put("/api/users/:name", Users.PutUserByName(...instances));
-  router.delete("/api/users/:name", Users.DeleteUserByName(...instances));
+  router.get(
+    "/api/users/:name",
+    validate({ params: Schema.ParamsGetUserByName }),
+    Users.GetUserByName(...instances)
+  );
+  router.put(
+    "/api/users/:name",
+    validate({
+      params: Schema.ParamsPutUserByName,
+      body: Schema.BodyPutUserByName
+    }),
+    Users.PutUserByName(...instances)
+  );
+  router.delete(
+    "/api/users/:name",
+    validate({ params: Schema.ParamsDeleteUserByName }),
+    Users.DeleteUserByName(...instances)
+  );
 
   app.use(router);
 };
