@@ -34,12 +34,12 @@ module.exports = app => {
         redisConfig = envs.redis.local;
         mysqlConfig = envs.mysql.local;
         break;
-      case "dev" || "development":
+      case "development":
         vars = envs.env.dev;
         redisConfig = envs.redis.dev;
         mysqlConfig = envs.mysql.dev;
         break;
-      case "prod" || "production":
+      case "production":
         vars = envs.env.prod;
         redisConfig = envs.redis.prod;
         mysqlConfig = envs.mysql.prod;
