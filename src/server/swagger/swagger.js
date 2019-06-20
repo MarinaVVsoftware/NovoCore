@@ -3,7 +3,7 @@ var swaggerUi = require("swagger-ui-express");
 const path = require("path");
 const YAML = require("yamljs");
 const swaggerDocument = YAML.load(
-  path.resolve("./src/server/swagger/Swagger.yaml")
+  path.resolve("./src/server/swagger/swagger.yaml")
 );
 // const swaggerDocument = require('./Swagger.json');
 
