@@ -6,15 +6,18 @@ module.exports = {
   env: {
     local: {
       host: process.env.LOCAL_HOST,
-      port: process.env.LOCAL_PORT
+      port: process.env.LOCAL_PORT,
+      authcore: process.env.LOCAL_AUTHCORE_HOST
     },
     dev: {
       host: process.env.DEV_HOST,
-      port: process.env.DEV_PORT
+      port: process.env.DEV_PORT,
+      authcore: process.env.DEV_AUTHCORE_HOST
     },
     prod: {
       host: process.env.PROD_HOST,
-      port: process.env.PROD_PORT
+      port: process.env.PROD_PORT,
+      authcore: process.env.PROD_AUTHCORE_HOST
     },
     NODE_ENV: process.env.NODE_ENV
   },

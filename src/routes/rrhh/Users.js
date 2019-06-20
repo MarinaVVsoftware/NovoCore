@@ -14,7 +14,7 @@ module.exports = (
   redis,
   redisHandler
 ) => {
-  const instances = [newError, Query, mysqlConnection];
+  const instances = [newError, Query, mysqlConnection, app.get("authcore")];
 
   router.get("/api/users/", Users.GetUsers(...instances));
   router.get(
@@ -31,7 +31,7 @@ module.exports = (
     Users.PutUserByName(...instances)
   );
   router.delete(
-    "/api/users/:name",
+    "/api/users/:email",
     validate({ params: Schema.ParamsDeleteUserByName }),
     Users.DeleteUserByName(...instances)
   );

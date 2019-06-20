@@ -53,6 +53,7 @@ module.exports = app => {
     // Guarda en express variables de uso global
     app.set("port", vars.port);
     app.set("host", vars.host);
+    app.set("authcore", vars.authcore);
 
     //carga de variables que no dependen del entorno
     dropboxConfig = envs.dropbox;
