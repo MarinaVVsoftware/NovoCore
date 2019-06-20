@@ -2,7 +2,7 @@
 const path = require("path");
 const BoatDocuments = require(path.resolve(
   __dirname,
-  "../../controllers/Boats/boatDocuments"
+  "../../controllers/boats/BoatDocuments"
 ));
 const Schema = require(path.resolve(
   __dirname,

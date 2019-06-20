@@ -1,5 +1,5 @@
 const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/NewError"));
+const newError = require(path.resolve(__dirname, "../../helpers/newError"));
 
 // Bank_Account - Controller
 const Bank_Account = {};

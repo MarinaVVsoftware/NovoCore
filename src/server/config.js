@@ -6,17 +6,17 @@ const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
 const monitor = require("express-status-monitor");
 const multer = require("multer");
-const envs = require(path.resolve(__dirname, "./Envs"));
-var monitorConfig = require(path.resolve(__dirname, "./MonitorConfig"));
-const swagger = require(path.resolve(__dirname, "./swagger/Swagger"));
+const envs = require(path.resolve(__dirname, "./envs"));
+var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
+const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
 const Redis = require(path.resolve(__dirname, "../helpers/redis/RedisClient"));
-const Mysql = require(path.resolve(__dirname, "../helpers/Database"));
-const Dropbox = require(path.resolve(__dirname, "../helpers/Dropbox"));
-const routes = require(path.resolve(__dirname, "./Routes"));
+const Mysql = require(path.resolve(__dirname, "../helpers/database"));
+const Dropbox = require(path.resolve(__dirname, "../helpers/dropbox"));
+const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
 var { Validator } = require("express-json-validator-middleware");
-const newError = require(path.resolve(__dirname, "../helpers/NewError"));
-const query = require(path.resolve(__dirname, "../helpers/Query"));
+const newError = require(path.resolve(__dirname, "../helpers/newError"));
+const query = require(path.resolve(__dirname, "../helpers/query"));
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -87,7 +87,7 @@ module.exports = app => {
   // instancia de swagger
   // swagger(app, router);
   // inicia el servicio de monitoreo
-  // app.use(monitor(monitorConfig));
+  app.use(monitor(monitorConfig));
 
   // Obtiene la instancia de redis
   const redis = new Redis(redisConfig, vars.host);

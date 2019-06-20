@@ -1,6 +1,6 @@
-const Token = require('../helpers/Token');
+const Token = require("../helpers/token");
 
-module.exports = (app) => {
-	//Utiliza un middleware
-	app.use(Token.auth());
+module.exports = app => {
+  //Utiliza un middleware
+  app.use(Token.auth());
 };

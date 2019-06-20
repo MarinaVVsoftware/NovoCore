@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const Log = require(path.resolve(__dirname, "./src/helpers/Logs"));
-const config = require(path.resolve(__dirname, "./src/server/Config"));
+const config = require(path.resolve(__dirname, "./src/server/config"));
 
 // Se pasa como parámetro la instancia de express al módulo de config
 const { app, vars } = config(express());
