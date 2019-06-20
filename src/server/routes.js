@@ -143,7 +143,7 @@ module.exports = (
   ];
 
   /* Middleware: Autenticación */
-  //Auth(app);
+  Auth(app);
 
   /* Rutas del Modelo de Boats */
   BoatDocuments(...instances);
