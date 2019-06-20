@@ -49,9 +49,9 @@ Users.BodyPutUserByName = {
 /* Valida los params de la url */
 Users.ParamsDeleteUserByName = {
   type: "object",
-  required: ["name"],
+  required: ["email"],
   properties: {
-    name: {
+    email: {
       type: "string"
     }
   }
