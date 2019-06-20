@@ -45,32 +45,54 @@ Users.GetUserByName = (newError, Query, mysqlConnection) => {
   };
 };
 
-Users.PutUserByName = (newError, Query, mysqlConnection) => {
+Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
   return function(req, res, next) {
     try {
+      const user = req.body;
+
       /* Valida manualmente si el nombre de usuario es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError('el param "name" no es un string válido.', 400));
-
-      Query(mysqlConnection, "CALL SP_Users_PutByName(?,?,?,?,?,?);", [
-        decodeURIComponent(req.params.name),
-        req.body.rol_id,
-        req.body.status_id,
-        req.body.email,
-        req.body.username,
-        req.body.recruitment_date
-      ])
-        .then(result => {
-          res
-            .status(200)
-            .send({ status: "Usuario insertado o modificado correctamente." });
-        })
-        .catch(error => {
-          /* retorna el mensaje de error */
-          console.log(error);
-          next(error);
-        });
+      /* Manda una petición a AuthCore para crear un usuario */ else
+        fetch(
+          authcore + "/auth/users/" + encodeURIComponent(user.email) + "/",
+          {
+            method: "PUT",
+            headers: {
+              "content-type": "application/json",
+              authorization: req.get("Authorization")
+            },
+            body: JSON.stringify({
+              email: user.email,
+              password: user.password,
+              displayName: user.username,
+              username: user.username
+            })
+          }
+        )
+          .then(response => {
+            if (response.ok) return response.json();
+            else throw new Error("La API de AuthCore ha fallado.");
+          })
+          .then(response => {
+            /* Hace PUT en DB del usuario */
+            Query(mysqlConnection, "CALL SP_Users_PutByName(?,?,?,?,?,?);", [
+              decodeURIComponent(req.params.name),
+              user.rol_id,
+              user.status_id,
+              user.email,
+              user.username,
+              user.recruitment_date
+            ])
+              .then(() => {
+                res.status(200).send({
+                  status: "Usuario insertado o modificado correctamente."
+                });
+              })
+              .catch(error => next(error));
+          })
+          .catch(error => next(error));
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
@@ -78,25 +100,46 @@ Users.PutUserByName = (newError, Query, mysqlConnection) => {
   };
 };
 
-Users.DeleteUserByName = (newError, Query, mysqlConnection) => {
+Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
   return function(req, res, next) {
     try {
       /* Valida manualmente si el nombre de usuario es un string alfanumérico válido.
       decodifica el string de la uri. %20 significa espacio. */
-      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError('el param "name" no es un string válido.', 400));
+      const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (!emailRegex.test(decodeURIComponent(req.params.email)))
+        next(newError('el param "email" no es un string válido.', 400));
 
-      Query(mysqlConnection, "CALL SP_Users_DeleteByName(?);", [
-        decodeURIComponent(req.params.name)
-      ])
-        .then(result => {
-          res.status(200).send({ status: "Usuario eliminado correctamente." });
+      console.log(decodeURIComponent(req.params.email));
+      /* Manda una petición a AuthCore para crear un usuario */
+      fetch(
+        authcore + "/auth/users/" + decodeURIComponent(req.params.email) + "/",
+        {
+          method: "DELETE",
+          headers: {
+            "content-type": "application/json",
+            authorization: req.get("Authorization")
+          }
+        }
+      )
+        .then(response => {
+          return response.json();
         })
-        .catch(error => {
-          /* retorna el mensaje de error */
-          console.log(error);
-          next(error);
-        });
+        .then(response => {
+          if (!response.error)
+            Query(mysqlConnection, "CALL SP_Users_DeleteByEmail(?);", [
+              decodeURIComponent(req.params.email)
+            ])
+              .then(() => {
+                res
+                  .status(200)
+                  .send({ status: "Usuario eliminado correctamente." });
+              })
+              .catch(error => {
+                next(error);
+              });
+          else throw new Error(response.error);
+        })
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
