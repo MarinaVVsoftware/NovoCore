@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const Log = require(path.resolve(__dirname, "../helpers/Logs"));
 const express = require("express");
 const morgan = require("morgan");
@@ -17,6 +18,13 @@ const routes = require(path.resolve(__dirname, "./routes"));
 var { Validator } = require("express-json-validator-middleware");
 const newError = require(path.resolve(__dirname, "../helpers/newError"));
 const query = require(path.resolve(__dirname, "../helpers/query"));
+const Token = require(path.resolve(__dirname, "../helpers/token"));
+
+// Imports de llave pública para la autentificación de JWT.
+const publicKey = fs.readFileSync(
+  path.resolve(__dirname, "../../keys/public.key"),
+  "utf8"
+);
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
@@ -98,19 +106,30 @@ module.exports = app => {
   // Obtiene la instancia de dropbox
   const dropbox = new Dropbox(dropboxConfig);
 
-  /* ROUTES */
-  // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
-  // app: Objeto de la aplicación.
-  // router: Router de express.
-  // newError: Manejador personalizado de errores.
-  // query: Función para la promesa de Mysql
-  // validate: Objeto del validador de Schemas.
-  // mysqlConnection: Conexión con mysql.
-  // redis: Instancia de redis.
-  routes(app, router, newError, query, validate, mysql, Multer, dropbox, redis);
-
   /* Si no se instancian las dependencias clave, truena el server. */
-  if (mysql) {
+  if (mysql && Token.keys(publicKey)) {
+    /* ROUTES */
+    // recibe todas las instancias que debe propagar a través de los diferentes endpoints de la API.
+    // app: Objeto de la aplicación.
+    // router: Router de express.
+    // newError: Manejador personalizado de errores.
+    // query: Función para la promesa de Mysql
+    // validate: Objeto del validador de Schemas.
+    // mysqlConnection: Conexión con mysql.
+    // redis: Instancia de redis.
+    routes(
+      app,
+      router,
+      newError,
+      query,
+      validate,
+      mysql,
+      Multer,
+      dropbox,
+      redis,
+      Token
+    );
+
     Log.Success("Configuración del servidor establecida.");
     return { app, vars };
   } else {

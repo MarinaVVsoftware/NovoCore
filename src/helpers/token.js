@@ -1,11 +1,16 @@
 const jwt = require("jsonwebtoken");
 const Token = {};
-const fs = require("fs");
-const path = require("path");
-const publicKey = fs.readFileSync(
-  path.join(__dirname, "../../keys/public.key"),
-  "utf8"
-);
+const keys = {};
+
+// Loguea el tokenData y te retorna el token encriptado
+// Utiliza un privateKey(authcore) y publicKey(novocore).
+
+Token.keys = public => {
+  if (public) {
+    keys.public = public;
+    return true;
+  } else return false;
+};
 
 // Toma el header y decodifica el token para ver si existe.
 Token.validateToken = header => {
@@ -18,7 +23,7 @@ Token.validateToken = header => {
   // Verifica el token
   return jwt.verify(
     tokenFormatted,
-    publicKey,
+    keys.public,
     {
       expiresIn: "4d"
     },
