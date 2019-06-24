@@ -4,7 +4,7 @@ const Clients = require(path.resolve(
   __dirname,
   "../../controllers/clients/Clients"
 ));
-const ClientsSchema = require(path.resolve(
+const Schema = require(path.resolve(
   __dirname,
   "../../schemas/clients/Clients"
 ));
@@ -17,22 +17,13 @@ module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get("/api/Clients/Read", Clients.Read(...instances));
-
-  router.patch(
-    "/api/Clients/Delete",
-    validate({ body: ClientsSchema.delete }),
-    Clients.Delete(...instances)
-  );
   router.post(
-    "/api/Clients/Create",
-    validate({ body: ClientsSchema.create }),
-    Clients.Create(mysqlConnection)
+    "/api/clients/",
+    validate({ body: Schema.BodyPostClient }),
+    Clients.PostClient(...instances)
   );
-  router.put(
-    "/api/Clients/Update",
-    validate({ body: ClientsSchema.update }),
-    Clients.Update(mysqlConnection)
-  );
+  router.patch("/api/Clients/Delete", Clients.Delete(...instances));
+  router.put("/api/Clients/Update", Clients.Update(mysqlConnection));
 
   app.use(router);
 };

@@ -136,7 +136,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
 };
 
 // Si se cicla, quiza no se ha puesto el res.status.send Promises.all, el resultado de cada promesa es una row.
-Marina.ReadList = (newError, Query, mysqlConnection) => {
+Marina.GetQuotationsByGroup = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       // Objeto para seleccionar el grupo de cotizaciones a base de su status
@@ -196,7 +196,7 @@ Marina.ReadList = (newError, Query, mysqlConnection) => {
 };
 
 // Redireccionamiento de /api/marina/quotation/active
-Marina.GetDefault = (newError, Query, mysqlConnection) => {
+Marina.GetQuotations = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       res.redirect("active");

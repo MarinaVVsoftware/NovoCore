@@ -23,17 +23,17 @@ module.exports = (
 ) => {
   const instances = [newError, Query, mysqlConnection];
 
-  // Lee una cotización por ID.
-  router.get(
-    "/api/marina/quotations/:id",
-    validate({ params: Schema.read }),
-    MarinaQuotations.Read(...instances)
-  );
   // Lee todas las cotizaciones por grupo en una variable llamada "filterBy".
   router.get(
     "/api/marina/quotations/",
     validate({ query: Schema.readList }),
-    MarinaQuotations.ReadList(...instances)
+    MarinaQuotations.GetQuotationsByGroup(...instances)
+  );
+  // Lee una cotización por ID.
+  router.get(
+    "/api/marina/quotations/:id/",
+    validate({ params: Schema.read }),
+    MarinaQuotations.Read(...instances)
   );
   // Crea cotización.
   router.post(

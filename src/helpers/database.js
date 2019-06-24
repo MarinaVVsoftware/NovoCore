@@ -10,6 +10,7 @@ function createConnection(config) {
   var password = config.password;
   var database = config.database;
 
+  console.log("trying connection");
   const connection = mysql.createConnection({
     host,
     port,
@@ -20,6 +21,7 @@ function createConnection(config) {
     multipleStatements: true,
     insecureAuth: true
   });
+  console.log("connection tried");
   if (connection) {
     console.log("base de datos inicializada");
     return connection;

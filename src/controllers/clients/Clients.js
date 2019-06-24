@@ -18,7 +18,28 @@ Clients.Read = function(newError, Query, mysqlConnection) {
   };
 };
 
-//Funcion para llamar La informacion de 1 usuario a travez de su Id
+Clients.PostClient = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
+    try {
+      Query(mysqlConnection, "CALL SP_Clients_PostClient(?,?,?,?,?);", [
+        req.body.status_id,
+        req.body.name,
+        req.body.email,
+        req.body.phone,
+        req.body.address
+      ])
+        .then(() => {
+          res.status(200).send({ status: "cliente creado." });
+        })
+        .catch(error => {
+          next(error);
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
 
 // Funcion para eliminar usuarios por su ID
 Clients.Delete = function(newError, Query, mysqlConnection) {
@@ -31,33 +52,6 @@ Clients.Delete = function(newError, Query, mysqlConnection) {
         (err, rows, fields) => {
           if (err) throw "Mysql Error";
           res.status(200).send({ status: "USER DELETED" });
-        }
-      );
-    } catch (error) {
-      next(newError(error, 500));
-    }
-  };
-};
-
-//Funcion para Insertar Usuarios dentro de la Tabla
-Clients.Create = function(mysqlConnection) {
-  return function(req, res, next) {
-    try {
-      mysqlConnection.query(
-        "CALL SP_CREATE_CLIENTS(?,?,?,?,?,?,?,?);",
-        [
-          req.body.status_id,
-          req.body.rol_id,
-          req.body.electronic_signature_id,
-          req.body.name,
-          req.body.email,
-          req.body.phone,
-          req.body.address,
-          req.body.electronic_wallet_id
-        ],
-        (err, rows, fields) => {
-          if (err) next("Mysql Error: " + err);
-          else res.status(200).send({ status: "USER CREATED" });
         }
       );
     } catch (error) {

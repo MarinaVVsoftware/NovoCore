@@ -1,49 +1,16 @@
-const ClientsSchema = {};
+const Clients = {};
 
-ClientsSchema.erase = {
+Clients.BodyPostClient = {
   type: "object",
-  required: ["id"],
-  properties: {
-    id: {
-      type: "number"
-    }
-  }
-};
-
-ClientsSchema.delete = {
-  type: "object",
-  required: ["id"],
-  properties: {
-    id: {
-      type: "number"
-    }
-  }
-};
-
-ClientsSchema.create = {
-  type: "object",
-  required: [
-    "status_id",
-    "rol_id",
-    "electronic_signature_id",
-    "name",
-    "email",
-    "phone",
-    "address",
-    "creation_date",
-    "electronic_wallet_id"
-  ],
+  required: ["status_id", "name", "email", "phone", "address"],
   properties: {
     status_id: {
       type: "number"
     },
-    rol_id: {
-      type: "number"
-    },
-    electronic_signature_id: {
-      type: "number"
-    },
     name: {
+      type: "string"
+    },
+    email: {
       type: "string"
     },
     phone: {
@@ -51,25 +18,8 @@ ClientsSchema.create = {
     },
     address: {
       type: "string"
-    },
-    creation_date: {
-      type: "string"
-    },
-    electronic_wallet_id: {
-      type: "number"
     }
   }
 };
 
-ClientsSchema.update = {
-  type: "object",
-  required: ["client_id"],
-  properties: {
-    client_id: {
-      type: "number"
-    },
-    ...ClientsSchema.create.properties
-  }
-};
-
-module.exports = ClientsSchema;
+module.exports = Clients;

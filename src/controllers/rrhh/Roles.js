@@ -53,7 +53,17 @@ Roles.PutRolByName = (newError, Query, mysqlConnection) => {
 Roles.DeleteRolByName = (newError, Query, mysqlConnection) => {
   return function(req, res, next) {
     try {
-      res.status(200).send(JSON.stringify("DeleteRolByName"));
+      Query(mysqlConnection, "CALL SP_Roles_DeleteByName(?);", [
+        req.params.name
+      ])
+        .then(() => {
+          res.status(200).send({ status: "Rol Eliminado." });
+        })
+        .catch(error => {
+          /* retorna el mensaje de error */
+          console.log(error);
+          next(error);
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
