@@ -12,7 +12,7 @@ const Marina = {};
 Marina.Read = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION (?);", [
+      Query(mysqlConnection, "CALL SP_MarinaQuotations_GetQuotationById (?);", [
         req.params.id
       ])
         .then(([rows, fields]) => {
@@ -66,7 +66,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
 
       // If the monthly quotation is true, call the partional quotations function.
       if (params.monthlyQuotation) {
-        Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION_GROUP;")
+        Query(mysqlConnection, "CALL SP_MarinaQuotations_GetQuotationGroup();")
           .then(([rows, fields]) => {
             rows.pop();
             // If the value is not null, return rows, otherwise return one.
@@ -105,7 +105,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
               Promises.push(
                 Query(
                   mysqlConnection,
-                  "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                  "CALL SP_MarinaQuotations_PostQuotation (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                   Object.values(quotationParams)
                 )
               );
@@ -120,7 +120,7 @@ Marina.Create = (newError, Query, mysqlConnection) => {
       } else {
         Query(
           mysqlConnection,
-          "CALL SP_CREATE_MARINA_QUOTATION (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          "CALL SP_MarinaQuotations_PostQuotation (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
           Object.values(params)
         )
           .then(result => {
@@ -153,7 +153,7 @@ Marina.ReadList = (newError, Query, mysqlConnection) => {
         : quotationStatus[active];
 
       // Convierte el array a string delimitado por comas para la base de datos.
-      Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATIONS_LIST (?)", [
+      Query(mysqlConnection, "CALL SP_Marina_GetQuotationsByGroup (?)", [
         statusSelected.toString()
       ])
         .then(([rows, fields]) => {
@@ -211,7 +211,7 @@ Marina.GetDefault = (newError, Query, mysqlConnection) => {
 Marina.StatusSent = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_READ_MARINA_QUOTATION (?);", [
+      Query(mysqlConnection, "CALL SP_MarinaQuotations_GetQuotationById (?);", [
         req.params.id
       ])
         .then(([rows, fields]) => {
@@ -222,7 +222,7 @@ Marina.StatusSent = (newError, Query, mysqlConnection) => {
           }
           Query(
             mysqlConnection,
-            "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);",
+            "CALL SP_MarinaQuotations_PatchStatus (?,?);",
             [req.params.id, 2]
           )
             .then(result => {
@@ -249,7 +249,7 @@ Marina.StatusSent = (newError, Query, mysqlConnection) => {
 Marina.StatusAccepted = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+      Query(mysqlConnection, "CALL SP_MarinaQuotations_PatchStatus (?,?);", [
         req.params.id,
         2
       ]).then(result => {
@@ -267,7 +267,7 @@ Marina.StatusAccepted = (newError, Query, mysqlConnection) => {
 Marina.StatusValidated = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+      Query(mysqlConnection, "CALL SP_MarinaQuotations_PatchStatus (?,?);", [
         req.params.id,
         3
       ]).then(result => {
@@ -285,7 +285,7 @@ Marina.StatusValidated = (newError, Query, mysqlConnection) => {
 Marina.StatusDeclined = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_UPDATE_MARINA_QUOTATION_STATUS (?,?);", [
+      Query(mysqlConnection, "CALL SP_MarinaQuotations_PatchStatus (?,?);", [
         req.params.id,
         2
       ]).then(result => {
