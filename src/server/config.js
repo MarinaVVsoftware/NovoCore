@@ -11,7 +11,10 @@ const envs = require(path.resolve(__dirname, "./envs"));
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
 const Redis = require(path.resolve(__dirname, "../helpers/redis/RedisClient"));
-const Mysql = require(path.resolve(__dirname, "../helpers/database"));
+const MysqlHandler = require(path.resolve(
+  __dirname,
+  "../helpers/MysqlHandler"
+));
 const Dropbox = require(path.resolve(__dirname, "../helpers/dropbox"));
 const routes = require(path.resolve(__dirname, "./routes"));
 /* Helpers para los Controllers */
@@ -101,7 +104,8 @@ module.exports = app => {
   const redis = new Redis(redisConfig, vars.host);
 
   // Obtiene el conector de mysql
-  const mysql = Mysql(mysqlConfig);
+  const mysqlHandler = new MysqlHandler(mysqlConfig);
+  var mysql = mysqlHandler.connection;
 
   // Obtiene la instancia de dropbox
   const dropbox = new Dropbox(dropboxConfig);
