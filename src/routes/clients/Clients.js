@@ -9,21 +9,30 @@ const Schema = require(path.resolve(
   "../../schemas/clients/Clients"
 ));
 
-var { Validator } = require("express-json-validator-middleware");
-var validator = new Validator({ allErrors: true });
-var validate = validator.validate;
-
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
   const instances = [newError, Query, mysqlConnection];
 
-  router.get("/api/Clients/Read", Clients.Read(...instances));
+  router.get("/api/clients/", Clients.GetClients(...instances));
+  router.get(
+    "/api/clients/:id/",
+    validate({ params: Schema.ParamsGetClientById }),
+    Clients.GetClientById(...instances)
+  );
   router.post(
     "/api/clients/",
     validate({ body: Schema.BodyPostClient }),
     Clients.PostClient(...instances)
   );
-  router.patch("/api/Clients/Delete", Clients.Delete(...instances));
-  router.put("/api/Clients/Update", Clients.Update(mysqlConnection));
+  router.put(
+    "/api/clients/:id/",
+    validate({ params: Schema.ParamsPutClient, body: Schema.BodyPutClient }),
+    Clients.PutClient(...instances)
+  );
+  router.delete(
+    "/api/clients/:id/",
+    validate({ params: Schema.ParamsDeleteClientById }),
+    Clients.DeleteClientById(...instances)
+  );
 
   app.use(router);
 };

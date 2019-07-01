@@ -1,20 +1,44 @@
 // Controller - Clients
 const Clients = {};
 
-//funcion para llamar y leer la informaion dentro de los usuarios en general
-Clients.Read = function(newError, Query, mysqlConnection) {
+Clients.GetClientById = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
-    console.log("lo que sea");
-    Query(mysqlConnection, "CALL SP_READ_CLIENTS(); ").then(result => {
-      let clients = result[0][0];
-      console.log(clients);
-      let response = {};
-      clients.map(client => {
-        response[client.client_id] = { client };
-      });
+    try {
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
 
-      res.status(200).send(response);
-    });
+      Query(mysqlConnection, "CALL SP_Clients_GetClientById(?);", [
+        req.params.id
+      ])
+        .then(result => {
+          res.status(200).send({ client: result[0][0][0] });
+        })
+        .catch(error => {
+          next(newError(error, 400));
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
+  };
+};
+
+//funcion para llamar y leer la informaion dentro de los usuarios en general
+Clients.GetClients = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
+    try {
+      Query(mysqlConnection, "CALL SP_Clients_GetClients();")
+        .then(result => {
+          res.status(200).send({ clients: result[0][0] });
+        })
+        .catch(error => {
+          next(newError(error, 400));
+        });
+    } catch (error) {
+      console.log(error);
+      next(newError(error, 500));
+    }
   };
 };
 
@@ -29,10 +53,10 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
         req.body.address
       ])
         .then(() => {
-          res.status(200).send({ status: "cliente creado." });
+          res.status(200).send({ status: "Cliente creado." });
         })
         .catch(error => {
-          next(error);
+          next(newError(error, 400));
         });
     } catch (error) {
       console.log(error);
@@ -41,51 +65,50 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
   };
 };
 
-// Funcion para eliminar usuarios por su ID
-Clients.Delete = function(newError, Query, mysqlConnection) {
-  return function(req, res, next) {
+Clients.PutClient = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
     try {
-      const query = "CALL SP_DELETE_CLIENTS(?);";
-      mysqlConnection.query(
-        query,
-        [req.body.client_id],
-        (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER DELETED" });
-        }
-      );
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
+      Query(mysqlConnection, "CALL SP_Clients_PutClient(?,?,?,?,?,?);", [
+        req.params.id,
+        req.body.status_id,
+        req.body.name,
+        req.body.email,
+        req.body.phone,
+        req.body.address
+      ])
+        .then(() => {
+          res.status(200).send({ status: "Cliente actualizado." });
+        })
+        .catch(error => {
+          next(newError(error, 400));
+        });
     } catch (error) {
+      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-//Funcion para Modificar Usuarios
-Clients.Update = function(mysqlConnection) {
-  return function(req, res, next) {
+Clients.DeleteClientById = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
     try {
-      const query = `    
-        CALL SP_UPDATE_CLIENTS(?,?,?,?,?,?,?,?,?,?);
-      `;
-      mysqlConnection.query(
-        query,
-        [
-          req.body.clients_id,
-          req.body.status_id,
-          req.body.rol_id,
-          req.body.electronic_signature_id,
-          req.body.name,
-          req.body.email,
-          req.body.phone,
-          req.body.address,
-          req.body.creation_date,
-          req.body.electronic_wallet_id
-        ],
-        (err, rows, fields) => {
-          if (err) throw "Mysql Error";
-          res.status(200).send({ status: "USER UPDATED" });
-        }
-      );
+      /* Valida manualmente el tipado de id */
+      if (isNaN(req.params.id))
+        next(newError('el param "id" no es un número válido.', 400));
+
+      Query(mysqlConnection, "CALL SP_Clients_DeleteClient(?);", [
+        req.params.id
+      ])
+        .then(result => {
+          res.status(200).send({ status: "Cliente eliminado." });
+        })
+        .catch(error => {
+          next(newError(error, 400));
+        });
     } catch (error) {
       console.log(error);
       next(newError(error, 500));
