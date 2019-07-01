@@ -7,7 +7,7 @@ class MysqlHandler {
     this.connection = null;
 
     this.dbConfig = {
-      config: config.host,
+      host: config.host,
       port: config.port,
       localAddress: config.localAddress,
       user: config.user,
