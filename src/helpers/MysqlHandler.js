@@ -4,9 +4,10 @@ const mysql = require("mysql2");
  */
 class MysqlHandler {
   constructor(config) {
-    this.connection = null;
+    this.pool = null;
 
-    this.dbConfig = {
+    const dbConfig = {
+      // connection options
       host: config.host,
       port: config.port,
       localAddress: config.localAddress,
@@ -14,37 +15,42 @@ class MysqlHandler {
       password: config.password,
       database: config.database,
       multipleStatements: true,
-      insecureAuth: true
+      insecureAuth: true,
+      // pool options
+      waitForConnections: true,
+      connectionLimit: 30,
+      queueLimit: 0
     };
 
-    this.HandleConnection();
+    this.HandleConnection(dbConfig, config.debugMode);
   }
 
-  HandleConnection() {
+  HandleConnection(config, debugMode) {
     try {
-      this.connection = mysql.createConnection(this.dbConfig);
+      /* Crea la pool de conexiones */
+      this.pool = mysql.createPool(config);
 
-      this.connection.connect(error => {
-        if (error) {
-          console.log("Error al conectar con la DB: ", error);
-          /* Espera un par de segundos para evitar un Hot Loop, luego reinicia
-        la conexión. */
-          setTimeout(this.HandleConnection, 2000);
-        }
+      /* Evento emitido cuando una conexión es añadida a la pool. Sucede despues de
+    cualquier actividad de una conexión, justo antes de ser manejado por la promesa
+    o el callback. */
+      this.pool.on("acquire", connection => {
+        if (debugMode === "true")
+          console.log("Connection %d acquired", connection.threadId);
       });
 
-      this.connection.on("error", error => {
-        console.log("DB Error: ", error);
-        /* Detecta errores de pérdida de conexión. Si sucede alguno, intenta
-      la reconexión, para cualquier otro error arroja una excepción. */
-        if (error.code === "PROTOCOL_CONNECTION_LOST") this.HandleConnection();
+      /* Evento emitido cuando una conexión es encolada. */
+      this.pool.on("enqueue", () => {
+        if (debugMode === "true")
+          console.log("Waiting for available connection slot");
       });
 
-      /* Output */
-      console.log("base de datos inicializada");
+      /* Evento emitido cada vez que una conexión es liberada de nuevo de la pool. */
+      this.pool.on("release", connection => {
+        if (debugMode === "true")
+          console.log("Connection %d released", connection.threadId);
+      });
     } catch (error) {
-      console.log("DB Error: ", error);
-      this.connection = null;
+      console.log("DB Pool ha fallado: " + error);
     }
   }
 }

@@ -54,7 +54,8 @@ module.exports = {
       localAddress: process.env.DB_LOCAL_LOCAL_ADDRESS,
       user: process.env.DB_LOCAL_USER,
       password: process.env.DB_LOCAL_PASS,
-      database: process.env.DB_LOCAL_NAME
+      database: process.env.DB_LOCAL_NAME,
+      debugMode: process.env.MYSQL_LOCAL_DEBUG_MODE
     },
     dev: {
       host: process.env.DB_DEV_HOST,
@@ -62,7 +63,8 @@ module.exports = {
       localAddress: process.env.DB_DEV_LOCAL_ADDRESS,
       user: process.env.DB_DEV_USER,
       password: process.env.DB_DEV_PASS,
-      database: process.env.DB_DEV_NAME
+      database: process.env.DB_DEV_NAME,
+      debugMode: process.env.MYSQL_DEV_DEBUG_MODE
     },
     prod: {
       host: process.env.DB_PROD_HOST,
@@ -70,7 +72,8 @@ module.exports = {
       localAddress: process.env.DB_PROD_LOCAL_ADDRESS,
       user: process.env.DB_PROD_USER,
       password: process.env.DB_PROD_PASS,
-      database: process.env.DB_PROD_NAME
+      database: process.env.DB_PROD_NAME,
+      debugMode: process.env.MYSQL_PORD_DEBUG_MODE
     }
   },
   dropbox: {

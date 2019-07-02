@@ -104,8 +104,7 @@ module.exports = app => {
   const redis = new Redis(redisConfig, vars.host);
 
   // Obtiene el conector de mysql
-  const mysqlHandler = new MysqlHandler(mysqlConfig);
-  var mysql = mysqlHandler.connection;
+  const mysql = new MysqlHandler(mysqlConfig);
 
   // Obtiene la instancia de dropbox
   const dropbox = new Dropbox(dropboxConfig);
