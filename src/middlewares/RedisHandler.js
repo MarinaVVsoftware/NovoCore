@@ -79,6 +79,7 @@ RedisHandler.ReadCache = (redis, key) => {
         const rule = redis.schema[key].read[req.route.path];
         /* Obtiene el param que funciona como key para ese endpoint */
         const hash = req.params[rule.hash];
+        const url = rule.url(hash);
         /* Obtiene el Header para evitar el ciclo infinito de caché */
         const header = req.get("Cache-Request");
 
@@ -110,13 +111,17 @@ RedisHandler.ReadCache = (redis, key) => {
                       res.status(200).send(result);
                     })
                     .catch(error => {
-                      console.log("The Redis server has failed: " + error);
+                      console.log(
+                        "The Redis server has failed obtaining data: " + error
+                      );
                       next();
                     });
                 } else next();
               })
               .catch(error => {
-                console.log("The Redis server has failed: " + error);
+                console.log(
+                  "The Redis server has failed obtaining hash: " + error
+                );
                 next();
               });
           } else next();
