@@ -50,7 +50,7 @@ class RedisClass {
       });
 
       //limpia la caché al momento de correr la DB
-      if (config.flush) instance.flushall();
+      if (config.flush) instance.flushdb();
     } catch (error) {
       console.log("El servidor Redis ha fallado. " + error);
       this.redis = null;
