@@ -2,9 +2,9 @@ const path = require("path");
 const fs = require("fs");
 const Log = require(path.resolve(__dirname, "../helpers/Logs"));
 const express = require("express");
-const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors")({ origin: true });
+const morgan = require(path.resolve(__dirname, "../helpers/morgan"));
 const monitor = require("express-status-monitor");
 const multer = require("multer");
 const envs = require(path.resolve(__dirname, "./envs"));
@@ -80,9 +80,8 @@ module.exports = app => {
   }
 
   /* MIDDLEWARES */
-  // Solo instancia morgan en entorno dev y local
-  if ((envs.env.NODE_ENV = "dev" || "development" || "local"))
-    app.use(morgan("dev"));
+  // middleware de morgan con log personalizado
+  morgan(app);
   // dependencias para json y http(s)
   app.use(express.json());
   app.use(bodyParser.json());
