@@ -41,7 +41,7 @@ Incidents.PutIncidentByUser = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else if (isNaN(req.params.id))
-        next(newError("el param 'id' no es un número válido.", 400));
+        next(newError("el param 'id' no es un número válido.", 406));
       else
         Query(mysqlConnection, "CALL SP_Incidents_PutById(?,?,?,?,?);", [
           decodeURIComponent(req.params.name),
@@ -64,7 +64,7 @@ Incidents.DeleteIncidentByUser = (newError, Query, mysqlConnection) => {
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else if (isNaN(req.params.id))
-        next(newError("el param 'id' no es un número válido.", 400));
+        next(newError("el param 'id' no es un número válido.", 406));
       else
         Query(mysqlConnection, "CALL SP_Incidents_DeleteById(?,?);", [
           decodeURIComponent(req.params.name),
