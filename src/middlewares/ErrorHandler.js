@@ -44,9 +44,15 @@ module.exports = app => {
 
       /* En caso que se ejecute un NewError() */
       if (err.statusCode && err.message) {
-        res.status(err.statusCode).send({ error: err.message });
+        if (err.statusCode == 500) {
+          /* IMPORTANTE: morgan requiere esta línea para hacer print del error */
+          res.error = err;
+          /* los errores 500 se imprimen en consola */
+          res.status(err.statusCode).send({ error: err.stack });
+        } else res.status(err.statusCode).send({ error: err.message });
       } else if (err.validationErrors) {
-        res.status(400).send({
+        /* Si son errores de Schemas, pasa por aquí */
+        res.status(406).send({
           bodyErrors: bodyErrors,
           paramsErrors: paramsErrors,
           queryErrors: queryErrors

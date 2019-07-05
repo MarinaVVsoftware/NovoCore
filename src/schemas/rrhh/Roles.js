@@ -15,12 +15,12 @@ Roles.ParamsPutRolByName = {
 /* Valida los params de la url */
 Roles.BodyPutUserByName = {
   type: "object",
-  required: ["rank_id", "rol_name", "permissions"],
+  required: ["rankId", "rolName", "permissions"],
   properties: {
-    rank_id: {
+    rankId: {
       type: "number"
     },
-    rol_name: {
+    rolName: {
       type: "string"
     },
     permissions: {

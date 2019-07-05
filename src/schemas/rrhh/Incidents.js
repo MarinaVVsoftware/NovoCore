@@ -26,9 +26,9 @@ Incidents.ParamsPostIncidentByUser = {
 /* Valida los params de la url */
 Incidents.BodyPostIncidentByUser = {
   type: "object",
-  required: ["incident_type_id", "title", "description"],
+  required: ["incidentTypeId", "title", "description"],
   properties: {
-    incident_type_id: {
+    incidentTypeId: {
       type: "number"
     },
     title: {
@@ -57,9 +57,9 @@ Incidents.ParamsPutIncidentByUser = {
 /* Valida los params de la url */
 Incidents.BodyPutIncidentByUser = {
   type: "object",
-  required: ["incident_type_id", "title", "description"],
+  required: ["incidentTypeId", "title", "description"],
   properties: {
-    incident_type_id: {
+    incidentTypeId: {
       type: "number"
     },
     title: {
