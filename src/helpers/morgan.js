@@ -20,10 +20,20 @@ module.exports = app => {
     return timestamp;
   });
 
+  /* Añade la información del error si hubo alguno */
+  morgan.token("error", (req, res) => {
+    /* Evita errores en express, en caso que no venga un error */
+    if (res.error) {
+      /* Construye el string del error */
+      let stack = res.error.stack.replace(/(\r\n|\n|\r)/gm, "");
+      return "| StackError[" + stack + "]";
+    } else return "";
+  });
+
   // añade un log personalizado de morgan con datetime
   app.use(
     morgan(
-      "[:timestamp] :status - :method :url - :response-time ms - :res[content-length]"
+      "[:timestamp] :status - :method :url - :response-time ms - :res[content-length] :error"
     )
   );
 };
