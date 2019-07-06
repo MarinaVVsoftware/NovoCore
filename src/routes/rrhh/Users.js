@@ -1,6 +1,9 @@
 const path = require("path");
 const Users = require(path.resolve(__dirname, "../../controllers/rrhh/Users"));
-const Schema = require(path.resolve(__dirname, "../../schemas/rrhh/Users"));
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/validations/rrhh/Users"
+));
 
 module.exports = (
   app,
@@ -16,11 +19,17 @@ module.exports = (
 ) => {
   const instances = [newError, Query, mysqlConnection, app.get("authcore")];
 
-  router.get("/api/users/", Users.GetUsers(...instances));
+  router.get(
+    "/api/users/",
+    redisHandler.ReadCache(redis, "Users"),
+    Users.GetUsers(...instances),
+    redisHandler.WriteCache(redis, "Users")
+  );
   router.get(
     "/api/users/:name",
     validate({ params: Schema.ParamsGetUserByName }),
-    Users.GetUserByName(...instances)
+    Users.GetUserByName(...instances),
+    redisHandler.WriteCache(redis, "Users")
   );
   router.put(
     "/api/users/:name",
@@ -28,12 +37,14 @@ module.exports = (
       params: Schema.ParamsPutUserByName,
       body: Schema.BodyPutUserByName
     }),
-    Users.PutUserByName(...instances)
+    Users.PutUserByName(...instances),
+    redisHandler.WriteCache(redis, "Users")
   );
   router.delete(
     "/api/users/:email",
     validate({ params: Schema.ParamsDeleteUserByName }),
-    Users.DeleteUserByName(...instances)
+    Users.DeleteUserByName(...instances),
+    redisHandler.WriteCache(redis, "Users")
   );
 
   app.use(router);

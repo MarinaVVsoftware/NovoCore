@@ -6,7 +6,7 @@ const Social_Reason = require(path.resolve(
 ));
 const Social_ReasonSchema = require(path.resolve(
   __dirname,
-  "../../schemas/clients/SocialReason"
+  "../../schemas/validations/clients/SocialReason"
 ));
 
 var { Validator } = require("express-json-validator-middleware");

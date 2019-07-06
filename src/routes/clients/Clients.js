@@ -6,7 +6,7 @@ const Clients = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/clients/Clients"
+  "../../schemas/validations/clients/Clients"
 ));
 
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {

@@ -6,7 +6,7 @@ const BoatDocuments = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/boats/BoatDocuments"
+  "../../schemas/validations/boats/BoatDocuments"
 ));
 
 module.exports = (

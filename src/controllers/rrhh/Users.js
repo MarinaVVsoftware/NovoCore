@@ -4,7 +4,12 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_Users_GetUsers();")
-        .then(result => res.status(200).send({ users: result[0][0] }))
+        .then(result => {
+          res.status(200);
+          res.json({ users: result[0][0] });
+          res.body = { users: result[0][0] };
+          next();
+        })
         .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
@@ -21,7 +26,11 @@ Users.GetUserByName = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_Users_GetUserByName(?);", [
           decodeURIComponent(req.params.name)
         ])
-          .then(result => res.status(200).send({ user: result[0][0][0] }))
+          .then(result => {
+            res.status(200);
+            res.json({ user: result[0][0][0] });
+            next();
+          })
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
@@ -64,7 +73,10 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
                 user.username,
                 user.recruitmentDate
               ])
-                .then(() => res.status(204).send())
+                .then(() => {
+                  res.status(204);
+                  next();
+                })
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));
           })
@@ -104,7 +116,10 @@ Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
               Query(mysqlConnection, "CALL SP_Users_DeleteByEmail(?);", [
                 decodeURIComponent(req.params.email)
               ])
-                .then(() => res.status(204).send())
+                .then(() => {
+                  res.status(204);
+                  next();
+                })
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));
           })

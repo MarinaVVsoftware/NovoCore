@@ -5,7 +5,7 @@ const MarinaQuotationTimeline = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/marina/MarinaQuotationTimeline"
+  "../../schemas/validations/marina/MarinaQuotationTimeline"
 ));
 
 module.exports = (

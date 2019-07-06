@@ -1,5 +1,8 @@
 const path = require("path");
-const constants = require(path.resolve(__dirname, "../../helpers/Constants"));
+const constants = require(path.resolve(
+  __dirname,
+  "../../../helpers/Constants"
+));
 /* Modelos de validación de los endpoints de Boats */
 const Boats = {};
 

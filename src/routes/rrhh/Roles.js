@@ -1,6 +1,9 @@
 const path = require("path");
 const Roles = require(path.resolve(__dirname, "../../controllers/rrhh/Roles"));
-const Schema = require(path.resolve(__dirname, "../../schemas/rrhh/Roles"));
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/validations/rrhh/Roles"
+));
 
 module.exports = (
   app,

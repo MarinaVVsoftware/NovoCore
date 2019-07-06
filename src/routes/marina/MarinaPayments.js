@@ -6,7 +6,7 @@ const MarinaPayments = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/marina/MarinaPayments"
+  "../../schemas/validations/marina/MarinaPayments"
 ));
 
 module.exports = (

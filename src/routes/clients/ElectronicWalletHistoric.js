@@ -6,7 +6,7 @@ const Electronic_Wallet_Historic = require(path.resolve(
 ));
 const Electronic_Wallet_HistoricSchema = require(path.resolve(
   __dirname,
-  "../../schemas/clients/ElectronicWalletHistoric"
+  "../../schemas/validations/clients/ElectronicWalletHistoric"
 ));
 
 var { Validator } = require("express-json-validator-middleware");

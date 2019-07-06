@@ -5,7 +5,7 @@ const Responsible = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/boats/Responsible"
+  "../../schemas/validations/boats/Responsible"
 ));
 
 module.exports = (

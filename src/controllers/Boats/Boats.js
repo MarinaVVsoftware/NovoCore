@@ -7,7 +7,7 @@ Boats.GetBoatsByClient = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       /* Setea un header que evita la lectura doble por el método "WriteCache" */
-      if (!req.get("Cache-Request")) res.setHeader("Cache-By-Read", "true");
+      // if (!req.get("Cache-Request")) res.setHeader("Cache-By-Read", "true");
 
       /* Valida manualmente el tipado de clientId */
       if (isNaN(req.params.id))

@@ -6,7 +6,7 @@ const ElectronicSignature = require(path.resolve(
 ));
 const ElectronicSignatureSchema = require(path.resolve(
   __dirname,
-  "../../schemas/clients/ElectronicSignature"
+  "../../schemas/validations/clients/ElectronicSignature"
 ));
 
 module.exports = (app, router, newError, Query, validate, mysqlConnection) => {

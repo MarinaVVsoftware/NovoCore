@@ -6,7 +6,7 @@ const MarinaQuotations = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/marina/MarinaQuotations"
+  "../../schemas/validations/marina/MarinaQuotations"
 ));
 
 module.exports = (

@@ -3,7 +3,10 @@ const Engines = require(path.resolve(
   __dirname,
   "../../controllers/boats/Engines"
 ));
-const Schema = require(path.resolve(__dirname, "../../schemas/boats/Engines"));
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/validations/boats/Engines"
+));
 
 module.exports = (
   app,

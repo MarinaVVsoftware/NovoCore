@@ -5,7 +5,7 @@ const BoatElectricity = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/boats/BoatElectricity"
+  "../../schemas/validations/boats/BoatElectricity"
 ));
 
 module.exports = (

@@ -6,7 +6,7 @@ const Bank_Account = require(path.resolve(
 ));
 const Bank_AccountSchema = require(path.resolve(
   __dirname,
-  "../../schemas/clients/BankAccount"
+  "../../schemas/validations/clients/BankAccount"
 ));
 
 var { Validator } = require("express-json-validator-middleware");

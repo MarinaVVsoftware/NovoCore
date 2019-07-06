@@ -5,7 +5,7 @@ const SlipsOccupation = require(path.resolve(
 ));
 const Schema = require(path.resolve(
   __dirname,
-  "../../schemas/marina/SlipsOccupation"
+  "../../schemas/validations/marina/SlipsOccupation"
 ));
 
 module.exports = (

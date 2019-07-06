@@ -1,6 +1,5 @@
 const path = require("path");
 var redis = require("async-redis");
-var RedisSchema = require(path.resolve(__dirname, "./RedisSchema"));
 
 class RedisClass {
   constructor(config, host) {
@@ -33,7 +32,6 @@ class RedisClass {
 
       // declaración de la instancia y las variables
       this.redis = instance;
-      this.schema = this.CreateSchema(RedisSchema);
       this.debug = config.debug == "true" ? true : false;
 
       /* Evento que maneja los errores de servidor de Redis. */
@@ -55,11 +53,6 @@ class RedisClass {
       console.log("El servidor Redis ha fallado. " + error);
       this.redis = null;
     }
-  }
-
-  /* Carga el archivo del schema */
-  CreateSchema(schema) {
-    return schema;
   }
 }
 

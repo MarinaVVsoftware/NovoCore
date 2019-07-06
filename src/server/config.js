@@ -10,7 +10,7 @@ const multer = require("multer");
 const envs = require(path.resolve(__dirname, "./envs"));
 var monitorConfig = require(path.resolve(__dirname, "./monitorConfig"));
 const swagger = require(path.resolve(__dirname, "./swagger/swagger"));
-const Redis = require(path.resolve(__dirname, "../helpers/redis/RedisClient"));
+const Redis = require(path.resolve(__dirname, "../helpers/RedisClient"));
 const MysqlHandler = require(path.resolve(
   __dirname,
   "../helpers/MysqlHandler"

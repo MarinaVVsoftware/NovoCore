@@ -4,7 +4,10 @@ const Captains = require(path.resolve(
   "../../controllers/boats/Captains"
 ));
 
-const Schema = require(path.resolve(__dirname, "../../schemas/boats/Captains"));
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/validations/boats/Captains"
+));
 
 module.exports = (
   app,
