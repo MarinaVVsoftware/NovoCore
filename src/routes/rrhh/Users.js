@@ -4,6 +4,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/rrhh/Users"
 ));
+const RedisSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/redis/rrhh/Users"
+));
 
 module.exports = (
   app,
@@ -21,15 +25,15 @@ module.exports = (
 
   router.get(
     "/api/users/",
-    redisHandler.ReadCache(redis, "Users"),
+    redisHandler.ReadCache(redis, RedisSchema),
     Users.GetUsers(...instances),
-    redisHandler.WriteCache(redis, "Users")
+    redisHandler.WriteCache(redis, RedisSchema)
   );
   router.get(
     "/api/users/:name",
     validate({ params: Schema.ParamsGetUserByName }),
     Users.GetUserByName(...instances),
-    redisHandler.WriteCache(redis, "Users")
+    redisHandler.WriteCache(redis, RedisSchema)
   );
   router.put(
     "/api/users/:name",
@@ -38,13 +42,13 @@ module.exports = (
       body: Schema.BodyPutUserByName
     }),
     Users.PutUserByName(...instances),
-    redisHandler.WriteCache(redis, "Users")
+    redisHandler.WriteCache(redis, RedisSchema)
   );
   router.delete(
     "/api/users/:email",
     validate({ params: Schema.ParamsDeleteUserByName }),
     Users.DeleteUserByName(...instances),
-    redisHandler.WriteCache(redis, "Users")
+    redisHandler.WriteCache(redis, RedisSchema)
   );
 
   app.use(router);

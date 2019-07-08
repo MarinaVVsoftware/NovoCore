@@ -6,6 +6,7 @@ module.exports = {
   read: {
     "/api/clients/:id/boats/": {
       hash: "id",
+      key: "boats",
       url: function(id) {
         return "/api/clients/" + id + "/boats/";
       }
@@ -13,6 +14,7 @@ module.exports = {
   },
   write: {
     "/api/clients/:id/boats/": {
+      key: "boats",
       get: {
         hash: "id",
         url: function(id) {
@@ -21,6 +23,7 @@ module.exports = {
       }
     },
     "/api/clients/:id/boats/:name": {
+      key: "boats",
       put: {
         hash: "id",
         url: function(id) {
