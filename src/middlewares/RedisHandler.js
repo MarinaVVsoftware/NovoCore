@@ -135,20 +135,20 @@ RedisHandler.WriteCache = (redis, schema) => {
           /* Obtiene el metodo REST */
           const method = req.route.stack[0].method;
           /* Obtiene las reglas de ese endpoint */
-          const rule = schema.write[req.route.path];
+          const rule = schema.write[req.route.path][method];
           const key = schema.write[req.route.path].key;
 
           let hash = null;
           let url = null;
           /* Obtiene el param que funciona como key para ese endpoint. Si el endpoint
           de lectura es global (y no basado en un param) simplemente obtiene la url */
-          if (schema.write[req.route.path].hash) {
+          if (rule.hash) {
             hash = req.params[rule.hash];
-            url = rule[method].url(hash);
-          } else url = rule[method].url();
+            url = rule.url(hash);
+          } else url = rule.url();
 
           /* valida que se haya obtenido correctamente el hash del esquema,
-        si falla, termina el response con normalidad */
+          si falla, termina el response con normalidad */
           if (hash === undefined) {
             console.log(
               "The Redis schema has failed. The hash obtained from the schema threw undefined."
@@ -160,6 +160,7 @@ RedisHandler.WriteCache = (redis, schema) => {
               case "post":
               case "put":
               case "patch":
+              case "delete":
                 if (req.get("Cache-Request"))
                   WriteCacheByRestWithResponse(
                     req,
@@ -172,21 +173,17 @@ RedisHandler.WriteCache = (redis, schema) => {
                   );
                 else res.send();
                 break;
-              case "delete":
-                if (req.get("Cache-Request"))
-                  DeleteHash(redis, key, hash)
-                    .then(() => res.send())
-                    .catch(error => {
-                      console.log(
-                        "Redis Failed By Deleting Hash in Write: " + error
-                      );
-                      res.send();
-                    });
-                else res.send();
-                break;
               case "get":
                 if (req.get("Cache-By-Read"))
-                  WriteCacheWithRestGet(res, redis, key, hash, method, url);
+                  WriteCacheWithRestGet(
+                    res,
+                    redis,
+                    key,
+                    hash,
+                    res.body,
+                    method,
+                    url
+                  );
                 else res.send();
                 break;
               default:
@@ -194,7 +191,7 @@ RedisHandler.WriteCache = (redis, schema) => {
                 break;
             }
         } catch (error) {
-          console.log("Redis Failed in Write - trycatch section: " + error);
+          console.log("Redis Failed in write - trycatch section: " + error);
           res.send();
         }
       else {
@@ -254,7 +251,7 @@ function ReadCacheWithKeys(res, next, redis, key, method, url) {
     .then(result => {
       if (result == 1) {
         /* Trae la caché */
-        GetKey(redis, key, hash)
+        GetKey(redis, key)
           .then(result => {
             /* Output de Debug */
             if (redis.debug) {
@@ -289,6 +286,7 @@ function ReadCacheWithKeys(res, next, redis, key, method, url) {
 /* Refactorización de código: Fragmento de código que se encarga de la escritura
 en redis por métodos POST, PUT, PATCH y DELETE */
 function WriteCacheByRestWithResponse(req, res, redis, key, hash, method, url) {
+  console.log(method);
   // para evitar ciclar infinitamente la caché, se manda un
   // header que excluye la lectura por caché cuando se hace escritura.
   var headers = new Headers();
@@ -302,13 +300,14 @@ function WriteCacheByRestWithResponse(req, res, redis, key, hash, method, url) {
   /* Ejecuta el endpoint de lectura para obtener los datos y cachearlos */
   GetData(redis.host + url, options)
     .then(response => response.json())
-    .then(response => {
+    .then(data => {
       /* En caso de que el fethc falle */
-      if (!response.error)
-        if (hash) WriteCacheWithHashes(res, redis, key, hash, method, url);
-        else WriteCacheWithKeys(res, redis, key, method, url);
+      if (!data.error)
+        if (hash)
+          WriteCacheWithHashes(res, redis, key, hash, data, method, url);
+        else WriteCacheWithKeys(res, redis, key, data, method, url);
       else {
-        console.log("Redis fetch get error in write: " + response.error);
+        console.log("Redis fetch get error in write: " + data.error);
         res.send();
       }
     })
@@ -320,14 +319,14 @@ function WriteCacheByRestWithResponse(req, res, redis, key, hash, method, url) {
 
 /* Refactorización de código: Fragmento de código que se encarga de la escritura
 en redis por métodos GET */
-function WriteCacheWithRestGet(res, redis, key, hash, method, url) {
-  if (hash) WriteCacheWithHashes(res, redis, key, hash, method, url);
-  else WriteCacheWithKeys(res, redis, key, method, url);
+function WriteCacheWithRestGet(res, redis, key, hash, data, method, url) {
+  if (hash) WriteCacheWithHashes(res, redis, key, hash, data, method, url);
+  else WriteCacheWithKeys(res, redis, key, data, method, url);
 }
 
-/* Crea un Hash */
-function WriteCacheWithHashes(res, redis, key, hash, method, url) {
-  SetHash(redis, key, hash, JSON.stringify(res.body))
+/* Refactorización de código: Crea un Hash */
+function WriteCacheWithHashes(res, redis, key, hash, data, method, url) {
+  SetHash(redis, key, hash, JSON.stringify(data))
     .then(() => {
       /* Output de Debug */
       if (redis.debug)
@@ -348,9 +347,9 @@ function WriteCacheWithHashes(res, redis, key, hash, method, url) {
   res.send();
 }
 
-/* Crea una Key */
-function WriteCacheWithKeys(res, redis, key, method, url) {
-  SetKey(redis, key, JSON.stringify(res.body))
+/* Refactorización de código: Crea una Key */
+function WriteCacheWithKeys(res, redis, key, data, method, url) {
+  SetKey(redis, key, JSON.stringify(data))
     .then(() => {
       /* Output de Debug */
       if (redis.debug)
@@ -391,11 +390,6 @@ async function IfHashExists(redis, key, hash) {
   return await redis.redis.hexists(key, hash);
 }
 
-/* Snippet para eliminar un hash */
-async function DeleteHash(redis, key, hash) {
-  return await redis.redis.hdel(key, hash);
-}
-
 /* Snippet para setear una key */
 async function SetKey(redis, key, value) {
   return await redis.redis.set(key, value);
@@ -409,11 +403,6 @@ async function GetKey(redis, key) {
 /* Snippet para verificar la existencia de una key */
 async function IfKeyExists(redis, key) {
   return await redis.redis.exists(key);
-}
-
-/* Snippet para eliminar una key */
-async function DeleteKey(redis, key) {
-  return await redis.redis.del(key);
 }
 
 module.exports = RedisHandler;
