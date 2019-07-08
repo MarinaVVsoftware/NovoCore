@@ -12,7 +12,7 @@ Clients.ParamsGetClientById = {
 
 Clients.BodyPostClient = {
   type: "object",
-  required: ["status_id", "name", "email", "phone", "address"],
+  required: ["statusId", "name", "email", "phone", "address"],
   properties: {
     status_id: {
       type: "number"
@@ -44,7 +44,7 @@ Clients.ParamsPutClient = {
 
 Clients.BodyPutClient = {
   type: "object",
-  required: ["status_id", "name", "email", "phone", "address"],
+  required: ["statusId", "name", "email", "phone", "address"],
   properties: {
     status_id: {
       type: "number"
