@@ -64,6 +64,10 @@
  * Sin esta relación no funcionarán los cambios que has realizado. para ver la estructura y explicación del Schema
  * de redis, ir a:  src\helpers\redis\RedisSchema.js
  *
+ * 6) No olvidar que los endpoints de lectura (GET) necesitan ser enviados con el header "Cache-By-Read" para que
+ * funciones, y lo endpoints de escritura (PUT, POST, PATCH, DELETE) necesitan el header "Cache-Request" para
+ * que se escriba en cache. Sin estos headers los endpoints pasarán sin tocar cache, con normalidad.
+ *
  * no olvides en tu route file verificar que traigas de route master el objecto "redis" y "redisHandler".
  */
 const RedisHandler = {};
@@ -163,20 +167,20 @@ RedisHandler.WriteCache = (redis, schema, key) => {
         const hash = req.params[rule.hash];
         const url = rule.url(hash);
 
-        if (req.get("Cache-Request")) {
-          /* valida que se haya obtenido correctamente el hash del esquema,
+        /* valida que se haya obtenido correctamente el hash del esquema,
         si falla, termina el response con normalidad */
-          if (hash === undefined) {
-            console.log(
-              "The Redis schema has failed. The hash obtained from the schema threw undefined."
-            );
-            res.send();
-          } else
-            switch (method) {
-              /* Fall Through */
-              case "post":
-              case "put":
-              case "patch":
+        if (hash === undefined) {
+          console.log(
+            "The Redis schema has failed. The hash obtained from the schema threw undefined."
+          );
+          res.send();
+        } else
+          switch (method) {
+            /* Fall Through */
+            case "post":
+            case "put":
+            case "patch":
+              if (req.get("Cache-Request"))
                 WriteCacheByRestWithResponse(
                   req,
                   res,
@@ -186,8 +190,10 @@ RedisHandler.WriteCache = (redis, schema, key) => {
                   hash,
                   method
                 );
-                break;
-              case "delete":
+              else res.send();
+              break;
+            case "delete":
+              if (req.get("Cache-Request"))
                 DeleteHash(redis, key, hash)
                   .then(() => res.send())
                   .catch(error => {
@@ -196,16 +202,17 @@ RedisHandler.WriteCache = (redis, schema, key) => {
                     );
                     res.send();
                   });
-                break;
-              case "get":
+              else res.send();
+              break;
+            case "get":
+              if (req.get("Cache-By-Read"))
                 WriteCacheWithRestGet(req, res, redis, url, key, hash, method);
-                break;
-              default:
-                console.log("default!");
-                res.send();
-                break;
-            }
-        } else res.send();
+              else res.send();
+              break;
+            default:
+              res.send();
+              break;
+          }
       } catch (error) {
         console.log("Redis Failed in Write - trycatch section: " + error);
         res.send();
@@ -260,7 +267,6 @@ function WriteCacheByRestWithResponse(req, res, redis, url, key, hash, method) {
 }
 
 function WriteCacheWithRestGet(req, res, redis, url, key, hash, method) {
-  console.log("WriteCacheWithRestGet");
   /* Cada enpoint "get" que escribe en caché lo hace a partir de un header especial
   que debe ser seteado dentro del controlador. Solo debe setearse si no trae del request
   el header "Cache-Request" */
