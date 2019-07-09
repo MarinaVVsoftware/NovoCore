@@ -46,7 +46,7 @@ const SocketTypes = require(path.resolve(
 /* Imports de Clients */
 const BankAccount = require(path.resolve(
   __dirname,
-  "../routes/clients/BankAccount"
+  "../routes/clients/BankAccounts"
 ));
 const Clients = require(path.resolve(__dirname, "../routes/clients/Clients"));
 const ElectronicSignature = require(path.resolve(
@@ -157,7 +157,7 @@ module.exports = (
   SocketTypes(...instances);
 
   /* Rutas del Modelo de Clients */
-  BankAccount(app, router, mysqlConnection);
+  BankAccount(...instances);
   Clients(...instances);
   ElectronicSignature(...instances);
   ElectronicWallet(app, router, mysqlConnection);
