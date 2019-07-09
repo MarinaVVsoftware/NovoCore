@@ -41,7 +41,7 @@ Users.GetUserByName = (newError, Query, mysqlConnection) => {
 Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
   return (req, res, next) => {
     try {
-      const user = req.body;
+      const user = req.body.user;
 
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));

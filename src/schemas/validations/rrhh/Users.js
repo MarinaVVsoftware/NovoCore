@@ -26,22 +26,28 @@ Users.ParamsPutUserByName = {
 /* Valida los params de la url */
 Users.BodyPutUserByName = {
   type: "object",
-  required: ["rolId", "statusId", "email", "username", "recruitmentDate"],
+  required: ["user"],
   properties: {
-    rolId: {
-      type: "number"
-    },
-    statusId: {
-      type: "number"
-    },
-    email: {
-      type: "string"
-    },
-    username: {
-      type: "string"
-    },
-    recruitmentDate: {
-      type: "string"
+    user: {
+      type: "object",
+      required: ["rolId", "statusId", "email", "username", "recruitmentDate"],
+      properties: {
+        rolId: {
+          type: "number"
+        },
+        statusId: {
+          type: "number"
+        },
+        email: {
+          type: "string"
+        },
+        username: {
+          type: "string"
+        },
+        recruitmentDate: {
+          type: "string"
+        }
+      }
     }
   }
 };

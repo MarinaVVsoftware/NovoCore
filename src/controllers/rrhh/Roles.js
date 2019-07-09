@@ -15,14 +15,16 @@ Roles.GetRoles = (newError, Query, mysqlConnection) => {
 Roles.PutRolByName = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      const rol = req.body.rol;
+
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else
         Query(mysqlConnection, "CALL SP_Roles_PutRolByName (?,?,?,?);", [
           decodeURIComponent(req.params.name),
-          req.body.rankId,
-          req.body.rolName,
-          req.body.permissions
+          rol.rankId,
+          rol.rolName,
+          rol.permissions
         ])
           .then(() => res.status(204).send())
           .catch(error => next(newError(error, 400)));

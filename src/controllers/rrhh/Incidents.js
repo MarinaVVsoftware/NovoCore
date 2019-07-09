@@ -18,14 +18,16 @@ Incidents.GetIncidentsByUser = (newError, Query, mysqlConnection) => {
 Incidents.PostIncidentByUser = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      const incident = req.body.incident;
+
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else
         Query(mysqlConnection, "CALL SP_Incidents_PostIncident(?,?,?,?);", [
           decodeURIComponent(req.params.name),
-          req.body.incidentTypeId,
-          req.body.title,
-          req.body.description
+          incident.incidentTypeId,
+          incident.title,
+          incident.description
         ])
           .then(() => res.status(204).send())
           .catch(error => next(newError(error, 400)));
@@ -38,6 +40,8 @@ Incidents.PostIncidentByUser = (newError, Query, mysqlConnection) => {
 Incidents.PutIncidentByUser = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      const incident = req.body.incident;
+
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else if (isNaN(req.params.id))
@@ -46,9 +50,9 @@ Incidents.PutIncidentByUser = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_Incidents_PutById(?,?,?,?,?);", [
           decodeURIComponent(req.params.name),
           req.params.id,
-          req.body.incidentTypeId,
-          req.body.title,
-          req.body.description
+          incident.incidentTypeId,
+          incident.title,
+          incident.description
         ])
           .then(() => res.status(204).send())
           .catch(error => next(newError(error, 400)));

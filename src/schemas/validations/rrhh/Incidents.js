@@ -26,16 +26,22 @@ Incidents.ParamsPostIncidentByUser = {
 /* Valida los params de la url */
 Incidents.BodyPostIncidentByUser = {
   type: "object",
-  required: ["incidentTypeId", "title", "description"],
+  required: ["incident"],
   properties: {
-    incidentTypeId: {
-      type: "number"
-    },
-    title: {
-      type: "string"
-    },
-    description: {
-      type: "string"
+    indicent: {
+      type: "object",
+      required: ["incidentTypeId", "title", "description"],
+      properties: {
+        incidentTypeId: {
+          type: "number"
+        },
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        }
+      }
     }
   }
 };
@@ -57,16 +63,22 @@ Incidents.ParamsPutIncidentByUser = {
 /* Valida los params de la url */
 Incidents.BodyPutIncidentByUser = {
   type: "object",
-  required: ["incidentTypeId", "title", "description"],
+  required: ["incident"],
   properties: {
-    incidentTypeId: {
-      type: "number"
-    },
-    title: {
-      type: "string"
-    },
-    description: {
-      type: "string"
+    indicent: {
+      type: "object",
+      required: ["incidentTypeId", "title", "description"],
+      properties: {
+        incidentTypeId: {
+          type: "number"
+        },
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        }
+      }
     }
   }
 };
