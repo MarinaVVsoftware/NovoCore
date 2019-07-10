@@ -1,121 +1,73 @@
-const path = require("path");
-const newError = require(path.resolve(__dirname, "../../helpers/newError"));
+const SocialReasons = {};
 
-// Marina - Controller
-const Marina = {};
-
-// Read all the Marina Quotation
-Marina.Read = mysqlConnection => {
+SocialReasons.GetSocialReasons = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      mysqlConnection.query(
-        "CALL SP_READ_SOCIAL_REASON",
-        (err, rows, fields) => {
-          if (err) next(newError(err, 400));
-          rows.pop();
-          res.status(200).send(JSON.stringify(rows));
-        }
-      );
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else
+        Query(mysqlConnection, "CALL SP_SocialReasons_GetSocialReasons(?);", [
+          req.params.id
+        ])
+          .then(result => res.status(200).send({ SocialReasons: result[0][0] }))
+          .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-// Erase the record (DELETE)
-Marina.Erase = mysqlConnection => {
+SocialReasons.PutSocialReason = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      mysqlConnection.query(
-        "CALL SP_DELETE_SOCIAL_REASON (?);",
-        [req.body.id],
-        (err, rows, fields) => {
-          if (err) next(newError(err, 400));
-          res.status(200).send({ status: "SOCIAL REASON DELETED" });
-        }
-      );
+      const socialReason = req.body.socialReason;
+
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else if (/[A-ZÑ&]{3,4}\d{6}[A-V1-9][A-Z1-9][0-9A]/.test(req.params.rfc))
+        next(newError("el param 'rfc' no es un rfc válido.", 406));
+      else
+        Query(
+          mysqlConnection,
+          "CALL SP_SocialReasons_PutSocialReason(?,?,?,?,?,?);",
+          [
+            req.params.id,
+            req.params.rfc,
+            socialReason.socialReason,
+            socialReason.cfdi,
+            socialReason.email,
+            socialReason.address
+          ]
+        )
+          .then(() => res.status(201).send())
+          .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-// Update the state
-Marina.Delete = mysqlConnection => {
+SocialReasons.DeleteSocialReason = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
-    if (!req.body.id || req.body.delete === null)
-      res.status(400).send({ error: "Undefined Object" });
     try {
-      mysqlConnection.query(
-        "CALL SP_LOGICAL_DELETE_SOCIAL_REASON (?,?);",
-        [req.body.id, req.body.delete],
-        (err, rows, fields) => {
-          if (err) next(newError(err, 400));
-          res.status(200).send({ status: "Success" });
-        }
-      );
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else if (/[A-ZÑ&]{3,4}\d{6}[A-V1-9][A-Z1-9][0-9A]/.test(req.params.rfc))
+        next(newError("el param 'rfc' no es un rfc válido.", 406));
+      else
+        Query(
+          mysqlConnection,
+          "CALL SP_SocialReasons_DeleteSocialReason(?,?);",
+          [req.params.id, req.params.rfc]
+        )
+          .then(() => res.status(204).send())
+          .catch(error => {
+            next(newError(error, 400));
+          });
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-// Create a new record
-Marina.Create = mysqlConnection => {
-  return (req, res, next) => {
-    try {
-      mysqlConnection.query(
-        "CALL SP_CREATE_SOCIAL_REASON (?,?,?,?,?,?,?)",
-        [
-          req.body.client_id,
-          req.body.email,
-          req.body.social_reason,
-          req.body.RCD,
-          req.body.CFDI,
-          req.body.address,
-          req.body.status_id
-        ],
-        (err, rows, fields) => {
-          if (err) next(newError(err, 400));
-          res.status(200).send({ status: "Success" });
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
-  };
-};
-
-// Update a record
-Marina.Update = mysqlConnection => {
-  return (req, res, next) => {
-    try {
-      mysqlConnection.query(
-        "CALL SP_UPDATE_SOCIAL_REASON (?,?,?,?,?,?,?,?)",
-        [
-          req.body.id,
-          req.body.client_id,
-          req.body.email,
-          req.body.social_reason,
-          req.body.RCD,
-          req.body.CFDI,
-          req.body.address,
-          req.body.status_id
-        ],
-        (err, rows, fields) => {
-          if (err) next(newError(err, 400));
-          res.status(200).send({ status: "SOCIAL REASON UPDATED" });
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
-  };
-};
-
-module.exports = Marina;
+module.exports = SocialReasons;
