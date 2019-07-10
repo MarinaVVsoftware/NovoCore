@@ -12,22 +12,54 @@ Clients.ParamsGetClientById = {
 
 Clients.BodyPostClient = {
   type: "object",
-  required: ["statusId", "name", "email", "phone", "address"],
+  required: ["client"],
   properties: {
-    status_id: {
-      type: "number"
-    },
-    name: {
-      type: "string"
-    },
-    email: {
-      type: "string"
-    },
-    phone: {
-      type: "string"
-    },
-    address: {
-      type: "string"
+    client: {
+      type: "object",
+      required: ["statusId", "name", "email", "phone", "address"],
+      properties: {
+        status_id: {
+          type: "number"
+        },
+        name: {
+          type: "string"
+        },
+        email: {
+          type: "string"
+        },
+        phone: {
+          type: "string"
+        },
+        address: {
+          type: "string"
+        },
+        bankAccounts: {
+          minItems: 1,
+          type: "array",
+          items: {
+            allOf: [
+              {
+                type: "object",
+                required: ["alias", "bank", "accountNumber", "clabe"],
+                properties: {
+                  alias: {
+                    type: "string"
+                  },
+                  bank: {
+                    type: "string"
+                  },
+                  accountNumber: {
+                    type: "string"
+                  },
+                  clabe: {
+                    type: "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   }
 };
@@ -44,22 +76,28 @@ Clients.ParamsPutClient = {
 
 Clients.BodyPutClient = {
   type: "object",
-  required: ["statusId", "name", "email", "phone", "address"],
+  required: ["client"],
   properties: {
-    status_id: {
-      type: "number"
-    },
-    name: {
-      type: "string"
-    },
-    email: {
-      type: "string"
-    },
-    phone: {
-      type: "string"
-    },
-    address: {
-      type: "string"
+    client: {
+      type: "object",
+      required: ["statusId", "name", "email", "phone", "address"],
+      properties: {
+        status_id: {
+          type: "number"
+        },
+        name: {
+          type: "string"
+        },
+        email: {
+          type: "string"
+        },
+        phone: {
+          type: "string"
+        },
+        address: {
+          type: "string"
+        }
+      }
     }
   }
 };
