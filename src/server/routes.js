@@ -63,7 +63,7 @@ const ElectronicWalletHistoric = require(path.resolve(
 ));
 const SocialReason = require(path.resolve(
   __dirname,
-  "../routes/clients/SocialReason"
+  "../routes/clients/SocialReasons"
 ));
 /* Imports de Marina */
 const MarinaDebts = require(path.resolve(
@@ -162,7 +162,7 @@ module.exports = (
   ElectronicSignature(...instances);
   ElectronicWallet(app, router, mysqlConnection);
   ElectronicWalletHistoric(app, router, mysqlConnection);
-  SocialReason(app, router, mysqlConnection);
+  SocialReason(...instances);
 
   /* Rutas del Modelo de Marina */
   MarinaDebts(...instances);
