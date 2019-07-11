@@ -16,7 +16,15 @@ Clients.GetClientById = (newError, Query, mysqlConnection) => {
           ]),
           Query(mysqlConnection, "CALL SP_SocialReasons_GetSocialReasons(?);", [
             req.params.id
-          ])
+          ]),
+          Query(mysqlConnection, "CALL SP_ElectronicWallet_GetWallet(?);", [
+            req.params.id
+          ]),
+          Query(
+            mysqlConnection,
+            "CALL SP_ElectronicWalletHistoric_GetAllHistoric(?);",
+            [req.params.id]
+          )
         ];
 
         Promise.all(Promises)
@@ -24,6 +32,8 @@ Clients.GetClientById = (newError, Query, mysqlConnection) => {
             let client = result[0][0][0][0];
             client.bankAccounts = result[1][0][0];
             client.socialReasons = result[2][0][0];
+            client.electronicWallet = result[3][0][0];
+            client.electronicWalletHistoric = result[4][0][0];
 
             res.status(200).send({ client });
           })
@@ -104,6 +114,13 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
                 )
               );
             });
+
+          /* Crea el monedero del cliente */
+          Promises.push(
+            Query(mysqlConnection, "CALL SP_ElectronicWallet_PostWallet(?);", [
+              clientId
+            ])
+          );
 
           /* Ejecuta las promesas generadas en caso que se aniden elementos */
           if (Promises.length > 0)

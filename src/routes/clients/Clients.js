@@ -9,7 +9,18 @@ const Schema = require(path.resolve(
   "../../schemas/validations/clients/Clients"
 ));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
 
   router.get("/api/clients/", Clients.GetClients(...instances));

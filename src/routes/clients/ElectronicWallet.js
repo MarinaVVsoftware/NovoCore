@@ -1,42 +1,40 @@
 // Routes
 const path = require("path");
-const Electronic_Wallet = require(path.resolve(
+const ElectronicWallet = require(path.resolve(
   __dirname,
   "../../controllers/clients//ElectronicWallet"
 ));
-const Electronic_WalletSchema = require(path.resolve(
+const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/clients/ElectronicWallet"
 ));
 
-var { Validator } = require("express-json-validator-middleware");
-var validator = new Validator({ allErrors: true });
-var validate = validator.validate;
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
+  const instances = [newError, Query, mysqlConnection];
 
-module.exports = (app, router, mysqlConnection) => {
   router.get(
-    "/api/Electronic_Wallet/Read",
-    Electronic_Wallet.Read(mysqlConnection)
-  );
-  router.delete(
-    "/api/Electronic_Wallet/Erase",
-    validate({ body: Electronic_WalletSchema.erase }),
-    Electronic_Wallet.Erase(mysqlConnection)
-  );
-  router.patch(
-    "/api/Electronic_Wallet/Delete",
-    validate({ body: Electronic_WalletSchema.delete }),
-    Electronic_Wallet.Delete(mysqlConnection)
+    "/api/clients/:id/electronic-wallet/",
+    validate({ params: Schema.ParamsGetElectronicWallet }),
+    ElectronicWallet.GetElectronicWallet(...instances)
   );
   router.post(
-    "/api/Electronic_Wallet/Create",
-    validate({ body: Electronic_WalletSchema.create }),
-    Electronic_Wallet.Create(mysqlConnection)
-  );
-  router.put(
-    "/api/Electronic_Wallet/Update",
-    validate({ body: Electronic_WalletSchema.update }),
-    Electronic_Wallet.Update(mysqlConnection)
+    "/api/clients/:id/electronic-wallet/marina",
+    validate({
+      params: Schema.ParamsPostElectronicWalletMovement,
+      body: Schema.BodyPostElectronicWalletMovement
+    }),
+    ElectronicWallet.PostElectronicWalletMovement(...instances)
   );
 
   app.use(router);

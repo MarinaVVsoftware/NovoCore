@@ -160,8 +160,8 @@ module.exports = (
   BankAccount(...instances);
   Clients(...instances);
   ElectronicSignature(...instances);
-  ElectronicWallet(app, router, mysqlConnection);
-  ElectronicWalletHistoric(app, router, mysqlConnection);
+  ElectronicWallet(...instances);
+  ElectronicWalletHistoric(...instances);
   SocialReason(...instances);
 
   /* Rutas del Modelo de Marina */

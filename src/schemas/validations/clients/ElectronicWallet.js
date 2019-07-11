@@ -1,50 +1,45 @@
-const Electronic_WalletSchema = {};
+const ElectronicWallet = {};
 
-Electronic_WalletSchema.erase = {
+ElectronicWallet.ParamsGetElectronicWallet = {
   type: "object",
-  required: ["electronic_wallet_id"],
+  required: ["id"],
   properties: {
-    electronic_wallet_id: {
-      type: "number"
+    id: {
+      type: "string"
     }
   }
 };
 
-Electronic_WalletSchema.delete = {
+ElectronicWallet.ParamsPostElectronicWalletMovement = {
   type: "object",
-  required: ["electronic_wallet_id", "logical_deleted"],
+  required: ["id"],
   properties: {
-    electronic_wallet_id: {
-      type: "number"
-    },
-    logical_deleted: {
-      type: "number"
+    id: {
+      type: "string"
     }
   }
 };
 
-Electronic_WalletSchema.create = {
+ElectronicWallet.BodyPostElectronicWalletMovement = {
   type: "object",
-  required: ["marina_amount", "logical_deleted"],
+  required: ["electronicWalletMovement"],
   properties: {
-    marina_amount: {
-      type: "number"
-    },
-    logical_deleted: {
-      type: "number"
+    electronicWalletMovement: {
+      type: "object",
+      required: ["newAmount", "description", "alterResponsable"],
+      properties: {
+        newAmount: {
+          type: "number"
+        },
+        description: {
+          type: "string"
+        },
+        alterResponsable: {
+          type: "string"
+        }
+      }
     }
   }
 };
 
-Electronic_WalletSchema.update = {
-  type: "object",
-  required: ["electronic_wallet_id"],
-  properties: {
-    electronic_wallet_id: {
-      type: "number"
-    },
-    ...Electronic_WalletSchema.create.properties
-  }
-};
-
-module.exports = Electronic_WalletSchema;
+module.exports = ElectronicWallet;
