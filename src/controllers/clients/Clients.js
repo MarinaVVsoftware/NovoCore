@@ -13,6 +13,9 @@ Clients.GetClientById = (newError, Query, mysqlConnection) => {
           ]),
           Query(mysqlConnection, "CALL SP_BankAccounts_GetBankAccounts(?);", [
             req.params.id
+          ]),
+          Query(mysqlConnection, "CALL SP_SocialReasons_GetSocialReasons(?);", [
+            req.params.id
           ])
         ];
 
@@ -20,6 +23,7 @@ Clients.GetClientById = (newError, Query, mysqlConnection) => {
           .then(result => {
             let client = result[0][0][0][0];
             client.bankAccounts = result[1][0][0];
+            client.socialReasons = result[2][0][0];
 
             res.status(200).send({ client });
           })
@@ -48,6 +52,7 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
     try {
       let client = req.body.client;
       let bankAccounts = req.body.client.bankAccounts;
+      let socialReasons = req.body.client.socialReasons;
       let clientId = null;
 
       /* Crea el cliente */
@@ -77,6 +82,24 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
                     bankAccount.alias,
                     bankAccount.bank,
                     bankAccount.clabe
+                  ]
+                )
+              );
+            });
+
+          if (socialReasons)
+            socialReasons.forEach(socialReason => {
+              Promises.push(
+                Query(
+                  mysqlConnection,
+                  "CALL SP_SocialReasons_PutSocialReason(?,?,?,?,?,?);",
+                  [
+                    clientId,
+                    socialReason.rfc,
+                    socialReason.socialReason,
+                    socialReason.cfdi,
+                    socialReason.email,
+                    socialReason.address
                   ]
                 )
               );

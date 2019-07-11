@@ -58,6 +58,35 @@ Clients.BodyPostClient = {
               }
             ]
           }
+        },
+        socialReasons: {
+          minItems: 1,
+          type: "array",
+          items: {
+            allOf: [
+              {
+                type: "object",
+                required: ["rfc", "socialReason", "cfdi", "email", "address"],
+                properties: {
+                  rfc: {
+                    typr: "string"
+                  },
+                  socialReason: {
+                    type: "string"
+                  },
+                  cfdi: {
+                    type: "string"
+                  },
+                  email: {
+                    type: "string"
+                  },
+                  address: {
+                    type: "string"
+                  }
+                }
+              }
+            ]
+          }
         }
       }
     }
