@@ -9,7 +9,7 @@ SocialReasons.GetSocialReasons = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_SocialReasons_GetSocialReasons(?);", [
           req.params.id
         ])
-          .then(result => res.status(200).send({ SocialReasons: result[0][0] }))
+          .then(result => res.status(200).send({ socialReasons: result[0][0] }))
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));

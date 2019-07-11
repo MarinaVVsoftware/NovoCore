@@ -9,7 +9,7 @@ BankAccounts.GetBankAccounts = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_BankAccounts_GetBankAccounts(?);", [
           req.params.id
         ])
-          .then(result => res.status(200).send({ BankAccounts: result[0][0] }))
+          .then(result => res.status(200).send({ bankAccounts: result[0][0] }))
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
