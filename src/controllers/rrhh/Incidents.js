@@ -29,7 +29,7 @@ Incidents.PostIncidentByUser = (newError, Query, mysqlConnection) => {
           incident.title,
           incident.description
         ])
-          .then(() => res.status(204).send())
+          .then(() => res.status(201).send())
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
@@ -54,7 +54,7 @@ Incidents.PutIncidentByUser = (newError, Query, mysqlConnection) => {
           incident.title,
           incident.description
         ])
-          .then(() => res.status(204).send())
+          .then(() => res.status(201).send())
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));

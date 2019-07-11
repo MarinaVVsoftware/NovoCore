@@ -34,7 +34,7 @@ module.exports = (
     validate({
       params: Schema.ParamsPutBoatDocuments
     }),
-    BoatDocuments.PutBoatDocuments(...instances)
+    BoatDocuments.PutBoatDocuments(newError, Query, mysqlConnection, dropbox)
   );
   router.put(
     "/api/clients/:id/boats/:name/boat-documents/:typeid",
@@ -42,7 +42,12 @@ module.exports = (
     validate({
       params: Schema.ParamsPutBoatDocumentsByType
     }),
-    BoatDocuments.PutBoatDocumentByType(...instances)
+    BoatDocuments.PutBoatDocumentByType(
+      newError,
+      Query,
+      mysqlConnection,
+      dropbox
+    )
   );
 
   app.use(router);

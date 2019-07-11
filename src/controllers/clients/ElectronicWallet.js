@@ -65,7 +65,7 @@ ElectronicWallet.PostElectronicWalletMovement = (
               ];
 
               Promise.all(Promises)
-                .then(() => res.status(204).send())
+                .then(() => res.status(201).send())
                 .catch(error => next(newError(error, 400)));
             }
           })

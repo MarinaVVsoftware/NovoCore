@@ -37,10 +37,10 @@ Boats.BodyPutBoat = {
   required: ["boat", "documents"],
   properties: {
     boat: {
-      required: ["client_id", "name", "model", "loa", "draft", "beam"],
+      required: ["clientId", "name", "model", "loa", "draft", "beam"],
       type: "object",
       properties: {
-        client_id: {
+        clientId: {
           type: "number"
         },
         name: {
@@ -65,8 +65,8 @@ Boats.BodyPutBoat = {
         "name",
         "phone",
         "email",
-        "payment_permission",
-        "aceptation_permission"
+        "paymentPermission",
+        "aceptationPermission"
       ],
       type: "object",
       properties: {
@@ -79,10 +79,10 @@ Boats.BodyPutBoat = {
         email: {
           type: ["string", "null"]
         },
-        payment_permission: {
+        paymentPermission: {
           type: "boolean"
         },
-        aceptation_permission: {
+        aceptationPermission: {
           type: "boolean"
         }
       }
@@ -92,8 +92,8 @@ Boats.BodyPutBoat = {
         "name",
         "phone",
         "email",
-        "payment_permission",
-        "aceptation_permission"
+        "paymentPermission",
+        "aceptationPermission"
       ],
       type: "object",
       properties: {
@@ -106,10 +106,10 @@ Boats.BodyPutBoat = {
         email: {
           type: ["string", "null"]
         },
-        payment_permission: {
+        paymentPermission: {
           type: "boolean"
         },
-        aceptation_permission: {
+        aceptationPermission: {
           type: "boolean"
         }
       }
@@ -138,13 +138,13 @@ Boats.BodyPutBoat = {
       items: {
         allOf: [
           {
-            required: ["cable_type_id", "socket_type_id"],
+            required: ["cableTypeId", "socketTypeId"],
             type: "object",
             properties: {
-              cable_type_id: {
+              cableTypeId: {
                 type: "number"
               },
-              socket_type_id: {
+              socketTypeId: {
                 type: "number"
               }
             }
@@ -160,10 +160,10 @@ Boats.BodyPutBoat = {
       items: {
         allOf: [
           {
-            required: ["boat_document_type_id", "url"],
+            required: ["boatDocumentTypeId", "url"],
             type: "object",
             properties: {
-              boat_document_type_id: {
+              boatDocumentTypeId: {
                 type: "number"
               },
               url: {

@@ -74,7 +74,7 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
                 user.recruitmentDate
               ])
                 .then(() => {
-                  res.status(204);
+                  res.status(201);
                   next();
                 })
                 .catch(error => next(newError(error, 400)));

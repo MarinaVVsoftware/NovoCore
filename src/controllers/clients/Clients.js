@@ -169,7 +169,7 @@ Clients.DeleteClientById = (newError, Query, mysqlConnection) => {
         Query(mysqlConnection, "CALL SP_Clients_DeleteClient(?);", [
           req.params.id
         ])
-          .then(() => res.status(201).send())
+          .then(() => res.status(204).send())
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));

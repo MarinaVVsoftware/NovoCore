@@ -26,7 +26,7 @@ Roles.PutRolByName = (newError, Query, mysqlConnection) => {
           rol.rolName,
           rol.permissions
         ])
-          .then(() => res.status(204).send())
+          .then(() => res.status(201).send())
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
