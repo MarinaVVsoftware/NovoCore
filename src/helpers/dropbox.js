@@ -52,6 +52,25 @@ class DropboxClass {
       path: path
     });
   }
+
+  async UploadFileBySession(contents) {
+    return await this.dropbox.filesUploadSessionStart({
+      contents,
+      close: true
+    });
+  }
+
+  async CloseSession(entries) {
+    return await this.dropbox.filesUploadSessionFinishBatch({
+      entries
+    });
+  }
+
+  async CheckSessionStatus(jobId) {
+    return await this.dropbox.filesUploadSessionFinishBatchCheck({
+      async_job_id: jobId
+    });
+  }
 }
 
 module.exports = DropboxClass;

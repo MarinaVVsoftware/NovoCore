@@ -38,14 +38,10 @@ BoatDocuments.PutBoatDocuments = (
       else if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else if (!req.files)
-        next(newError("No se proporcionó ningún archivo vía multipart.", 406));
-      else if (req.files.length != constants.boats.boatDocumentsLength)
+        next(newError("No se proporcionó el objeto multipart.", 406));
+      else if (req.files.length == 0)
         next(
-          newError(
-            "No se proporcionó la cantidad correcta de documentos: " +
-              constants.boats.boatDocumentsLength,
-            406
-          )
+          newError("No se proporcionó ningún documento via multipart. ", 406)
         );
       else if (!req.body.body)
         next(newError("No se proporcionó el body dentro del multipart"));
@@ -53,18 +49,21 @@ BoatDocuments.PutBoatDocuments = (
         /* Se envían los archivos via DROPBOX */
         /* se requiere la lista de elementos nulos o reales en el body */
         body = JSON.parse(req.body.body);
-        let UploadPromises = [];
+        let files = [];
+        let Promises = [];
         let LinkPromises = [];
         let SqlPromises = [];
 
         /* Construye los nombres de todos los archivos */
         let date = Date.now(); // timestamp para el nombre del archivo
-        req.files.forEach((file, index) => {
+        let fileCounter = 0;
+        for (let index = 0; index < body.documents.length; index++) {
           // si en el body se especifica que no se recibió archivo, se descarta
-          if (!body.documents[index].sent) return;
-          else {
+          if (body.documents[index].sent) {
             // calcula la extensión del archivo
-            const extension = (fileExtension = mime.extension(file.mimetype));
+            const extension = (fileExtension = mime.extension(
+              req.files[fileCounter].mimetype
+            ));
             const extensions = constants.boatDocuments.extensions;
 
             /* Si la extensión pertenece al grupo aceptado, retorna !-1 */
@@ -74,9 +73,15 @@ BoatDocuments.PutBoatDocuments = (
                 constants.boatDocuments.folder +
                 decodeURIComponent(req.params.name) +
                 "/";
-              let name = ++index + "-" + date + "." + extension;
+              let name = index + 1 + "-" + date + "." + extension;
 
-              UploadPromises.push(dropbox.UploadFile(path + name, file.buffer));
+              // UploadPromises.push(dropbox.UploadFile(path + name, file.buffer));
+              files.push({
+                path: path + name,
+                buffer: req.files[fileCounter].buffer,
+                offset: req.files[fileCounter].buffer.length
+              });
+              fileCounter++;
             } else {
               next(
                 newError(
@@ -87,63 +92,88 @@ BoatDocuments.PutBoatDocuments = (
               return;
             }
           }
+        }
+
+        files.forEach(file => {
+          Promises.push(dropbox.UploadFileBySession(file.buffer));
         });
 
-        /* Sube todos los archivos */
-        if (UploadPromises.length > 0)
-          Promise.all(UploadPromises)
-            .then(results => {
-              results.forEach(result => {
-                LinkPromises.push(dropbox.GetLink(result.path_display));
+        /* Crea una sesión por cada archivo */
+        Promise.all(Promises)
+          .then(response => {
+            let entries = [];
+
+            files.forEach((file, index) => {
+              entries.push({
+                cursor: {
+                  session_id: response[index].session_id,
+                  offset: file.buffer.length
+                },
+                commit: {
+                  path: file.path
+                }
               });
-
-              /* Genera todos los shared links */
-              Promise.all(LinkPromises)
-                .then(results => {
-                  /* Crea todos los llamados SQL a ejecutar */
-                  results.forEach(result => {
-                    SqlPromises.push(
-                      Query(
-                        mysqlConnection,
-                        "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);",
-                        [
-                          req.params.id,
-                          decodeURIComponent(req.params.name),
-                          // extrae el primer char del nombre, que representa el tipo de documento
-                          result.name.substring(0, 1),
-                          // obtiene la shared url para guardarla
-                          result.url
-                        ]
-                      )
-                    );
-
-                    /* Ejecuta las promesas y finaliza el endpoint */
-                    if (SqlPromises.length > 0)
-                      Promise.all(SqlPromises)
-                        .then(() => res.status(201).send())
-                        .catch(error => {
-                          console.log(error);
-                          next(newError(error, 400));
-                        });
-                    else res.status(201).send();
-                  });
-                })
-                .catch(error => {
-                  console.log(error);
-                  next(newError(error, 400));
-                });
-            })
-            .catch(error => {
-              console.log(error);
-              next(newError(error, 400));
             });
-        else
-          next(
-            newError(
-              "Ningún archivo fue enviado, el body especififca cero archivos por enviar.",
-              400
-            )
-          );
+
+            /* Ejecuta las sesiones, las envía, y espera a que se suban los archivos */
+            dropbox
+              .CloseSession(entries)
+              .then(response => {
+                const jobId = response.async_job_id;
+
+                /* Código weird que envía peticiones a dropbox para averiguar
+                cuando se carguen los archivos. Es necesario para obtener el objeto de
+                respuesta y generar los links */
+                function WaitSucess() {
+                  return dropbox
+                    .CheckSessionStatus(jobId)
+                    .then(r => {
+                      if (r[".tag"] != "complete") return WaitSucess();
+                      else {
+                        r.entries.forEach(entry => {
+                          LinkPromises.push(
+                            dropbox.GetLink(entry.path_display)
+                          );
+                        });
+
+                        /* Genera todos los shared links */
+                        Promise.all(LinkPromises)
+                          .then(results => {
+                            /* Crea todos los llamados SQL a ejecutar */
+                            results.forEach(result => {
+                              SqlPromises.push(
+                                Query(
+                                  mysqlConnection,
+                                  "CALL SP_BoatDocuments_PutByBoat (?,?,?,?);",
+                                  [
+                                    req.params.id,
+                                    decodeURIComponent(req.params.name),
+                                    // extrae el primer char del nombre, que representa el tipo de documento
+                                    result.name.substring(0, 1),
+                                    // obtiene la shared url para guardarla
+                                    result.url
+                                  ]
+                                )
+                              );
+
+                              /* Ejecuta las promesas y finaliza el endpoint */
+                              Promise.all(SqlPromises)
+                                .then(() => res.status(201).send())
+                                .catch(error => next(newError(error, 400)));
+                            });
+                          })
+                          .catch(error => next(newError(error, 400)));
+                      }
+                    })
+                    .catch(error => next(newError(error, 400)));
+                }
+
+                /* Ejecuta la función recursiva */
+                WaitSucess();
+              })
+              .catch(error => next(newError(error, 400)));
+          })
+          .catch(error => next(newError(error, 400)));
       }
     } catch (error) {
       next(newError(error, 500));
