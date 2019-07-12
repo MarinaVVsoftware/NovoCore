@@ -79,6 +79,13 @@ module.exports = app => {
     return null;
   }
 
+  /* Reconfiguración del parse a date de JSON */
+  Date.prototype.toJSON = function() {
+    return new Date(this).toLocaleString("en-US", {
+      timeZone: "America/Cancun"
+    });
+  };
+
   /* MIDDLEWARES */
   // middleware de morgan con log personalizado
   morgan(app);
