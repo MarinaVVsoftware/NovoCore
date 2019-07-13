@@ -18,7 +18,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
-    "dropbox": "^4.0.26",
+    "dropbox": "^4.0.28",
     "express": "^4.17.1",
     "express-json-validator-middleware": "^2.0.0",
     "express-status-monitor": "^1.2.6",
@@ -31,7 +31,7 @@
     "nodemailer": "^6.2.1",
     "redis": "^2.8.0",
     "request": "^2.88.0",
-    "swagger-ui-express": "^4.0.6",
+    "swagger-ui-express": "^4.0.7",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
