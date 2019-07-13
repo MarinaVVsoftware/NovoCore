@@ -27,9 +27,18 @@ Users.GetUserByName = (newError, Query, mysqlConnection) => {
           decodeURIComponent(req.params.name)
         ])
           .then(result => {
-            res.status(200);
-            res.json({ user: result[0][0][0] });
-            next();
+            let user = result[0][0][0];
+
+            Query(mysqlConnection, "CALL SP_Roles_GetRolByUser(?);", [
+              user.rolId
+            ])
+              .then(rol => {
+                user.rol = rol[0][0][0];
+                res.status(200);
+                res.json({ user: user });
+                next();
+              })
+              .catch(error => next(newError(error, 400)));
           })
           .catch(error => next(newError(error, 400)));
     } catch (error) {
