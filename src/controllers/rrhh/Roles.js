@@ -24,7 +24,7 @@ Roles.PutRolByName = (newError, Query, mysqlConnection) => {
           decodeURIComponent(req.params.name),
           rol.rankId,
           rol.rolName,
-          rol.permissions
+          JSON.stringify(rol.permissions)
         ])
           .then(() => res.status(201).send())
           .catch(error => next(newError(error, 400)));

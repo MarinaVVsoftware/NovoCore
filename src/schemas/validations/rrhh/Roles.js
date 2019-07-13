@@ -28,7 +28,7 @@ Roles.BodyPutUserByName = {
           type: "string"
         },
         permissions: {
-          type: "string"
+          type: ["object", "array", "string"]
         }
       }
     }
