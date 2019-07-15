@@ -2,11 +2,11 @@
 const Users = {};
 
 /* Valida los params de la url */
-Users.ParamsGetUserByName = {
+Users.ParamsGetUserByEmail = {
   type: "object",
-  required: ["name"],
+  required: ["email"],
   properties: {
-    name: {
+    email: {
       type: "string"
     }
   }

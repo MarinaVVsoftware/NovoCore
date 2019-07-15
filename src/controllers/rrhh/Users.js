@@ -8,7 +8,7 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
           res.status(200);
           res.json({ users: result[0][0] });
           res.body = { users: result[0][0] };
-          next();
+          // next();
         })
         .catch(error => next(newError(error, 400)));
     } catch (error) {
@@ -17,14 +17,16 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
   };
 };
 
-Users.GetUserByName = (newError, Query, mysqlConnection) => {
+Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
-        next(newError("el param 'name' no es un string válido.", 406));
+      const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      if (!regexEmail.test(decodeURIComponent(req.params.email)))
+        next(newError("el param 'email' no es un string válido.", 406));
       else
-        Query(mysqlConnection, "CALL SP_Users_GetUserByName(?);", [
-          decodeURIComponent(req.params.name)
+        Query(mysqlConnection, "CALL SP_Users_GetUserByEmail(?);", [
+          decodeURIComponent(req.params.email)
         ])
           .then(result => {
             let user = result[0][0][0];
@@ -36,7 +38,7 @@ Users.GetUserByName = (newError, Query, mysqlConnection) => {
                 user.rol = rol[0][0][0];
                 res.status(200);
                 res.json({ user: user });
-                next();
+                // next();
               })
               .catch(error => next(newError(error, 400)));
           })
@@ -84,7 +86,7 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
               ])
                 .then(() => {
                   res.status(201);
-                  next();
+                  // next();
                 })
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));
@@ -127,7 +129,7 @@ Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
               ])
                 .then(() => {
                   res.status(204);
-                  next();
+                  // next();
                 })
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));

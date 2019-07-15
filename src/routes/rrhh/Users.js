@@ -25,15 +25,15 @@ module.exports = (
 
   router.get(
     "/api/users/",
-    redisHandler.ReadCache(redis, RedisSchema),
-    Users.GetUsers(...instances),
-    redisHandler.WriteCache(redis, RedisSchema)
+    // redisHandler.ReadCache(redis, RedisSchema),
+    Users.GetUsers(...instances)
+    // redisHandler.WriteCache(redis, RedisSchema)
   );
   router.get(
-    "/api/users/:name",
-    validate({ params: Schema.ParamsGetUserByName }),
-    Users.GetUserByName(...instances),
-    redisHandler.WriteCache(redis, RedisSchema)
+    "/api/users/:email",
+    validate({ params: Schema.ParamsGetUserByEmail }),
+    Users.GetUserByEmail(...instances)
+    // redisHandler.WriteCache(redis, RedisSchema)
   );
   router.put(
     "/api/users/:name",
@@ -41,14 +41,14 @@ module.exports = (
       params: Schema.ParamsPutUserByName,
       body: Schema.BodyPutUserByName
     }),
-    Users.PutUserByName(...instances),
-    redisHandler.WriteCache(redis, RedisSchema)
+    Users.PutUserByName(...instances)
+    // redisHandler.WriteCache(redis, RedisSchema)
   );
   router.delete(
     "/api/users/:email",
     validate({ params: Schema.ParamsDeleteUserByName }),
-    Users.DeleteUserByName(...instances),
-    redisHandler.WriteCache(redis, RedisSchema)
+    Users.DeleteUserByName(...instances)
+    // redisHandler.WriteCache(redis, RedisSchema)
   );
 
   app.use(router);
