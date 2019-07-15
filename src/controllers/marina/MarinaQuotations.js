@@ -8,27 +8,81 @@ const PartitionalQuotations = require(path.resolve(
 // Marina - Controller
 const Marina = {};
 
-// Read a Marina Quotation.
-Marina.Read = (newError, Query, mysqlConnection) => {
+Marina.GetMarinaQuotation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_MarinaQuotations_GetQuotationById (?);", [
         req.params.id
       ])
-        .then(([rows, fields]) => {
-          rows.pop();
-          res.status(200).send(rows[0]);
-        })
-        .catch(error => next(error));
+        .then(result => res.status(200).send({ quotation: result[0][0] }))
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-// Create a new quotation
-Marina.Create = (newError, Query, mysqlConnection) => {
+Marina.GetMarinaQuotationsByGroup = (newError, Query, mysqlConnection) => {
+  return (req, res, next) => {
+    try {
+      // Objeto para seleccionar el grupo de cotizaciones a base de su status
+      const quotationStatus = {
+        active: [2, 3, 4, 6, 7, 8, 9, 10],
+        draft: [1],
+        cancelled: [5, 12, 13],
+        deleted: [14],
+        finished: [11]
+      };
+
+      const statusSelected = quotationStatus.hasOwnProperty(req.query.filterBy)
+        ? quotationStatus[req.query.filterBy]
+        : quotationStatus[active];
+
+      // Convierte el array a string delimitado por comas para la base de datos.
+      Query(
+        mysqlConnection,
+        "CALL SP_MarinaQuotations_GetQuotationsByGroup (?)",
+        [statusSelected.toString()]
+      )
+        .then(([rows, fields]) => {
+          const quotations = [];
+          const Promises = [];
+          const data = [];
+
+          // Se ejecuta UNA promesa y se hace un push a las nuevas promesas para la electricidad.
+          rows[0].forEach((element, index) => {
+            Promises.push(
+              Query(
+                mysqlConnection,
+                "CALL SP_BoatElectricity_GetByBoat (?,?)",
+                [element.client_id, element.boat_name]
+              )
+            );
+            quotations.push(element);
+          });
+
+          // Se ejecuta las promesas sincronas y se crea un objeto nuevo por cada iteración.
+          Promise.all(Promises)
+            .then(result => {
+              result.forEach((element, index) => {
+                data.push(
+                  Object.assign({}, quotations[index], {
+                    electricity: element[0][0]
+                  })
+                );
+              });
+              res.status(200).send(data);
+            })
+            .catch(error => next(newError(error, 400)));
+        })
+        .catch(error => next(newError(error, 400)));
+    } catch (error) {
+      next(newError(error, 500));
+    }
+  };
+};
+
+Marina.CreateQuotation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       const params = {
@@ -111,103 +165,27 @@ Marina.Create = (newError, Query, mysqlConnection) => {
               );
             });
             Promise.all(Promises)
-              .then(result => {
-                res.status(200).send({ status: "QUOTATIONS CREATED." });
-              })
-              .catch(error => next(error));
+              .then(() =>
+                res.status(200).send({ status: "QUOTATIONS CREATED." })
+              )
+              .catch(error => next(newError(error, 400)));
           })
-          .catch(error => next(error));
+          .catch(error => next(newError(error, 400)));
       } else {
         Query(
           mysqlConnection,
           "CALL SP_MarinaQuotations_PostQuotation (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
           Object.values(params)
         )
-          .then(result => {
-            res.status(200).send({ status: "QUOTATION CREATED." });
-          })
-          .catch(error => next(error));
+          .then(() => res.status(200).send({ status: "QUOTATION CREATED." }))
+          .catch(error => next(newError(error, 400)));
       }
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
 };
 
-// Si se cicla, quiza no se ha puesto el res.status.send Promises.all, el resultado de cada promesa es una row.
-Marina.GetQuotationsByGroup = (newError, Query, mysqlConnection) => {
-  return (req, res, next) => {
-    try {
-      // Objeto para seleccionar el grupo de cotizaciones a base de su status
-      const quotationStatus = {
-        active: [2, 3, 4, 6, 7, 8, 9, 10],
-        draft: [1],
-        cancelled: [5, 12, 13],
-        deleted: [14],
-        finished: [11]
-      };
-
-      const statusSelected = quotationStatus.hasOwnProperty(req.query.filterBy)
-        ? quotationStatus[req.query.filterBy]
-        : quotationStatus[active];
-
-      // Convierte el array a string delimitado por comas para la base de datos.
-      Query(mysqlConnection, "CALL SP_Marina_GetQuotationsByGroup (?)", [
-        statusSelected.toString()
-      ])
-        .then(([rows, fields]) => {
-          const quotations = [];
-          const Promises = [];
-          const data = [];
-
-          // Se ejecuta UNA promesa y se hace un push a las nuevas promesas para la electricidad.
-          rows[0].forEach((element, index) => {
-            Promises.push(
-              Query(
-                mysqlConnection,
-                "CALL SP_BoatElectricity_GetByBoat (?,?)",
-                [element.client_id, element.boat_name]
-              )
-            );
-            quotations.push(element);
-          });
-
-          // Se ejecuta las promesas sincronas y se crea un objeto nuevo por cada iteración.
-          Promise.all(Promises)
-            .then(result => {
-              result.forEach((element, index) => {
-                data.push(
-                  Object.assign({}, quotations[index], {
-                    electricity: element[0][0]
-                  })
-                );
-              });
-              res.status(200).send(data);
-            })
-            .catch(error => next(error));
-        })
-        .catch(error => next(error));
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
-  };
-};
-
-// Redireccionamiento de /api/marina/quotation/active
-Marina.GetQuotations = (newError, Query, mysqlConnection) => {
-  return (req, res, next) => {
-    try {
-      res.redirect("active");
-    } catch (error) {
-      console.log(error);
-      next(newError(error, 500));
-    }
-  };
-};
-
-/*------------------------------ Quotation Status --------------------------------------*/
 Marina.StatusSent = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {

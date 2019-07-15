@@ -27,19 +27,19 @@ module.exports = (
   router.get(
     "/api/marina/quotations/",
     validate({ query: Schema.readList }),
-    MarinaQuotations.GetQuotationsByGroup(...instances)
+    MarinaQuotations.GetMarinaQuotationsByGroup(...instances)
   );
   // Lee una cotización por ID.
   router.get(
     "/api/marina/quotations/:id/",
     validate({ params: Schema.read }),
-    MarinaQuotations.Read(...instances)
+    MarinaQuotations.GetMarinaQuotation(...instances)
   );
   // Crea cotización.
   router.post(
     "/api/marina/quotations/",
     validate({ body: Schema.create }),
-    MarinaQuotations.Create(...instances)
+    MarinaQuotations.CreateQuotation(...instances)
   );
 
   // Actualiza la cotización a estado "sent"
