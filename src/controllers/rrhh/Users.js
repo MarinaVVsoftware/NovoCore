@@ -4,12 +4,7 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
       Query(mysqlConnection, "CALL SP_Users_GetUsers();")
-        .then(result => {
-          res.status(200);
-          res.json({ users: result[0][0] });
-          res.body = { users: result[0][0] };
-          // next();
-        })
+        .then(result => res.status(200).send({ users: result[0][0] }))
         .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
@@ -36,9 +31,7 @@ Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
             ])
               .then(rol => {
                 user.rol = rol[0][0][0];
-                res.status(200);
-                res.json({ user: user });
-                // next();
+                res.status(200).send({ user: user });
               })
               .catch(error => next(newError(error, 400)));
           })
@@ -84,10 +77,7 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
                 user.username,
                 user.recruitmentDate
               ])
-                .then(() => {
-                  res.status(201);
-                  // next();
-                })
+                .then(() => res.status(201).send())
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));
           })
@@ -127,10 +117,7 @@ Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
               Query(mysqlConnection, "CALL SP_Users_DeleteByEmail(?);", [
                 decodeURIComponent(req.params.email)
               ])
-                .then(() => {
-                  res.status(204);
-                  // next();
-                })
+                .then(() => res.status(204).send())
                 .catch(error => next(newError(error, 400)));
             else next(newError(response.error, 400));
           })
