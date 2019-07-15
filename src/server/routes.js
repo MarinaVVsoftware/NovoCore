@@ -80,6 +80,18 @@ const MarinaQuotationTimelineTypes = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotationTimelineTypes"
 ));
+const Notifications = require(path.resolve(
+  __dirname,
+  "../routes/marina/Notifications"
+));
+const NotificationStatus = require(path.resolve(
+  __dirname,
+  "../routes/marina/NotificationStatus"
+));
+const NotificationTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/NotificationTypes"
+));
 const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
 const SlipOccupation = require(path.resolve(
   __dirname,
@@ -151,6 +163,9 @@ module.exports = (
   MarinaQuotations(...instances);
   MarinaQuotationTimeline(...instances);
   MarinaQuotationTimelineTypes(...instances);
+  Notifications(...instances);
+  NotificationStatus(...instances);
+  NotificationTypes(...instances);
   Slips(...instances);
   SlipOccupation(...instances);
   SlipTypes(...instances);
