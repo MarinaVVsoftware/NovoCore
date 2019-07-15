@@ -11,19 +11,16 @@ MarinaQuotationTimeline.GetTimelineByQuotation = (
     try {
       /* Valida manualmente el tipado de id */
       if (isNaN(req.params.id))
-        next(newError('el param "id" no es un número válido.', 400));
+        next(newError('el param "id" no es un número válido.', 406));
 
       Query(
         mysqlConnection,
         "CALL SP_MarinaQuotationTimeline_GetByQuotation(?);",
         [req.params.id]
       )
-        .then(result => {
-          res.status(200).send({ Timeline: result[0][0] });
-        })
-        .catch(error => next(error));
+        .then(result => res.status(200).send({ timeline: result[0][0] }))
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };

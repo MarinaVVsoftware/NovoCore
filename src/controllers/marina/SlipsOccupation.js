@@ -14,13 +14,8 @@ SlipsOccupation.GetSlipsOccupation = (newError, Query, mysqlConnection) => {
 
           res.status(200).send({ slipsOccupation: slipsOccupation });
         })
-        .catch(error => {
-          /* retorna el mensaje de error */
-          console.log(error);
-          next(error);
-        });
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
@@ -36,7 +31,6 @@ SlipsOccupation.GetSlipsOccupationByQuotation = (
     try {
       res.status(200).send("GetSlipsOccupationByQuotation");
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
@@ -72,9 +66,8 @@ SlipsOccupation.PostSlipsOccupation = (
 
           res.status(200).send({ occupation });
         })
-        .catch(error => console.log(error));
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
@@ -86,7 +79,6 @@ SlipsOccupation.PutSlipsOccupation = (newError, Query, mysqlConnection) => {
     try {
       res.status(200).send("PutSlipOccupations");
     } catch (error) {
-      console.log(error);
       next(newError(error, 500));
     }
   };
