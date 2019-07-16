@@ -68,6 +68,14 @@ const SocialReason = require(path.resolve(
 ));
 
 /* Imports de Marina */
+const MarinaMooringTariff = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaMooringTariff"
+));
+const MarinaMooringTariffTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaMooringTariffTypes"
+));
 const MarinaQuotations = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotations"
@@ -168,6 +176,8 @@ module.exports = (
   SocialReason(...instances);
 
   /* Rutas del Modelo de Marina */
+  MarinaMooringTariff(...instances);
+  MarinaMooringTariffTypes(...instances);
   MarinaQuotations(...instances);
   MarinaQuotationServices(...instances);
   MarinaQuotationServiceTypes(...instances);
