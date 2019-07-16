@@ -72,6 +72,14 @@ const MarinaQuotations = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotations"
 ));
+const MarinaQuotationServices = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationServices"
+));
+const MarinaQuotationServiceTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationServiceTypes"
+));
 const MarinaQuotationTimeline = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotationTimeline"
@@ -161,6 +169,8 @@ module.exports = (
 
   /* Rutas del Modelo de Marina */
   MarinaQuotations(...instances);
+  MarinaQuotationServices(...instances);
+  MarinaQuotationServiceTypes(...instances);
   MarinaQuotationTimeline(...instances);
   MarinaQuotationTimelineTypes(...instances);
   Notifications(...instances);
