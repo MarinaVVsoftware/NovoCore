@@ -87,7 +87,7 @@ Notifications.PatchNotification = (newError, Query, mysqlConnection) => {
             notification.dateToSend
           ]
         )
-          .then(() => res.status(201).send())
+          .then(() => res.status(204).send())
           .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
@@ -98,7 +98,18 @@ Notifications.PatchNotification = (newError, Query, mysqlConnection) => {
 Notifications.DeleteNotification = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      res.status(200).send("DeleteNotification");
+      if (isNaN(req.params.quotation))
+        next(newError("el param 'quotation' no es un número válido.", 406));
+      else if (isNaN(req.params.notification))
+        next(newError("el param 'notification' no es un número válido.", 406));
+      else
+        Query(
+          mysqlConnection,
+          "CALL SP_Notifications_DeleteNotification(?,?);",
+          [req.params.quotation, req.params.notification]
+        )
+          .then(() => res.status(204).send())
+          .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
