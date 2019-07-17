@@ -7,7 +7,11 @@ MarinaMooringTariffTypes.GetTariffTypes = (
 ) => {
   return (req, res, next) => {
     try {
-      res.status(200).send("GetTariffTypes");
+      Query(mysqlConnection, "CALL SP_MarinaMooringTariffTypes_GetTypes();")
+        .then(result =>
+          res.status(200).send({ mooringTariffTypes: result[0][0] })
+        )
+        .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
     }

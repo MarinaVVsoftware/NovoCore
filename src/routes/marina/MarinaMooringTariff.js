@@ -3,6 +3,10 @@ const MarinaMooringTariff = require(path.resolve(
   __dirname,
   "../../controllers/marina/MarinaMooringTariff"
 ));
+const Schema = require(path.resolve(
+  __dirname,
+  "../../schemas/validations/marina/MarinaMooringTariff"
+));
 
 module.exports = (
   app,
@@ -23,15 +27,21 @@ module.exports = (
     MarinaMooringTariff.GetTariff(...instances)
   );
   router.post(
-    "/api/marina/mooring-rates/:type",
+    "/api/marina/mooring-rates/",
+    validate({ body: Schema.BodyPostTariff }),
     MarinaMooringTariff.PostTariff(...instances)
   );
   router.put(
-    "/api/marina/mooring-rates/:type/:id",
+    "/api/marina/mooring-rates/:id",
+    validate({
+      params: Schema.ParamsPutTariff,
+      body: Schema.BodyPutTariff
+    }),
     MarinaMooringTariff.PutTariff(...instances)
   );
   router.delete(
-    "/api/marina/mooring-rates/:type/:id",
+    "/api/marina/mooring-rates/:id",
+    validate({ params: Schema.ParamsDeleteTariff }),
     MarinaMooringTariff.DeleteTariff(...instances)
   );
 
