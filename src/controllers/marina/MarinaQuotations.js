@@ -82,10 +82,33 @@ MarinaQuotations.GetQuotationById = (newError, Query, mysqlConnection) => {
 MarinaQuotations.PostQuotation = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
-      Query(mysqlConnection, "CALL SP_MarinaQuotations_GetQuotationById (?);", [
-        req.params.id
-      ])
-        .then(result => res.status(200).send({ quotation: result[0][0] }))
+      const quotation = req.body.marinaQuotation;
+
+      Query(
+        mysqlConnection,
+        "CALL SP_MarinaQuotations_PostQuotation (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+        [
+          quotation.boatId,
+          quotation.marinaQuotationStatusId,
+          quotation.marinaMooringTariffId,
+          new Date(quotation.arrivalDate),
+          new Date(quotation.departureDate),
+          quotation.mooringTariff,
+          quotation.loa,
+          quotation.daysStay,
+          quotation.discountStayPercentage,
+          quotation.currencyAmount,
+          quotation.tax,
+          quotation.total,
+          quotation.subtotal,
+          quotation.monthlyQuotation,
+          quotation.seminnualQuotation,
+          quotation.annualQuotation,
+          quotation.groupQuotation,
+          quotation.creationResponsable
+        ]
+      )
+        .then(() => res.status(201).send())
         .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));

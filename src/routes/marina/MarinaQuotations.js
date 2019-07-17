@@ -25,17 +25,17 @@ module.exports = (
 
   router.get(
     "/api/marina/quotations/:id/",
-    validate({ params: Schema.read }),
+    validate({ params: Schema.ParamsGetQuotationById }),
     MarinaQuotations.GetQuotationById(...instances)
   );
   router.get(
     "/api/marina/quotations/",
-    validate({ query: Schema.readList }),
+    validate({ query: Schema.QueryGetQuotationsByGroup }),
     MarinaQuotations.GetQuotationsByGroup(...instances)
   );
   router.post(
     "/api/marina/quotations/",
-    validate({ body: Schema.create }),
+    validate({ body: Schema.BodyPostQuotation }),
     MarinaQuotations.PostQuotation(...instances)
   );
 
