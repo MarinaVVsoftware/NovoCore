@@ -26,6 +26,11 @@ module.exports = (
     "/api/marina/mooring-rates/",
     MarinaMooringTariff.GetTariff(...instances)
   );
+  router.get(
+    "/api/marina/mooring-rates/:type",
+    validate({ params: Schema.ParamsGetTariffByType }),
+    MarinaMooringTariff.GetTariffByType(...instances)
+  );
   router.post(
     "/api/marina/mooring-rates/",
     validate({ body: Schema.BodyPostTariff }),

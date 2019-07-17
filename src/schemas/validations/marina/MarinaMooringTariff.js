@@ -1,6 +1,16 @@
 /* Schemas de validación de los endpoints de MarinaMooringTariff */
 const MarinaMooringTariff = {};
 
+MarinaMooringTariff.ParamsGetTariffByType = {
+  type: "object",
+  required: ["type"],
+  properties: {
+    type: {
+      type: "string"
+    }
+  }
+};
+
 MarinaMooringTariff.BodyPostTariff = {
   type: "object",
   required: ["marinaMooringTariff"],
