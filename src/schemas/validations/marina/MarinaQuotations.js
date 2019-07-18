@@ -42,10 +42,6 @@ MarinaQuotations.BodyPostQuotation = {
         "tax",
         "subtotal",
         "total",
-        "monthlyQuotation",
-        "semiannualQuotation",
-        "annualQuotation",
-        "groupQuotation",
         "creationResponsable"
       ],
       properties: {

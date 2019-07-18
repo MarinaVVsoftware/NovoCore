@@ -19,44 +19,48 @@ MarinaQuotations.GetQuotationsByGroup = (newError, Query, mysqlConnection) => {
         finished: [11]
       };
 
+      /* Si el endpoint no recibe ningun filtro vía query, setea "active" como predeterminado */
       const statusSelected = quotationStatus.hasOwnProperty(req.query.filterBy)
         ? quotationStatus[req.query.filterBy]
         : quotationStatus[active];
 
       // Convierte el array a string delimitado por comas para la base de datos.
-      Query(mysqlConnection, "CALL SP_Marina_GetQuotationsByGroup (?)", [
-        statusSelected.toString()
-      ])
+      Query(
+        mysqlConnection,
+        "CALL SP_MarinaQuotations_GetQuotationsByGroup (?)",
+        [statusSelected.toString()]
+      )
         .then(result => {
-          const quotations = result[0][0];
-          const Promises = [];
-          const data = [];
+          res.status(200).send({ quotations: result[0][0] });
+          // const quotations = result[0][0];
+          // const Promises = [];
+          // const data = [];
 
-          /* Crea un arreglo de Queries para buscar la información de electricidad de cada cotización */
-          quotations.forEach((quotation, index) => {
-            Promises.push(
-              Query(
-                mysqlConnection,
-                "CALL SP_BoatElectricity_GetByBoat (?,?)",
-                [quotation.client_id, quotation.boat_name]
-              )
-            );
-            quotations.push(quotation);
-          });
+          // /* Crea un arreglo de Queries para buscar la información de electricidad de cada cotización */
+          // quotations.forEach((quotation, index) => {
+          //   Promises.push(
+          //     Query(
+          //       mysqlConnection,
+          //       "CALL SP_BoatElectricity_GetByBoat (?,?)",
+          //       [quotation.client_id, quotation.boat_name]
+          //     )
+          //   );
+          //   quotations.push(quotation);
+          // });
 
-          // Ejecuta las promesas sincronas y se crea un objeto nuevo por cada iteración.
-          Promise.all(Promises)
-            .then(result => {
-              result.forEach((elect, index) => {
-                data.push(
-                  Object.assign({}, elect[index], {
-                    electricity: element[0][0]
-                  })
-                );
-              });
-              res.status(200).send({ quotations: data });
-            })
-            .catch(error => next(newError(error, 400)));
+          // // Ejecuta las promesas sincronas y se crea un objeto nuevo por cada iteración.
+          // Promise.all(Promises)
+          //   .then(result => {
+          //     result.forEach((elect, index) => {
+          //       data.push(
+          //         Object.assign({}, elect[index], {
+          //           electricity: element[0][0]
+          //         })
+          //       );
+          //     });
+          //     res.status(200).send({ quotations: data });
+          //   })
+          //   .catch(error => next(newError(error, 400)));
         })
         .catch(error => next(newError(error, 400)));
     } catch (error) {
@@ -101,10 +105,10 @@ MarinaQuotations.PostQuotation = (newError, Query, mysqlConnection) => {
           quotation.tax,
           quotation.total,
           quotation.subtotal,
-          quotation.monthlyQuotation,
-          quotation.seminnualQuotation,
-          quotation.annualQuotation,
-          quotation.groupQuotation,
+          quotation.monthlyQuotation ? quotation.monthlyQuotation : null,
+          quotation.seminnualQuotation ? quotation.seminnualQuotation : null,
+          quotation.annualQuotation ? quotation.annualQuotation : null,
+          quotation.groupQuotation ? quotation.groupQuotation : null,
           quotation.creationResponsable
         ]
       )
