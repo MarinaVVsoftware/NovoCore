@@ -92,7 +92,7 @@ module.exports = app => {
   // dependencias para json y http(s)
   app.use(express.json());
   app.use(bodyParser.json());
-  app.use(cors());
+  app.use(cors({ origin: true }));
   //  dependencia para envío de archivos mediante multipart
   const Multer = multer();
 
