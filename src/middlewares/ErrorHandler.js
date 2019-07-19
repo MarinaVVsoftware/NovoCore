@@ -53,9 +53,11 @@ module.exports = app => {
       } else if (err.validationErrors) {
         /* Si son errores de Schemas, pasa por aquí */
         res.status(406).send({
-          bodyErrors: bodyErrors,
-          paramsErrors: paramsErrors,
-          queryErrors: queryErrors
+          error: {
+            bodyErrors: bodyErrors,
+            paramsErrors: paramsErrors,
+            queryErrors: queryErrors
+          }
         });
       } else {
         /* En caso que no se especifique el error */
