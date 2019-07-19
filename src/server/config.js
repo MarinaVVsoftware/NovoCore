@@ -31,7 +31,9 @@ const publicKey = fs.readFileSync(
 
 // este módulo sirve para separar la configuración del servidor
 // del archivo que instancia el servidor.
-module.exports = app => {
+module.exports = () => {
+  var app = express();
+
   let redisConfig = {};
   let mysqlConfig = {};
   let dropboxConfig = {};
@@ -87,13 +89,14 @@ module.exports = app => {
   };
 
   /* MIDDLEWARES */
+  app.use(cors());
+  app.options("*", cors());
+
   // middleware de morgan con log personalizado
   morgan(app);
   // dependencias para json y http(s)
   app.use(express.json());
   app.use(bodyParser.json());
-  app.options("*", cors());
-  app.use(cors({ origin: true }));
   //  dependencia para envío de archivos mediante multipart
   const Multer = multer();
 
