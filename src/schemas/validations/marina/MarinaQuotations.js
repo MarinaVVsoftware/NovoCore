@@ -1,6 +1,6 @@
 const MarinaQuotations = {};
 
-MarinaQuotations.read = {
+MarinaQuotations.ParamsGetQuotationById = {
   type: "object",
   required: ["id"],
   properties: {
@@ -11,7 +11,7 @@ MarinaQuotations.read = {
   }
 };
 
-MarinaQuotations.readList = {
+MarinaQuotations.QueryGetQuotationsByGroup = {
   type: "object",
   required: ["filterBy"],
   properties: {
@@ -22,138 +22,85 @@ MarinaQuotations.readList = {
   }
 };
 
-MarinaQuotations.erase = {
+MarinaQuotations.BodyPostQuotation = {
   type: "object",
-  required: ["id"],
+  required: ["marinaQuotation"],
   properties: {
-    id: {
-      type: "number"
+    marinaQuotation: {
+      type: "object",
+      required: [
+        "boatId",
+        "marinaQuotationStatusId",
+        "marinaMooringTariffId",
+        "arrivalDate",
+        "departureDate",
+        "mooringTariff",
+        "loa",
+        "daysStay",
+        "discountStayPercentage",
+        "currencyAmount",
+        "tax",
+        "subtotal",
+        "total",
+        "creationResponsable"
+      ],
+      properties: {
+        boatId: {
+          type: "number"
+        },
+        marinaQuotationStatusId: {
+          type: "number"
+        },
+        marinaMooringTariffId: {
+          type: "number"
+        },
+        arrivalDate: {
+          type: "string"
+        },
+        departureDate: {
+          type: "string"
+        },
+        mooringTariff: {
+          type: "number"
+        },
+        loa: {
+          type: "number"
+        },
+        daysStay: {
+          type: "number"
+        },
+        discountStayPercentage: {
+          type: "number"
+        },
+        currencyAmount: {
+          type: "number"
+        },
+        tax: {
+          type: "number"
+        },
+        subtotal: {
+          type: "number"
+        },
+        total: {
+          type: "number"
+        },
+        monthlyQuotation: {
+          type: "boolean"
+        },
+        semiannualQuotation: {
+          type: "boolean"
+        },
+        annualQuotation: {
+          type: "boolean"
+        },
+        groupQuotation: {
+          type: ["number", "null"]
+        },
+        creationResponsable: {
+          type: "string"
+        }
+      }
     }
-  }
-};
-
-MarinaQuotations.delete = {
-  type: "object",
-  required: ["id", "delete"],
-  properties: {
-    id: {
-      type: "number"
-    },
-    delete: {
-      type: "number"
-    }
-  }
-};
-
-MarinaQuotations.create = {
-  type: "object",
-  required: [
-    "boatId",
-    "quotationStatusId",
-    "mooringTariffId",
-    "arrivalDate",
-    "departureDate",
-    "arrivalStatus",
-    "mooringTariff",
-    "loa",
-    "daysStay",
-    "discountStayPercentage",
-    "currencyAmount",
-    "tax",
-    "subtotal",
-    "total",
-    "monthlyQuotation",
-    "annualQuotation",
-    "semiannualQuotation",
-    "creationResponsable"
-  ],
-  properties: {
-    boatId: {
-      type: "number"
-    },
-    quotationStatusId: {
-      type: "number"
-    },
-    mooringTariffId: {
-      type: "number"
-    },
-    arrivalDate: {
-      type: "string"
-    },
-    departureDate: {
-      type: "string"
-    },
-    arrivalStatus: {
-      type: "boolean"
-    },
-    mooringTariff: {
-      type: "number"
-    },
-    loa: {
-      type: "number"
-    },
-    daysStay: {
-      type: "number"
-    },
-    discountStayPercentage: {
-      type: "number"
-    },
-    currencyAmount: {
-      type: "number"
-    },
-    tax: {
-      type: "number"
-    },
-    subtotal: {
-      type: "number"
-    },
-    total: {
-      type: "number"
-    },
-    monthlyQuotation: {
-      type: "boolean"
-    },
-    annualQuotation: {
-      type: "boolean"
-    },
-    semiannualQuotation: {
-      type: "boolean"
-    },
-    creationResponsable: {
-      type: "string"
-    },
-    electricityTariff: {
-      type: "number"
-    },
-    totalElectricityDays: {
-      type: "number"
-    },
-    discountElectricityPercentage: {
-      type: "number"
-    },
-    currencyElectricityAmount: {
-      type: "number"
-    },
-    electricityTax: {
-      type: "number"
-    },
-    electricitySubtotal: {
-      type: "number"
-    },
-    electricityTotal: {
-      type: "number"
-    }
-  }
-};
-
-MarinaQuotations.update = {
-  type: "object",
-  required: ["quotationId"],
-  properties: {
-    quotationId: {
-      type: "number"
-    },
-    ...MarinaQuotations.create.properties
   }
 };
 

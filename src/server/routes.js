@@ -68,9 +68,29 @@ const SocialReason = require(path.resolve(
 ));
 
 /* Imports de Marina */
+const MarinaMooringTariff = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaMooringTariff"
+));
+const MarinaMooringTariffTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaMooringTariffTypes"
+));
 const MarinaQuotations = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotations"
+));
+const MarinaQuotationServices = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationServices"
+));
+const MarinaQuotationServiceTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationServiceTypes"
+));
+const MarinaQuotationStatus = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationStatus"
 ));
 const MarinaQuotationTimeline = require(path.resolve(
   __dirname,
@@ -79,6 +99,18 @@ const MarinaQuotationTimeline = require(path.resolve(
 const MarinaQuotationTimelineTypes = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotationTimelineTypes"
+));
+const Notifications = require(path.resolve(
+  __dirname,
+  "../routes/marina/Notifications"
+));
+const NotificationStatus = require(path.resolve(
+  __dirname,
+  "../routes/marina/NotificationStatus"
+));
+const NotificationTypes = require(path.resolve(
+  __dirname,
+  "../routes/marina/NotificationTypes"
 ));
 const Slips = require(path.resolve(__dirname, "../routes/marina/Slips"));
 const SlipOccupation = require(path.resolve(
@@ -148,9 +180,17 @@ module.exports = (
   SocialReason(...instances);
 
   /* Rutas del Modelo de Marina */
+  MarinaMooringTariff(...instances);
+  MarinaMooringTariffTypes(...instances);
   MarinaQuotations(...instances);
+  MarinaQuotationServices(...instances);
+  MarinaQuotationServiceTypes(...instances);
+  MarinaQuotationStatus(...instances);
   MarinaQuotationTimeline(...instances);
   MarinaQuotationTimelineTypes(...instances);
+  Notifications(...instances);
+  NotificationStatus(...instances);
+  NotificationTypes(...instances);
   Slips(...instances);
   SlipOccupation(...instances);
   SlipTypes(...instances);

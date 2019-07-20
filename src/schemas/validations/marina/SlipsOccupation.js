@@ -6,7 +6,7 @@ SlipsOccupation.ParamsGetSlipsOccupationByQuotation = {
   type: "object",
   required: ["quotation"],
   properties: {
-    id: {
+    quotation: {
       type: "string"
     }
   }
@@ -40,7 +40,7 @@ SlipsOccupation.ParamsPutSlipsOccupation = {
   type: "object",
   required: ["quotation"],
   properties: {
-    id: {
+    quotation: {
       type: "string"
     }
   }
