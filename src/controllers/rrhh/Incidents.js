@@ -8,7 +8,7 @@ Incidents.GetIncidentsByUser = (newError, Query, mysqlConnection) => {
       else
         Query(mysqlConnection, "CALL SP_Incidents_GetIncidents();")
           .then(result => res.status(200).send({ Incidents: result[0][0] }))
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -30,7 +30,7 @@ Incidents.PostIncidentByUser = (newError, Query, mysqlConnection) => {
           incident.description
         ])
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -55,7 +55,7 @@ Incidents.PutIncidentByUser = (newError, Query, mysqlConnection) => {
           incident.description
         ])
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }

@@ -5,7 +5,7 @@ Ranks.GetRanks = (newError, Query, mysqlConnection) => {
     try {
       Query(mysqlConnection, "CALL SP_Ranks_GetRanks();")
         .then(result => res.status(200).send({ ranks: result[0][0] }))
-        .catch(error => next(newError(error, 400)));
+        .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }

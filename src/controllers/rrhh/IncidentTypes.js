@@ -5,7 +5,7 @@ IncidentTypes.GetIncidentTypes = (newError, Query, mysqlConnection) => {
     try {
       Query(mysqlConnection, "CALL SP_IncidentTypes_GetTypes();")
         .then(result => res.status(200).send({ IncidentTypes: result[0][0] }))
-        .catch(error => next(newError(error, 400)));
+        .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }

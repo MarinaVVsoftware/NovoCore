@@ -5,7 +5,7 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
     try {
       Query(mysqlConnection, "CALL SP_Users_GetUsers();")
         .then(result => res.status(200).send({ users: result[0][0] }))
-        .catch(error => next(newError(error, 400)));
+        .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -33,9 +33,9 @@ Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
                 user.rol = rol[0][0][0];
                 res.status(200).send({ user: user });
               })
-              .catch(error => next(newError(error, 400)));
+              .catch(error => next(newError(error.message, 400)));
           })
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -78,7 +78,26 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
                 user.recruitmentDate
               ])
                 .then(() => res.status(201).send())
-                .catch(error => next(newError(error, 400)));
+                .catch(error => {
+                  let message = "";
+                  let code = 400;
+                  switch (parseInt(error.sqlState)) {
+                    case 45000:
+                      message =
+                        "El rol no existe. No se pudo crear al usuario.";
+                      break;
+                    case 45001:
+                      message =
+                        "El status no existe. No se pudo crear al usuario.";
+                      break;
+                    default:
+                      message =
+                        "Novocore falló en la creación del usuario. Contacte con soporte.";
+                      code = 500;
+                      break;
+                  }
+                  next(newError(message, code));
+                });
             else next(newError(response.error, 400));
           })
           .catch(error => next(newError(error, 400)));
@@ -118,7 +137,7 @@ Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
                 decodeURIComponent(req.params.email)
               ])
                 .then(() => res.status(204).send())
-                .catch(error => next(newError(error, 400)));
+                .catch(error => next(newError(error.message, 400)));
             else next(newError(response.error, 400));
           })
           .catch(error => next(newError(error, 400)));

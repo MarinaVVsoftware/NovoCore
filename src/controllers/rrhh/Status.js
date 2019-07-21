@@ -5,7 +5,7 @@ Status.GetStatus = (newError, Query, mysqlConnection) => {
     try {
       Query(mysqlConnection, "CALL SP_Status_GetStatus();")
         .then(result => res.status(200).send({ status: result[0][0] }))
-        .catch(error => next(newError(error, 400)));
+        .catch(error => next(newError(error.message, 400)));
     } catch (error) {
       next(newError(error, 500));
     }
