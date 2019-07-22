@@ -4,17 +4,17 @@
  * la función next() dentro de cada endpoint o route.z
  */
 module.exports = app => {
-  app.use((err, req, res, next) => {
+  app.use((error, req, res, next) => {
     try {
       let bodyErrors = [];
       let paramsErrors = [];
       let queryErrors = [];
 
       /* En caso que sea un error en el body del endpoint */
-      if (err.validationErrors) {
+      if (error.validationErrors) {
         /* Mapea los errores de body */
-        if (err.validationErrors.body)
-          bodyErrors = err.validationErrors.body.map(element => {
+        if (error.validationErrors.body)
+          bodyErrors = error.validationErrors.body.map(element => {
             return {
               datapath: element.dataPath,
               type: element.params.type,
@@ -22,8 +22,8 @@ module.exports = app => {
             };
           });
         /* Mapea los errores de params */
-        if (err.validationErrors.params)
-          paramsErrors = err.validationErrors.params.map(element => {
+        if (error.validationErrors.params)
+          paramsErrors = error.validationErrors.params.map(element => {
             return {
               datapath: element.dataPath,
               type: element.params.type,
@@ -32,8 +32,8 @@ module.exports = app => {
           });
 
         /* Mapea los errores de querys */
-        if (err.validationErrors.query)
-          queryErrors = err.validationErrors.query.map(element => {
+        if (error.validationErrors.query)
+          queryErrors = error.validationErrors.query.map(element => {
             return {
               datapath: element.dataPath,
               type: element.params.type,
@@ -43,14 +43,14 @@ module.exports = app => {
       }
 
       /* En caso que se ejecute un NewError() */
-      if (err.statusCode && err.message) {
-        if (err.statusCode == 500) {
+      if (error.statusCode && error.message) {
+        if (error.statusCode == 500) {
           /* IMPORTANTE: morgan requiere esta línea para hacer print del error */
-          res.error = err;
+          res.error = error;
           /* los errores 500 se imprimen en consola */
-          res.status(err.statusCode).send({ error: err.stack });
-        } else res.status(err.statusCode).send({ error: err.message });
-      } else if (err.validationErrors) {
+          res.status(error.statusCode).send({ error: error.stack });
+        } else res.status(error.statusCode).send({ error: error.message });
+      } else if (error.validationErrors) {
         /* Si son errores de Schemas, pasa por aquí */
         res.status(406).send({
           error: {
@@ -60,12 +60,12 @@ module.exports = app => {
           }
         });
       } else {
+        res.error = error;
         /* En caso que no se especifique el error */
-        res
-          .status(400)
-          .send({ error: "Something Went Wrong! error attached: " + err });
+        res.status(400).send({ error: error });
       }
     } catch (error) {
+      res.error = error;
       res.status(500).send({ error: "El validador ha fallado: " + error });
     }
   });
