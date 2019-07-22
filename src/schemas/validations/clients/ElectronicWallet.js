@@ -42,4 +42,24 @@ ElectronicWallet.BodyPostElectronicWalletMovement = {
   }
 };
 
+ElectronicWallet.ParamsPatchMarinaAmount = {
+  type: "object",
+  required: ["id"],
+  properties: {
+    id: {
+      type: "string"
+    }
+  }
+};
+
+ElectronicWallet.BodyPatchMarinaAmount = {
+  type: "object",
+  required: ["marinaAmount"],
+  properties: {
+    marinaAmount: {
+      type: "number"
+    }
+  }
+};
+
 module.exports = ElectronicWallet;

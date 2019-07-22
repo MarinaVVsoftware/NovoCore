@@ -44,6 +44,17 @@ module.exports = (
     }),
     ElectronicWallet.PostElectronicWalletMovement(...instances)
   );
+  router.patch(
+    "/api/clients/:id/electronic-wallet/marina",
+    validate({
+      params: Schema.ParamsPatchMarinaAmount,
+      body: Schema.BodyPatchMarinaAmount
+    }),
+    ElectronicWallet.PatchMarinaAmount(
+      ...instances,
+      ErrorSchema.PatchMarinaAmount
+    )
+  );
 
   app.use(router);
 };

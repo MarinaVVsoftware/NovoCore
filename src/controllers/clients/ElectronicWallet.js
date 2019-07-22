@@ -82,4 +82,28 @@ ElectronicWallet.PostElectronicWalletMovement = (
   };
 };
 
+ElectronicWallet.PatchMarinaAmount = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
+  return (req, res, next) => {
+    try {
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else
+        Query(
+          mysqlConnection,
+          "CALL SP_ElectronicWallet_PatchMarinaAmount(?,?);",
+          [req.params.id, req.body.marinaAmount]
+        )
+          .then(() => res.status(204).send())
+          .catch(error => next(newError(...ErrorSchema(error))));
+    } catch (error) {
+      next(newError(error, 500));
+    }
+  };
+};
+
 module.exports = ElectronicWallet;

@@ -18,4 +18,18 @@ ElectronicWallet.GetElectronicWallet = error => {
   return [message, code, sqlError];
 };
 
+ElectronicWallet.PatchMarinaAmount = error => {
+  switch (parseInt(error.sqlState)) {
+    case 45000:
+      message = "El cliente no existe. Contacte con soporte.";
+      break;
+    default:
+      message =
+        "Novocore falló al actualizar el monedero electrónico. Contacte con soporte.";
+      sqlError = error.message;
+      break;
+  }
+  return [message, code, sqlError];
+};
+
 module.exports = ElectronicWallet;
