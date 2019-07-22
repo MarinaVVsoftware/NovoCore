@@ -22,6 +22,7 @@ var { Validator } = require("express-json-validator-middleware");
 const newError = require(path.resolve(__dirname, "../helpers/newError"));
 const query = require(path.resolve(__dirname, "../helpers/query"));
 const Token = require(path.resolve(__dirname, "../helpers/token"));
+const Fetch = require(path.resolve(__dirname, "../helpers/Fetch"));
 
 // Imports de llave pública para la autentificación de JWT.
 const publicKey = fs.readFileSync(
@@ -140,7 +141,7 @@ module.exports = () => {
       Multer,
       dropbox,
       redis,
-      Token
+      Fetch
     );
 
     Log.Success("Configuración del servidor establecida.");

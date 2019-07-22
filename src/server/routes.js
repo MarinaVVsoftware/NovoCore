@@ -142,13 +142,15 @@ module.exports = (
   mysqlConnection,
   multer,
   dropbox,
-  redis
+  redis,
+  Fetch
 ) => {
   const instances = [
     app,
     router,
     newError,
     Query,
+    Fetch,
     validate,
     mysqlConnection,
     multer,

@@ -17,6 +17,7 @@ module.exports = (
   router,
   newError,
   Query,
+  Fetch,
   validate,
   mysqlConnection,
   multer,
