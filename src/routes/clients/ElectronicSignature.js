@@ -9,7 +9,19 @@ const ElectronicSignatureSchema = require(path.resolve(
   "../../schemas/validations/clients/ElectronicSignature"
 ));
 
-module.exports = (app, router, newError, Query, validate, mysqlConnection) => {
+module.exports = (
+  app,
+  router,
+  newError,
+  Query,
+  Fetch,
+  validate,
+  mysqlConnection,
+  multer,
+  dropbox,
+  redis,
+  redisHandler
+) => {
   const instances = [newError, Query, mysqlConnection];
   router.get(
     "/api/electronic-signature/read",
