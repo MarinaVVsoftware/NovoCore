@@ -15,6 +15,21 @@ Roles.GetRoles = (newError, Query, mysqlConnection) => {
 Roles.PutRolByName = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      const sqlError = error => {
+        let message = "";
+        let code = 400;
+        switch (parseInt(error.sqlState)) {
+          case 45000:
+            message =
+              "La jerarquía no existe. Seleccione una jerarquía válida.";
+            break;
+          default:
+            message = "Novocore falló al crear el rol. Contacte con soporte.";
+            break;
+        }
+        next(newError(message, code));
+      };
+
       const rol = req.body.rol;
 
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
@@ -27,7 +42,7 @@ Roles.PutRolByName = (newError, Query, mysqlConnection) => {
           JSON.stringify(rol.permissions)
         ])
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error.message, 400)));
+          .catch(error => sqlError(error));
     } catch (error) {
       next(newError(error, 500));
     }

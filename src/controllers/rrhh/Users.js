@@ -15,6 +15,37 @@ Users.GetUsers = (newError, Query, mysqlConnection) => {
 Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
+      const sqlErrorGetUserByEmail = error => {
+        let message = "";
+        let code = 400;
+        switch (parseInt(error.sqlState)) {
+          case 45000:
+            message =
+              "El usuario no existe. Inserte un email de usuario válido.";
+            break;
+          default:
+            message =
+              "Novocore falló en la obtención del usuario. Contacte con soporte.";
+            break;
+        }
+        next(newError(message, code));
+      };
+
+      const sqlErrorGetRolById = error => {
+        let message = "";
+        let code = 400;
+        switch (parseInt(error.sqlState)) {
+          case 45000:
+            message = "El rol no existe. Seleccione un rol válido.";
+            break;
+          default:
+            message =
+              "Novocore falló en la obtención del usuario. Contacte con soporte.";
+            break;
+        }
+        next(newError(message, code));
+      };
+
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       if (!regexEmail.test(decodeURIComponent(req.params.email)))
@@ -26,16 +57,14 @@ Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
           .then(result => {
             let user = result[0][0][0];
 
-            Query(mysqlConnection, "CALL SP_Roles_GetRolByUser(?);", [
-              user.rolId
-            ])
+            Query(mysqlConnection, "CALL SP_Roles_GetRolById(?);", [user.rolId])
               .then(rol => {
                 user.rol = rol[0][0][0];
                 res.status(200).send({ user: user });
               })
-              .catch(error => next(newError(error.message, 400)));
+              .catch(error => sqlErrorGetRolById(error));
           })
-          .catch(error => next(newError(error.message, 400)));
+          .catch(error => sqlErrorGetUserByEmail(error));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -45,6 +74,24 @@ Users.GetUserByEmail = (newError, Query, mysqlConnection) => {
 Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
   return (req, res, next) => {
     try {
+      const sqlError = error => {
+        let message = "";
+        let code = 400;
+        switch (parseInt(error.sqlState)) {
+          case 45000:
+            message = "El rol no existe. No se pudo crear al usuario.";
+            break;
+          case 45001:
+            message = "El status no existe. No se pudo crear al usuario.";
+            break;
+          default:
+            message =
+              "Novocore falló en la creación del usuario. Contacte con soporte.";
+            break;
+        }
+        next(newError(message, code));
+      };
+
       const user = req.body.user;
 
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
@@ -78,26 +125,7 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
                 user.recruitmentDate
               ])
                 .then(() => res.status(201).send())
-                .catch(error => {
-                  let message = "";
-                  let code = 400;
-                  switch (parseInt(error.sqlState)) {
-                    case 45000:
-                      message =
-                        "El rol no existe. No se pudo crear al usuario.";
-                      break;
-                    case 45001:
-                      message =
-                        "El status no existe. No se pudo crear al usuario.";
-                      break;
-                    default:
-                      message =
-                        "Novocore falló en la creación del usuario. Contacte con soporte.";
-                      code = 500;
-                      break;
-                  }
-                  next(newError(message, code));
-                });
+                .catch(error => sqlError(error));
             else next(newError(response.error, 400));
           })
           .catch(error => next(newError(error, 400)));
@@ -111,6 +139,22 @@ Users.PutUserByName = (newError, Query, mysqlConnection, authcore) => {
 Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
   return (req, res, next) => {
     try {
+      const sqlError = error => {
+        let message = "";
+        let code = 400;
+        switch (parseInt(error.sqlState)) {
+          case 45000:
+            message =
+              "El usuario no existe. Inserte un email de usuario válido.";
+            break;
+          default:
+            message =
+              "Novocore falló al eliminar el usuario. Contacte con soporte.";
+            break;
+        }
+        next(newError(message, code));
+      };
+
       const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (!emailRegex.test(decodeURIComponent(req.params.email)))
         next(newError("el param 'email' no es un string válido.", 406));
@@ -137,7 +181,7 @@ Users.DeleteUserByName = (newError, Query, mysqlConnection, authcore) => {
                 decodeURIComponent(req.params.email)
               ])
                 .then(() => res.status(204).send())
-                .catch(error => next(newError(error.message, 400)));
+                .catch(error => sqlError(error));
             else next(newError(response.error, 400));
           })
           .catch(error => next(newError(error, 400)));
