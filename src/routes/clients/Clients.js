@@ -32,7 +32,12 @@ module.exports = (
   router.get(
     "/api/clients/:id/",
     validate({ params: Schema.ParamsGetClientById }),
-    Clients.GetClientById(...instances, ErrorSchema.GetClientById)
+    Clients.GetClientById(
+      ...instances,
+      Fetch,
+      app.get("host"),
+      ErrorSchema.GetClientById
+    )
   );
   router.post(
     "/api/clients/",

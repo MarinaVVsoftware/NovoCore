@@ -13,7 +13,14 @@ Clients.GetClients = (newError, Query, mysqlConnection) => {
   };
 };
 
-Clients.GetClientById = (newError, Query, mysqlConnection, ErrorSchema) => {
+Clients.GetClientById = (
+  newError,
+  Query,
+  mysqlConnection,
+  Fetch,
+  host,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -23,38 +30,69 @@ Clients.GetClientById = (newError, Query, mysqlConnection, ErrorSchema) => {
           req.params.id
         ])
           .then(client => {
+            const params = {
+              method: "GET",
+              headers: {
+                authorization: req.get("Authorization")
+              }
+            };
             let Promises = [
-              Query(
-                mysqlConnection,
-                "CALL SP_BankAccounts_GetBankAccounts(?);",
-                [req.params.id]
+              Fetch(
+                host + "/api/clients/" + req.params.id + "/bank-accounts/",
+                params
               ),
-              Query(
-                mysqlConnection,
-                "CALL SP_SocialReasons_GetSocialReasons(?);",
-                [req.params.id]
+              Fetch(
+                host + "/api/clients/" + req.params.id + "/social-reasons/",
+                params
               ),
-              Query(mysqlConnection, "CALL SP_ElectronicWallet_GetWallet(?);", [
-                req.params.id
-              ]),
-              Query(
-                mysqlConnection,
-                "CALL SP_ElectronicWalletHistoric_GetAllHistoric(?);",
-                [req.params.id]
+              Fetch(
+                host + "/api/clients/" + req.params.id + "/electronic-wallet/",
+                params
+              ),
+              Fetch(
+                host +
+                  "/api/clients/" +
+                  req.params.id +
+                  "/electronic-wallet-historic/",
+                params
               )
             ];
 
             Promise.all(Promises)
               .then(result => {
-                let response = client[0][0][0];
-                response.bankAccounts = result[0][0][0];
-                response.socialReasons = result[1][0][0];
-                response.electronicWallet = result[2][0][0];
-                response.electronicWalletHistoric = result[3][0][0];
+                /* Contruye un arreglo de promesas de await r.json() */
+                let P = [];
+                const jsonPromise = async r => await r.json();
+                result.forEach(r => P.push(jsonPromise(r)));
 
-                res.status(200).send({ client: response });
+                Promise.all(P)
+                  .then(r => {
+                    let response = client[0][0][0];
+                    let error = null;
+
+                    r.forEach(e => {
+                      if (e.error) error = e.error;
+                    });
+
+                    if (!error) {
+                      response.bankAccounts = r[0].error
+                        ? r[0].error
+                        : r[0].bankAccounts;
+                      response.socialReasons = r[1].error
+                        ? r[1].error
+                        : r[1].socialReasons;
+                      response.electronicWallet = r[2].error
+                        ? r[2].error
+                        : r[2].electronicWallet;
+                      response.electronicWalletHistoric = r[3].error
+                        ? r[3].error
+                        : r[3].electronicWalletHistoric;
+                      res.status(200).send({ client: response });
+                    } else next(newError(error, 400));
+                  })
+                  .catch(error => next(newError(error, 400)));
               })
-              .catch(error => sqlError(error));
+              .catch(error => next(newError(error, 400)));
           })
           .catch(error => next(newError(...ErrorSchema(error))));
       }
