@@ -1,6 +1,11 @@
 const ElectronicWallet = {};
 
-ElectronicWallet.GetElectronicWallet = (newError, Query, mysqlConnection) => {
+ElectronicWallet.GetElectronicWallet = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -12,7 +17,7 @@ ElectronicWallet.GetElectronicWallet = (newError, Query, mysqlConnection) => {
           .then(result =>
             res.status(200).send({ electronicWallet: result[0][0] })
           )
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

@@ -27,9 +27,13 @@ module.exports = app => {
   morgan.token("error", (req, res) => {
     /* Evita errores en express, en caso que no venga un error */
     if (res.error) {
-      /* Construye el string del error */
-      let stack = res.error.stack.replace(/(\r\n|\n|\r)/gm, "");
-      return "| StackError[" + stack + "]";
+      if (res.error.stack) {
+        /* Construye el string del error */
+        let stack = res.error.stack.replace(/(\r\n|\n|\r)/gm, "");
+        return "| StackError[" + stack + "]";
+      } else {
+        return "| Error: " + res.error;
+      }
     } else return "";
   });
 

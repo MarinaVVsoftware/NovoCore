@@ -7,6 +7,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/clients/SocialReasons"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/clients/SocialReasons"
+));
 
 module.exports = (
   app,
@@ -25,7 +29,7 @@ module.exports = (
   router.get(
     "/api/clients/:id/social-reasons/",
     validate({ params: Schema.ParamsGetSocialReasons }),
-    SocialReasons.GetSocialReasons(...instances)
+    SocialReasons.GetSocialReasons(...instances, ErrorSchema.GetSocialReasons)
   );
   router.put(
     "/api/clients/:id/social-reasons/:rfc",
@@ -33,14 +37,17 @@ module.exports = (
       params: Schema.ParamsPutSocialReason,
       body: Schema.BodyPutSocialReason
     }),
-    SocialReasons.PutSocialReason(...instances)
+    SocialReasons.PutSocialReason(...instances, ErrorSchema.PutSocialReason)
   );
   router.delete(
     "/api/clients/:id/social-reasons/:rfc",
     validate({
       params: Schema.ParamsDeleteSocialReason
     }),
-    SocialReasons.DeleteSocialReason(...instances)
+    SocialReasons.DeleteSocialReason(
+      ...instances,
+      ErrorSchema.DeleteSocialReason
+    )
   );
 
   app.use(router);

@@ -8,6 +8,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/clients/BankAccounts"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/clients/BankAccounts"
+));
 
 module.exports = (
   app,

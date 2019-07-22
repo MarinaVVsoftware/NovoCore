@@ -1,6 +1,11 @@
 const ElectronicWalletHistoric = {};
 
-ElectronicWalletHistoric.GetHistoric = (newError, Query, mysqlConnection) => {
+ElectronicWalletHistoric.GetHistoric = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -14,7 +19,7 @@ ElectronicWalletHistoric.GetHistoric = (newError, Query, mysqlConnection) => {
           .then(result =>
             res.status(200).send({ electronicWalletHistoric: result[0][0] })
           )
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

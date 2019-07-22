@@ -1,6 +1,11 @@
 const SocialReasons = {};
 
-SocialReasons.GetSocialReasons = (newError, Query, mysqlConnection) => {
+SocialReasons.GetSocialReasons = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -10,14 +15,19 @@ SocialReasons.GetSocialReasons = (newError, Query, mysqlConnection) => {
           req.params.id
         ])
           .then(result => res.status(200).send({ socialReasons: result[0][0] }))
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-SocialReasons.PutSocialReason = (newError, Query, mysqlConnection) => {
+SocialReasons.PutSocialReason = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       const socialReason = req.body.socialReason;
@@ -40,14 +50,19 @@ SocialReasons.PutSocialReason = (newError, Query, mysqlConnection) => {
           ]
         )
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-SocialReasons.DeleteSocialReason = (newError, Query, mysqlConnection) => {
+SocialReasons.DeleteSocialReason = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -61,9 +76,7 @@ SocialReasons.DeleteSocialReason = (newError, Query, mysqlConnection) => {
           [req.params.id, req.params.rfc]
         )
           .then(() => res.status(204).send())
-          .catch(error => {
-            next(newError(error, 400));
-          });
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

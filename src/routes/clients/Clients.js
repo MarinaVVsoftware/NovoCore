@@ -8,6 +8,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/clients/Clients"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/clients/Clients"
+));
 
 module.exports = (
   app,
@@ -27,12 +31,12 @@ module.exports = (
   router.get(
     "/api/clients/:id/",
     validate({ params: Schema.ParamsGetClientById }),
-    Clients.GetClientById(...instances)
+    Clients.GetClientById(...instances, ErrorSchema.GetClientById)
   );
   router.post(
     "/api/clients/",
     validate({ body: Schema.BodyPostClient }),
-    Clients.PostClient(...instances)
+    Clients.PostClient(...instances, ErrorSchema.PostClient, app.get("host"))
   );
   router.put(
     "/api/clients/:id/",

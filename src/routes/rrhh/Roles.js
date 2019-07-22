@@ -5,6 +5,11 @@ const Schema = require(path.resolve(
   "../../schemas/validations/rrhh/Roles"
 ));
 
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/rrhh/Roles"
+));
+
 module.exports = (
   app,
   router,
@@ -26,14 +31,14 @@ module.exports = (
       params: Schema.ParamsPutRolByName,
       body: Schema.BodyPutUserByName
     }),
-    Roles.PutRolByName(...instances)
+    Roles.PutRolByName(...instances, ErrorSchema.PutRolByName)
   );
   router.delete(
     "/api/users/roles/:name",
     validate({
       params: Schema.ParamsDeleteRolByName
     }),
-    Roles.DeleteRolByName(...instances)
+    Roles.DeleteRolByName(...instances, ErrorSchema.DeleteRolByName)
   );
 
   app.use(router);

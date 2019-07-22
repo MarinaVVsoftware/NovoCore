@@ -1,6 +1,11 @@
 const BankAccounts = {};
 
-BankAccounts.GetBankAccounts = (newError, Query, mysqlConnection) => {
+BankAccounts.GetBankAccounts = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -10,14 +15,19 @@ BankAccounts.GetBankAccounts = (newError, Query, mysqlConnection) => {
           req.params.id
         ])
           .then(result => res.status(200).send({ bankAccounts: result[0][0] }))
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-BankAccounts.PutBankAccount = (newError, Query, mysqlConnection) => {
+BankAccounts.PutBankAccount = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       const bankAccount = req.body.bankAccount;
@@ -40,14 +50,19 @@ BankAccounts.PutBankAccount = (newError, Query, mysqlConnection) => {
           ]
         )
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-BankAccounts.DeleteBankAccount = (newError, Query, mysqlConnection) => {
+BankAccounts.DeleteBankAccount = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -58,9 +73,7 @@ BankAccounts.DeleteBankAccount = (newError, Query, mysqlConnection) => {
           req.params.number
         ])
           .then(() => res.status(204).send())
-          .catch(error => {
-            next(newError(error, 400));
-          });
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

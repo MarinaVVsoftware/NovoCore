@@ -8,6 +8,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/clients/ElectronicWallet"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/clients/ElectronicWallet"
+));
 
 module.exports = (
   app,
@@ -26,7 +30,10 @@ module.exports = (
   router.get(
     "/api/clients/:id/electronic-wallet/",
     validate({ params: Schema.ParamsGetElectronicWallet }),
-    ElectronicWallet.GetElectronicWallet(...instances)
+    ElectronicWallet.GetElectronicWallet(
+      ...instances,
+      ErrorSchema.GetElectronicWallet
+    )
   );
   router.post(
     "/api/clients/:id/electronic-wallet/marina",

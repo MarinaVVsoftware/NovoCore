@@ -1,50 +1,6 @@
 // Controller - Clients
 const Clients = {};
 
-Clients.GetClientById = (newError, Query, mysqlConnection) => {
-  return (req, res, next) => {
-    try {
-      if (isNaN(req.params.id))
-        next(newError("el param 'id' no es un string válido.", 406));
-      else {
-        let Promises = [
-          Query(mysqlConnection, "CALL SP_Clients_GetClientById(?);", [
-            req.params.id
-          ]),
-          Query(mysqlConnection, "CALL SP_BankAccounts_GetBankAccounts(?);", [
-            req.params.id
-          ]),
-          Query(mysqlConnection, "CALL SP_SocialReasons_GetSocialReasons(?);", [
-            req.params.id
-          ]),
-          Query(mysqlConnection, "CALL SP_ElectronicWallet_GetWallet(?);", [
-            req.params.id
-          ]),
-          Query(
-            mysqlConnection,
-            "CALL SP_ElectronicWalletHistoric_GetAllHistoric(?);",
-            [req.params.id]
-          )
-        ];
-
-        Promise.all(Promises)
-          .then(result => {
-            let client = result[0][0][0][0];
-            client.bankAccounts = result[1][0][0];
-            client.socialReasons = result[2][0][0];
-            client.electronicWallet = result[3][0][0];
-            client.electronicWalletHistoric = result[4][0][0];
-
-            res.status(200).send({ client });
-          })
-          .catch(error => next(newError(error, 400)));
-      }
-    } catch (error) {
-      next(newError(error, 500));
-    }
-  };
-};
-
 Clients.GetClients = (newError, Query, mysqlConnection) => {
   return (req, res, next) => {
     try {
@@ -57,7 +13,58 @@ Clients.GetClients = (newError, Query, mysqlConnection) => {
   };
 };
 
-Clients.PostClient = (newError, Query, mysqlConnection) => {
+Clients.GetClientById = (newError, Query, mysqlConnection, ErrorSchema) => {
+  return (req, res, next) => {
+    try {
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else {
+        Query(mysqlConnection, "CALL SP_Clients_GetClientById(?);", [
+          req.params.id
+        ])
+          .then(client => {
+            let Promises = [
+              Query(
+                mysqlConnection,
+                "CALL SP_BankAccounts_GetBankAccounts(?);",
+                [req.params.id]
+              ),
+              Query(
+                mysqlConnection,
+                "CALL SP_SocialReasons_GetSocialReasons(?);",
+                [req.params.id]
+              ),
+              Query(mysqlConnection, "CALL SP_ElectronicWallet_GetWallet(?);", [
+                req.params.id
+              ]),
+              Query(
+                mysqlConnection,
+                "CALL SP_ElectronicWalletHistoric_GetAllHistoric(?);",
+                [req.params.id]
+              )
+            ];
+
+            Promise.all(Promises)
+              .then(result => {
+                let response = client[0][0][0];
+                response.bankAccounts = result[0][0][0];
+                response.socialReasons = result[1][0][0];
+                response.electronicWallet = result[2][0][0];
+                response.electronicWalletHistoric = result[3][0][0];
+
+                res.status(200).send({ client: response });
+              })
+              .catch(error => sqlError(error));
+          })
+          .catch(error => next(newError(...ErrorSchema(error))));
+      }
+    } catch (error) {
+      next(newError(error, 500));
+    }
+  };
+};
+
+Clients.PostClient = (newError, Query, mysqlConnection, ErrorSchema, host) => {
   return (req, res, next) => {
     try {
       let client = req.body.client;
@@ -129,7 +136,7 @@ Clients.PostClient = (newError, Query, mysqlConnection) => {
               .catch(error => next(newError(error, 400)));
           else res.status(201).send();
         })
-        .catch(error => next(newError(error, 400)));
+        .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
@@ -160,7 +167,7 @@ Clients.PutClient = (newError, Query, mysqlConnection) => {
   };
 };
 
-Clients.DeleteClientById = (newError, Query, mysqlConnection) => {
+Clients.DeleteClientById = (newError, Query, mysqlConnection, ErrorSchema) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -170,7 +177,7 @@ Clients.DeleteClientById = (newError, Query, mysqlConnection) => {
           req.params.id
         ])
           .then(() => res.status(204).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

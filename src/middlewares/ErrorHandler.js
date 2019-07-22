@@ -47,9 +47,13 @@ module.exports = app => {
         if (error.statusCode == 500) {
           /* IMPORTANTE: morgan requiere esta línea para hacer print del error */
           res.error = error;
-          /* los errores 500 se imprimen en consola */
           res.status(error.statusCode).send({ error: error.stack });
-        } else res.status(error.statusCode).send({ error: error.message });
+        } else {
+          /* Se puede enviar el error sql dentro del objeto newError,
+          de lo contrario se imprime el mensaje de error con morgan */
+          res.error = error.error ? error.error : error.message;
+          res.status(error.statusCode).send({ error: error.message });
+        }
       } else if (error.validationErrors) {
         /* Si son errores de Schemas, pasa por aquí */
         res.status(406).send({

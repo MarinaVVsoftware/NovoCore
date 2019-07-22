@@ -7,6 +7,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/rrhh/Incidents"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/rrhh/Incidents"
+));
 
 module.exports = (
   app,
@@ -27,7 +31,7 @@ module.exports = (
     validate({
       params: Schema.ParamsGetIncidentsByUser
     }),
-    Roles.GetIncidentsByUser(...instances)
+    Roles.GetIncidentsByUser(...instances, ErrorSchema.GetIncidentsByUser)
   );
   router.post(
     "/api/users/:name/incidents/",
@@ -35,7 +39,7 @@ module.exports = (
       params: Schema.ParamsPostIncidentByUser,
       body: Schema.BodyPostIncidentByUser
     }),
-    Roles.PostIncidentByUser(...instances)
+    Roles.PostIncidentByUser(...instances, ErrorSchema.PostIncidentByUser)
   );
   router.put(
     "/api/users/:name/incidents/:id",
@@ -43,14 +47,14 @@ module.exports = (
       params: Schema.ParamsPutIncidentByUser,
       body: Schema.BodyPutIncidentByUser
     }),
-    Roles.PutIncidentByUser(...instances)
+    Roles.PutIncidentByUser(...instances, ErrorSchema.PutIncidentByUser)
   );
   router.delete(
     "/api/users/:name/incidents/:id",
     validate({
       params: Schema.ParamsDeleteIncidentByUser
     }),
-    Roles.DeleteIncidentByUser(...instances)
+    Roles.DeleteIncidentByUser(...instances, ErrorSchema.DeleteIncidentByUser)
   );
 
   app.use(router);
