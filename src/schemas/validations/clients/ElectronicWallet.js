@@ -42,6 +42,16 @@ ElectronicWallet.BodyPostElectronicWalletMovement = {
   }
 };
 
+ElectronicWallet.ParamsPutElectronicWallet = {
+  type: "object",
+  required: ["id"],
+  properties: {
+    id: {
+      type: "string"
+    }
+  }
+};
+
 ElectronicWallet.ParamsPatchMarinaAmount = {
   type: "object",
   required: ["id"],

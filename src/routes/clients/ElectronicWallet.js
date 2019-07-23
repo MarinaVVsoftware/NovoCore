@@ -44,6 +44,16 @@ module.exports = (
     }),
     ElectronicWallet.PostElectronicWalletMovement(...instances)
   );
+  router.put(
+    "/api/clients/:id/electronic-wallet",
+    validate({
+      params: Schema.ParamsPutElectronicWallet
+    }),
+    ElectronicWallet.PutElectronicWallet(
+      ...instances,
+      ErrorSchema.PutElectronicWallet
+    )
+  );
   router.patch(
     "/api/clients/:id/electronic-wallet/marina",
     validate({

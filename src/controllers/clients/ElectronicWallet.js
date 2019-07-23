@@ -82,6 +82,28 @@ ElectronicWallet.PostElectronicWalletMovement = (
   };
 };
 
+ElectronicWallet.PutElectronicWallet = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
+  return (req, res, next) => {
+    try {
+      if (isNaN(req.params.id))
+        next(newError("el param 'id' no es un string válido.", 406));
+      else
+        Query(mysqlConnection, "CALL SP_ElectronicWallet_PutWallet(?);", [
+          req.params.id
+        ])
+          .then(() => res.status(204).send())
+          .catch(error => next(newError(...ErrorSchema(error))));
+    } catch (error) {
+      next(newError(error, 500));
+    }
+  };
+};
+
 ElectronicWallet.PatchMarinaAmount = (
   newError,
   Query,

@@ -42,7 +42,12 @@ module.exports = (
   router.post(
     "/api/clients/",
     validate({ body: Schema.BodyPostClient }),
-    Clients.PostClient(...instances, ErrorSchema.PostClient, app.get("host"))
+    Clients.PostClient(
+      ...instances,
+      Fetch,
+      app.get("host"),
+      ErrorSchema.PostClient
+    )
   );
   router.put(
     "/api/clients/:id/",

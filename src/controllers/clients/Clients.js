@@ -36,6 +36,7 @@ Clients.GetClientById = (
                 authorization: req.get("Authorization")
               }
             };
+
             let Promises = [
               Fetch(
                 host + "/api/clients/" + req.params.id + "/bank-accounts/",
@@ -67,6 +68,7 @@ Clients.GetClientById = (
 
                 Promise.all(P)
                   .then(r => {
+                    /* Crea un objeto que será usado como respuesta del endpoint */
                     let response = client[0][0][0];
                     let error = null;
 
@@ -74,6 +76,8 @@ Clients.GetClientById = (
                       if (e.error) error = e.error;
                     });
 
+                    /* revisa que ningún fetch venga con errores, de lo contrario
+                    arroja un error 400 */
                     if (!error) {
                       response.bankAccounts = r[0].error
                         ? r[0].error
@@ -102,7 +106,14 @@ Clients.GetClientById = (
   };
 };
 
-Clients.PostClient = (newError, Query, mysqlConnection, ErrorSchema, host) => {
+Clients.PostClient = (
+  newError,
+  Query,
+  mysqlConnection,
+  Fetch,
+  host,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       let client = req.body.client;
@@ -127,17 +138,19 @@ Clients.PostClient = (newError, Query, mysqlConnection, ErrorSchema, host) => {
           if (bankAccounts)
             bankAccounts.forEach(bankAccount => {
               Promises.push(
-                Query(
-                  mysqlConnection,
-                  "CALL SP_BankAccounts_PutBankAccount(?,?,?,?,?,?);",
-                  [
-                    clientId,
-                    req.params.number,
+                Fetch(
+                  host +
+                    "/api/clients/" +
+                    clientId +
+                    "/bank-accounts/" +
                     bankAccount.accountNumber,
-                    bankAccount.alias,
-                    bankAccount.bank,
-                    bankAccount.clabe
-                  ]
+                  {
+                    method: "PUT",
+                    headers: {
+                      authorization: req.get("Authorization")
+                    },
+                    body: bankAccount
+                  }
                 )
               );
             });
@@ -145,34 +158,37 @@ Clients.PostClient = (newError, Query, mysqlConnection, ErrorSchema, host) => {
           if (socialReasons)
             socialReasons.forEach(socialReason => {
               Promises.push(
-                Query(
-                  mysqlConnection,
-                  "CALL SP_SocialReasons_PutSocialReason(?,?,?,?,?,?);",
-                  [
-                    clientId,
+                Fetch(
+                  host +
+                    "/api/clients/" +
+                    clientId +
+                    "/social-reasons/" +
                     socialReason.rfc,
-                    socialReason.socialReason,
-                    socialReason.cfdi,
-                    socialReason.email,
-                    socialReason.address
-                  ]
+                  {
+                    method: "PUT",
+                    headers: {
+                      authorization: req.get("Authorization")
+                    },
+                    body: socialReason
+                  }
                 )
               );
             });
 
           /* Crea el monedero del cliente */
           Promises.push(
-            Query(mysqlConnection, "CALL SP_ElectronicWallet_PostWallet(?);", [
-              clientId
-            ])
+            Fetch(host + "/api/clients/" + clientId + "/electronic-wallet/", {
+              method: "PUT",
+              headers: {
+                authorization: req.get("Authorization")
+              }
+            })
           );
 
           /* Ejecuta las promesas generadas en caso que se aniden elementos */
-          if (Promises.length > 0)
-            Promise.all(Promises)
-              .then(() => res.status(201).send())
-              .catch(error => next(newError(error, 400)));
-          else res.status(201).send();
+          Promise.all(Promises)
+            .then(() => res.status(201).send())
+            .catch(error => next(newError(error, 400)));
         })
         .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
