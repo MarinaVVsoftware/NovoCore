@@ -76,6 +76,10 @@ const MarinaMooringTariffTypes = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaMooringTariffTypes"
 ));
+const MarinaQuotationElectricity = require(path.resolve(
+  __dirname,
+  "../routes/marina/MarinaQuotationElectricity"
+));
 const MarinaQuotations = require(path.resolve(
   __dirname,
   "../routes/marina/MarinaQuotations"
@@ -184,6 +188,7 @@ module.exports = (
   /* Rutas del Modelo de Marina */
   MarinaMooringTariff(...instances);
   MarinaMooringTariffTypes(...instances);
+  MarinaQuotationElectricity(...instances);
   MarinaQuotations(...instances);
   MarinaQuotationServices(...instances);
   MarinaQuotationServiceTypes(...instances);

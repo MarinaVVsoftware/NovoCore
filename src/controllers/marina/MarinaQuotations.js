@@ -112,7 +112,12 @@ MarinaQuotations.PostQuotation = (newError, Query, mysqlConnection) => {
           quotation.creationResponsable
         ]
       )
-        .then(() => res.status(201).send())
+        .then(result => {
+          marinaQuotationId = result[0][0][0]["LAST_INSERT_ID()"];
+
+          if (quotation.quotationElectricity) res.status(201).send();
+          else res.status(201).send();
+        })
         .catch(error => next(newError(error, 400)));
     } catch (error) {
       next(newError(error, 500));
