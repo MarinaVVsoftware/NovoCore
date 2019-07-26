@@ -56,7 +56,11 @@ module.exports = (
   router.delete(
     "/api/users/:email",
     validate({ params: Schema.ParamsDeleteUserByName }),
-    Users.DeleteUserByName(...instances, ErrorSchema.DeleteUserByName)
+    Users.DeleteUserByName(
+      ...instances,
+      ErrorSchema.DeleteUserByName,
+      app.get("authcore")
+    )
     // redisHandler.WriteCache(redis, RedisSchema)
   );
 
