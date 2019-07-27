@@ -11,7 +11,7 @@ Incidents.GetIncidentsByUser = (
       if (!/^[a-z0-9 ]+$/i.test(decodeURIComponent(req.params.name)))
         next(newError("el param 'name' no es un string válido.", 406));
       else
-        Query(mysqlConnection, "CALL SP_Incidents_GetIncidents(?);", [
+        Query(mysqlConnection, "CALL SP_Incidents_GetIncidentsByUser(?);", [
           req.params.name
         ])
           .then(result => res.status(200).send({ Incidents: result[0][0] }))
