@@ -1,6 +1,6 @@
 const Captains = {};
 
-Captains.GetCaptain = (newError, Query, mysqlConnection) => {
+Captains.GetCaptain = (newError, Query, mysqlConnection, ErrorSchema) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -13,14 +13,14 @@ Captains.GetCaptain = (newError, Query, mysqlConnection) => {
           decodeURIComponent(req.params.name)
         ])
           .then(result => res.status(200).send({ captain: result[0][0][0] }))
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-Captains.PutCaptain = (newError, Query, mysqlConnection) => {
+Captains.PutCaptain = (newError, Query, mysqlConnection, ErrorSchema) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -38,14 +38,14 @@ Captains.PutCaptain = (newError, Query, mysqlConnection) => {
           req.body.captain.aceptationPermission
         ])
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-Captains.DeleteCaptain = (newError, Query, mysqlConnection) => {
+Captains.DeleteCaptain = (newError, Query, mysqlConnection, ErrorSchema) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -58,7 +58,7 @@ Captains.DeleteCaptain = (newError, Query, mysqlConnection) => {
           decodeURIComponent(req.params.name)
         ])
           .then(() => res.status(204).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
