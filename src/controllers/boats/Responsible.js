@@ -1,6 +1,11 @@
 const Responsible = {};
 
-Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
+Responsible.GetResponsable = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -15,14 +20,19 @@ Responsible.GetResponsable = (newError, Query, mysqlConnection) => {
           .then(result =>
             res.status(200).send({ responsable: result[0][0][0] })
           )
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
+Responsible.PutResponsable = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -44,14 +54,19 @@ Responsible.PutResponsable = (newError, Query, mysqlConnection) => {
           ]
         )
           .then(() => res.status(201).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }
   };
 };
 
-Responsible.DeleteResponsable = (newError, Query, mysqlConnection) => {
+Responsible.DeleteResponsable = (
+  newError,
+  Query,
+  mysqlConnection,
+  ErrorSchema
+) => {
   return (req, res, next) => {
     try {
       if (isNaN(req.params.id))
@@ -64,7 +79,7 @@ Responsible.DeleteResponsable = (newError, Query, mysqlConnection) => {
           decodeURIComponent(req.params.name)
         ])
           .then(() => res.status(204).send())
-          .catch(error => next(newError(error, 400)));
+          .catch(error => next(newError(...ErrorSchema(error))));
     } catch (error) {
       next(newError(error, 500));
     }

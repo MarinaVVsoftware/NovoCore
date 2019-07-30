@@ -7,6 +7,10 @@ const Schema = require(path.resolve(
   __dirname,
   "../../schemas/validations/boats/Responsible"
 ));
+const ErrorSchema = require(path.resolve(
+  __dirname,
+  "../../schemas/errors/boats/Responsible"
+));
 
 module.exports = (
   app,
@@ -26,7 +30,7 @@ module.exports = (
   router.get(
     "/api/clients/:id/boats/:name/responsable/",
     validate({ params: Schema.ParamsGetResponsable }),
-    Responsible.GetResponsable(...instances)
+    Responsible.GetResponsable(...instances, ErrorSchema.GetResponsable)
   );
   router.put(
     "/api/clients/:id/boats/:name/responsable/",
@@ -34,12 +38,12 @@ module.exports = (
       params: Schema.ParamsPutResponsable,
       body: Schema.BodyPostResponsable
     }),
-    Responsible.PutResponsable(...instances)
+    Responsible.PutResponsable(...instances, ErrorSchema.PutResponsable)
   );
   router.delete(
     "/api/clients/:id/boats/:name/responsable/",
     validate({ params: Schema.ParamsDeleteResponsable }),
-    Responsible.DeleteResponsable(...instances)
+    Responsible.DeleteResponsable(...instances, ErrorSchema.DeleteResponsable)
   );
 
   app.use(router);
